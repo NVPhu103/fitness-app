@@ -1,6 +1,6 @@
 # fitness_app
 
-A new Flutter project.
+A new Flutter + FastAPI project
 
 ## Getting Started
 
