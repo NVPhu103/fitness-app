@@ -1,0 +1,13 @@
+wheel
+
+fastapi==0.87.0
+uvicorn[standard]==0.14.0
+ujson>=5.0
+
+SQLAlchemy[mypy]==1.4.20
+alembic==1.6.5
+asyncpg==0.25
+psycopg2-binary==2.8.5
+starlette==0.21.0
+
+black==22.12.0
