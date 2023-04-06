@@ -1,3 +1,4 @@
+import 'package:fitness_app/screen/log_in/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
 
@@ -43,7 +44,7 @@ class _MyHomePageState extends State<MyHomePage> {
           onPressed: () {
             Navigator.push(
               context,
-              MaterialPageRoute(builder: (context) => const Dashboard()),
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
             );
           },
         ),
