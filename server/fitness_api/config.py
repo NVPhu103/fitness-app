@@ -14,14 +14,13 @@ DATABASE_URI: PostgresDsn = "postgresql+asyncpg://postgres:password@localhost:54
 async_engine: AsyncEngine = create_async_engine(
     DATABASE_URI,
     echo=True,
+    future=True,
 )
 
 async_session_factory = sessionmaker(
     bind=async_engine, 
     class_=AsyncSession,
-    autocommit=True,
-    future=True,
-    autoflush=True,
+    expire_on_commit=False,
 )
 
 @declarative_mixin
