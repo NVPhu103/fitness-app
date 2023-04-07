@@ -1,4 +1,4 @@
-from . import user
+from . import user, food
 from fastapi import FastAPI
 
 def configure_routes(app: FastAPI) -> None:
@@ -6,4 +6,9 @@ def configure_routes(app: FastAPI) -> None:
         user.router,
         tags=user.TAGS,
         prefix=f"/{user.PREFIX}",
+    )
+    app.include_router(
+        food.router,
+        tags=food.TAGS,
+        prefix=f"/{food.PREFIX}",
     )
