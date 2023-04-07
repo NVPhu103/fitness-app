@@ -15,12 +15,12 @@ class _SignUpState extends State<SignUp> {
       child: SafeArea(
         child: Column(
           children: [
-            Image.asset(
-              'assets/images/signup.png',
-              fit: BoxFit.cover,
-              height: 300,
-              width: 350,
-            ),
+            // Image.asset(
+            //   'assets/images/signup.png',
+            //   fit: BoxFit.cover,
+            //   height: 300,
+            //   width: 350,
+            // ),
             const SizedBox(
               height: 20,
               width: 20,
@@ -104,9 +104,9 @@ class _SignUpState extends State<SignUp> {
                       TextButton(
                         onPressed: (() {
                           var MyRoutes;
-                          Navigator.pushNamed(
+                          Navigator.push(
                             context,
-                            MyRoutes.loginScreen,
+                            MyRoutes.LoginScreen,
                           );
                         }),
                         child: const Text(
@@ -121,7 +121,7 @@ class _SignUpState extends State<SignUp> {
                     mainAxisAlignment: MainAxisAlignment.center,
                   ),
                   const Text(
-                    'By signing up you agree to our terms, conditions and privacy Policy.',
+                    'Wish you a lot of health when using our application!',
                     style: TextStyle(
                       fontSize: 13,
                     ),
