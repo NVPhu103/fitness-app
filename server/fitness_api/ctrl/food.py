@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError, NoResultFound
@@ -51,5 +51,24 @@ async def update_food(
     session: AsyncSession,
     food_id: UUID,
     patch_food_data: PatchFoodModel,
-) -> FoodModel:
-    ...
+) -> Food:
+    if not (data := patch_food_data.dict(exclude_unset=True)):
+        raise ValueError("No changes submitted.")
+    food_record = await get_food(session, food_id)
+    try:
+        food_record.apply_update(**data)
+        await session.commit()
+    except IntegrityError as exc:
+        await session.rollback()
+        raise HTTPException(status_code=400, detail="Error")
+
+
+async def get_food(
+    session: AsyncSession,
+    food_id: UUID,
+) -> Optional[Food]:
+    food_record: Optional[Food] = await session.get(Food, food_id, populate_existing=True)
+    if food_record:
+        return food_record
+    else:
+        raise HTTPException(status_code=404, detail="food does not exist")

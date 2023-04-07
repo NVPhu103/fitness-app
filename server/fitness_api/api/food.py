@@ -27,7 +27,7 @@ async def create_food(
 
 
 @router.get(
-    "", response_model=List[FoodModel], summary="Get all a food", status_code=200
+    "", response_model=List[FoodModel], summary="Get all foods", status_code=200
 )
 async def get_all_food(
     request: Request,
@@ -43,8 +43,22 @@ async def get_all_food(
     return food_records
 
 
+@router.get(
+    "/{food_id}", response_model=FoodModel, summary="Get a food", status_code=200
+)
+async def get_food(
+    request: Request,
+    response: Response,
+    food_id: UUID,
+    session: AsyncSession = Depends(create_session),
+) -> FoodModel:
+    food_record = await ctrl.food.get_food(session, food_id)
+    food = FoodModel.from_orm(food_record).dict()
+    return food
+
+
 @router.patch(
-    "", response_model=FoodModel, summary="Update a food", status_code=200
+    "/{food_id}", summary="Update a food", status_code=204
 )
 async def update_food(
     request: Request,
@@ -52,7 +66,23 @@ async def update_food(
     food_id: UUID,
     patch_food_data: PatchFoodModel,
     session: AsyncSession = Depends(create_session),
-) -> FoodModel:
+) -> None:
+    patch_food_data.status = FoodStatus.ACTIVE
+    await ctrl.food.update_food(session, food_id, patch_food_data)
+    response.status_code = 204
+    return response
+
+
+@router.patch(
+    "/delete/{food_id}", summary="delete a food", status_code=204
+)
+async def delete_food(
+    request: Request,
+    response: Response,
+    food_id: UUID,
+    session: AsyncSession = Depends(create_session),
+) -> None:
+    patch_food_data = PatchFoodModel(status=FoodStatus.INACTIVE)
     await ctrl.food.update_food(session, food_id, patch_food_data)
     response.status_code = 204
     return response
