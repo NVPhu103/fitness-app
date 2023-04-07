@@ -1,5 +1,13 @@
+import 'dart:convert';
+import 'dart:html';
+
+import 'package:fitness_app/screen/auth/second.dart';
+import 'package:fitness_app/screen/auth/signup_screen.dart';
+import 'package:fitness_app/screen/dashboard/dashboard.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:http/http.dart' as http;
 // ignore: unused_import
 import 'package:fitness_app/utilities/constants.dart';
 
@@ -10,6 +18,9 @@ class LoginScreen extends StatefulWidget {
   // ignore: library_private_types_in_public_api
   _LoginScreenState createState() => _LoginScreenState();
 }
+
+var passwordController = TextEditingController();
+var usernameController = TextEditingController();
 
 class _LoginScreenState extends State<LoginScreen> {
   bool _rememberMe = false;
@@ -28,6 +39,9 @@ class _LoginScreenState extends State<LoginScreen> {
           'Email',
           style: kLabelStyle,
         ),
+        TextFormField(
+          controller: usernameController,
+        ),
         const SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -44,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: const EdgeInsets.only(top: 14.0),
               prefixIcon: const Icon(
                 Icons.email,
-                color: Colors.white,
+                color: Colors.black,
               ),
               hintText: 'Enter your Email',
               hintStyle: kHintTextStyle,
@@ -63,6 +77,9 @@ class _LoginScreenState extends State<LoginScreen> {
           'Password',
           style: kLabelStyle,
         ),
+        TextFormField(
+          controller: passwordController,
+        ),
         const SizedBox(height: 10.0),
         Container(
           alignment: Alignment.centerLeft,
@@ -79,7 +96,7 @@ class _LoginScreenState extends State<LoginScreen> {
               contentPadding: const EdgeInsets.only(top: 14.0),
               prefixIcon: const Icon(
                 Icons.lock,
-                color: Colors.white,
+                color: Colors.black,
               ),
               hintText: 'Enter your Password',
               hintStyle: kHintTextStyle,
@@ -87,20 +104,6 @@ class _LoginScreenState extends State<LoginScreen> {
           ),
         ),
       ],
-    );
-  }
-
-  Widget _buildForgotPasswordBtn() {
-    return Container(
-      alignment: Alignment.centerRight,
-      child: FlatButton(
-        onPressed: () => print('Forgot Password Button Pressed'),
-        padding: const EdgeInsets.only(right: 0.0),
-        child: Text(
-          'Forgot Password?',
-          style: kLabelStyle,
-        ),
-      ),
     );
   }
 
@@ -137,14 +140,17 @@ class _LoginScreenState extends State<LoginScreen> {
         const Text(
           '- OR -',
           style: TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w400,
-          ),
+              color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18.0),
         ),
         const SizedBox(height: 20.0),
         Text(
           'Sign in with',
-          style: kLabelStyle,
+          style: TextStyle(
+            fontFamily: 'opensans',
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+            fontSize: 18.0,
+          ),
         ),
       ],
     );
@@ -204,9 +210,9 @@ class _LoginScreenState extends State<LoginScreen> {
       // ignore: avoid_print
       onTap: () => print('Sign Up Button Pressed'),
       child: RichText(
-        text: const TextSpan(
+        text: TextSpan(
           children: [
-            TextSpan(
+            const TextSpan(
               text: 'Don\'t have an Account? ',
               style: TextStyle(
                 color: Colors.white,
@@ -215,8 +221,13 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ),
             TextSpan(
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.push(context,
+                      MaterialPageRoute(builder: (context) => const SignUp()));
+                },
               text: 'Sign Up',
-              style: TextStyle(
+              style: const TextStyle(
                 color: Colors.white,
                 fontSize: 18.0,
                 fontWeight: FontWeight.bold,
@@ -233,9 +244,27 @@ class _LoginScreenState extends State<LoginScreen> {
       padding: const EdgeInsets.symmetric(vertical: 25.0),
       width: double.infinity,
       child: ElevatedButton(
-        style: ElevatedButton.styleFrom(shape: StadiumBorder()),
-        child: const Text('Login'),
-        onPressed: () => print("Login Button Pressed"),
+        style: ElevatedButton.styleFrom(
+            shape: StadiumBorder(), backgroundColor: Colors.white),
+        child: const Text('Login',
+            style: TextStyle(color: Colors.blue, fontSize: 20.0)),
+        onPressed: () {
+          login();
+        },
+      ),
+    );
+  }
+
+  Widget _buildForgotPasswordBtn() {
+    return Container(
+      alignment: Alignment.topRight,
+      child: TextButton(
+        child: Text(
+          'Forgot Password ?',
+          style: kLabelStyle,
+        ),
+        onPressed: () => print('Forgot Password Button Pressed'),
+        style: TextButton.styleFrom(primary: Colors.white),
       ),
     );
   }
@@ -324,4 +353,25 @@ class _LoginScreenState extends State<LoginScreen> {
       required RoundedRectangleBorder shape,
       required Color color,
       required Text child}) {}
+  Future<void> login() async {
+    if (passwordController.text.isNotEmpty &&
+        usernameController.text.isNotEmpty) {
+      final body = {'username': 'duong1', 'password': 'password'};
+      var response = await http.post(
+          Uri.parse("http://127.0.0.1:8000/users/login"),
+          body: jsonEncode(
+              <String, String>{'username': 'duong1', 'password': 'password'}));
+      if (response.statusCode == 200) {
+        Navigator.push(
+            context, MaterialPageRoute(builder: (context) => Dashboard()));
+      } else {
+        print(usernameController.text);
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text("Invalid Credentials. ")));
+      }
+    } else {
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text("Black Field Not Allowed")));
+    }
+  }
 }
