@@ -35,6 +35,5 @@ async def login(
     response: Response,
     session: AsyncSession = Depends(create_session),
 ) -> Response:
-    print(login_user_model.dict())
     response = await ctrl.user.login(login_user_model, session, response)
     return response

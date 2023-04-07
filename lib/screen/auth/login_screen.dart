@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:html';
+// import 'dart:html';
 
 import 'package:fitness_app/screen/auth/second.dart';
 import 'package:fitness_app/screen/auth/signup_screen.dart';
@@ -136,13 +136,13 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildSignInWithText() {
     return Column(
-      children: <Widget>[
-        const Text(
+      children: const <Widget>[
+        Text(
           '- OR -',
           style: TextStyle(
               color: Colors.white, fontWeight: FontWeight.w400, fontSize: 18.0),
         ),
-        const SizedBox(height: 20.0),
+        SizedBox(height: 20.0),
         Text(
           'Sign in with',
           style: TextStyle(
@@ -245,7 +245,7 @@ class _LoginScreenState extends State<LoginScreen> {
       width: double.infinity,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-            shape: StadiumBorder(), backgroundColor: Colors.white),
+            shape: const StadiumBorder(), backgroundColor: Colors.white),
         child: const Text('Login',
             style: TextStyle(color: Colors.blue, fontSize: 20.0)),
         onPressed: () {
@@ -259,12 +259,12 @@ class _LoginScreenState extends State<LoginScreen> {
     return Container(
       alignment: Alignment.topRight,
       child: TextButton(
+        onPressed: () => print('Forgot Password Button Pressed'),
+        style: TextButton.styleFrom(primary: Colors.white),
         child: Text(
           'Forgot Password ?',
           style: kLabelStyle,
         ),
-        onPressed: () => print('Forgot Password Button Pressed'),
-        style: TextButton.styleFrom(primary: Colors.white),
       ),
     );
   }
@@ -356,22 +356,25 @@ class _LoginScreenState extends State<LoginScreen> {
   Future<void> login() async {
     if (passwordController.text.isNotEmpty &&
         usernameController.text.isNotEmpty) {
-      final body = {'username': 'duong1', 'password': 'password'};
       var response = await http.post(
           Uri.parse("http://127.0.0.1:8000/users/login"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8', 
+          },
           body: jsonEncode(
-              <String, String>{'username': 'duong1', 'password': 'password'}));
+              <String, String>{'username': usernameController.text, 'password': passwordController.text}));
       if (response.statusCode == 200) {
+        // ignore: use_build_context_synchronously
         Navigator.push(
-            context, MaterialPageRoute(builder: (context) => Dashboard()));
+            context, MaterialPageRoute(builder: (context) => const Dashboard()));
       } else {
-        print(usernameController.text);
+        // ignore: use_build_context_synchronously
         ScaffoldMessenger.of(context)
-            .showSnackBar(SnackBar(content: Text("Invalid Credentials. ")));
+            .showSnackBar(const SnackBar(content: Text("Invalid Credentials. ")));
       }
     } else {
       ScaffoldMessenger.of(context)
-          .showSnackBar(SnackBar(content: Text("Black Field Not Allowed")));
+          .showSnackBar(const SnackBar(content: Text("Black Field Not Allowed")));
     }
   }
 }
