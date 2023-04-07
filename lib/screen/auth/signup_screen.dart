@@ -1,4 +1,9 @@
+import 'dart:convert';
+
+import 'package:fitness_app/screen/auth/login_screen.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:http/http.dart' as http;
 
 class SignUp extends StatefulWidget {
   const SignUp({Key? key}) : super(key: key);
@@ -8,12 +13,17 @@ class SignUp extends StatefulWidget {
 }
 
 class _SignUpState extends State<SignUp> {
+  var usernameController = TextEditingController();
+  var passwordController = TextEditingController();
+  var confirmpasswordController = TextEditingController();
+  var emailController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Material(
-      color: Colors.white,
+      color: Colors.blue,
       child: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             // Image.asset(
             //   'assets/images/signup.png',
@@ -30,7 +40,7 @@ class _SignUpState extends State<SignUp> {
               style: TextStyle(
                 fontSize: 30,
                 fontFamily: 'Courier',
-                color: Colors.red,
+                color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -44,10 +54,15 @@ class _SignUpState extends State<SignUp> {
                 children: [
                   TextFormField(
                     decoration: const InputDecoration(
-                      icon: Icon(Icons.person),
-                      hintText: 'Enter Your Full Name',
-                      labelText: 'Full Name',
+                      icon: Icon(
+                        Icons.email,
+                        color: Colors.black,
+                      ),
+                      hintText: 'Enter Your Email',
+                      labelText: 'Email',
                     ),
+                    style: TextStyle(color: Colors.white),
+                    controller: emailController,
                   ),
                   const SizedBox(
                     height: 10,
@@ -55,10 +70,15 @@ class _SignUpState extends State<SignUp> {
                   ),
                   TextFormField(
                     decoration: const InputDecoration(
-                      icon: Icon(Icons.email),
-                      hintText: 'Enter Your Email/Username',
-                      labelText: 'Email or Username',
+                      icon: Icon(
+                        Icons.person,
+                        color: Colors.black,
+                      ),
+                      hintText: 'Enter Your Username',
+                      labelText: 'Username',
                     ),
+                    style: TextStyle(color: Colors.white),
+                    controller: usernameController,
                   ),
                   const SizedBox(
                     height: 10,
@@ -67,51 +87,70 @@ class _SignUpState extends State<SignUp> {
                   TextFormField(
                     obscureText: true,
                     decoration: const InputDecoration(
-                      icon: Icon(Icons.lock),
+                      icon: Icon(
+                        Icons.lock,
+                        color: Colors.black,
+                      ),
                       hintText: 'Enter Your Password',
                       labelText: 'Password',
                     ),
+                    style: TextStyle(color: Colors.white),
+                    controller: passwordController,
+                  ),
+                  TextFormField(
+                    obscureText: true,
+                    decoration: const InputDecoration(
+                      icon: Icon(
+                        Icons.lock,
+                        color: Colors.black,
+                      ),
+                      hintText: 'Enter Your ConfirmPassword',
+                      labelText: 'ConfirmPassword',
+                    ),
+                    style: TextStyle(color: Colors.white),
+                    controller: confirmpasswordController,
                   ),
                   const SizedBox(
                     height: 10,
                     width: 10,
                   ),
-                  TextButton.icon(
-                    onPressed: (() {
-                      //sign up
-                    }),
-                    icon: const Icon(Icons.create),
-                    label: Container(
+                  TextButton(
+                    onPressed: () {
+                      SignUp();
+                    },
+                    child: Container(
                       alignment: Alignment.center,
                       width: 150,
                       height: 35,
-                      child: const Text(
-                        'Sign Up',
-                        style: TextStyle(
-                          fontSize: 18,
-                          color: Colors.white,
-                        ),
-                      ),
+                      child: Text('Sign Up',
+                          style: TextStyle(fontSize: 18, color: Colors.blue)),
                       decoration: BoxDecoration(
-                        color: Colors.red,
+                        color: Colors.white,
                         borderRadius: BorderRadius.circular(25),
                       ),
                     ),
                   ),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
-                      const Text('Already have an account?'),
+                      Text(
+                        'Already have an account?',
+                        style: TextStyle(
+                          color: Colors.yellow,
+                        ),
+                      ),
                       TextButton(
                         onPressed: (() {
                           var MyRoutes;
                           Navigator.push(
-                            context,
-                            MyRoutes.LoginScreen,
-                          );
+                              context,
+                              MaterialPageRoute(
+                                  builder: (context) => const LoginScreen()));
                         }),
                         child: const Text(
                           'Sign In',
                           style: TextStyle(
+                            color: Colors.white,
                             fontSize: 15,
                             fontWeight: FontWeight.bold,
                           ),
@@ -124,6 +163,7 @@ class _SignUpState extends State<SignUp> {
                     'Wish you a lot of health when using our application!',
                     style: TextStyle(
                       fontSize: 13,
+                      color: Colors.yellow,
                     ),
                   ),
                 ],
@@ -133,5 +173,35 @@ class _SignUpState extends State<SignUp> {
         ),
       ),
     );
+  }
+
+  Future<void> SignUp() async {
+    if (passwordController.text.isNotEmpty &&
+        usernameController.text.isNotEmpty &&
+        confirmpasswordController.text.isNotEmpty &&
+        emailController.text.isNotEmpty) {
+      var response = await http.post(Uri.parse("http://127.0.0.1:8000/users"),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(<String, String>{
+            'username': usernameController.text,
+            'password': passwordController.text,
+            'email': emailController.text,
+            'confirmpassword': confirmpasswordController.text,
+          }));
+      if (response.statusCode == 200) {
+        // ignore: use_build_context_synchronously
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const LoginScreen()));
+      } else {
+        // ignore: use_build_context_synchronously
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Invalid Credentials. ")));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Black Field Not Allowed")));
+    }
   }
 }
