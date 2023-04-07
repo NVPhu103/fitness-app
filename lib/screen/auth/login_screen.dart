@@ -35,35 +35,22 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Email',
-          style: kLabelStyle,
-        ),
+        // Text(
+        //   'Username',
+        //   style: kLabelStyle,
+        // ),
         TextFormField(
-          controller: usernameController,
-        ),
-        const SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
-          height: 60.0,
-          child: TextField(
-            keyboardType: TextInputType.emailAddress,
-            style: const TextStyle(
-              color: Colors.white,
-              fontFamily: 'OpenSans',
+          obscureText: false,
+          decoration: const InputDecoration(
+            icon: Icon(
+              Icons.person,
+              color: Colors.black,
             ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(top: 14.0),
-              prefixIcon: const Icon(
-                Icons.email,
-                color: Colors.black,
-              ),
-              hintText: 'Enter your Email',
-              hintStyle: kHintTextStyle,
-            ),
+            hintText: 'Enter Your Username',
+            labelText: 'Username',
           ),
+          style: TextStyle(color: Colors.white),
+          controller: usernameController,
         ),
       ],
     );
@@ -73,35 +60,22 @@ class _LoginScreenState extends State<LoginScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
-        Text(
-          'Password',
-          style: kLabelStyle,
-        ),
+        // Text(
+        //   'Password',
+        //   style: kLabelStyle,
+        // ),
         TextFormField(
           controller: passwordController,
-        ),
-        const SizedBox(height: 10.0),
-        Container(
-          alignment: Alignment.centerLeft,
-          decoration: kBoxDecorationStyle,
-          height: 60.0,
-          child: TextField(
-            obscureText: true,
-            style: const TextStyle(
-              color: Colors.white,
-              fontFamily: 'OpenSans',
+          obscureText: true,
+          decoration: const InputDecoration(
+            icon: Icon(
+              Icons.lock,
+              color: Colors.black,
             ),
-            decoration: InputDecoration(
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.only(top: 14.0),
-              prefixIcon: const Icon(
-                Icons.lock,
-                color: Colors.black,
-              ),
-              hintText: 'Enter your Password',
-              hintStyle: kHintTextStyle,
-            ),
+            hintText: 'Enter Your Password',
+            labelText: 'password',
           ),
+          style: TextStyle(color: Colors.white),
         ),
       ],
     );
@@ -281,19 +255,7 @@ class _LoginScreenState extends State<LoginScreen> {
               Container(
                 height: double.infinity,
                 width: double.infinity,
-                decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter,
-                    colors: [
-                      Color(0xFF73AEF5),
-                      Color(0xFF61A4F1),
-                      Color(0xFF478DE0),
-                      Color(0xFF398AE5),
-                    ],
-                    stops: [0.1, 0.4, 0.7, 0.9],
-                  ),
-                ),
+                color: Colors.blue,
               ),
               // ignore: sized_box_for_whitespace
               Container(
@@ -359,22 +321,24 @@ class _LoginScreenState extends State<LoginScreen> {
       var response = await http.post(
           Uri.parse("http://127.0.0.1:8000/users/login"),
           headers: <String, String>{
-            'Content-Type': 'application/json; charset=UTF-8', 
+            'Content-Type': 'application/json; charset=UTF-8',
           },
-          body: jsonEncode(
-              <String, String>{'username': usernameController.text, 'password': passwordController.text}));
+          body: jsonEncode(<String, String>{
+            'username': usernameController.text,
+            'password': passwordController.text
+          }));
       if (response.statusCode == 200) {
         // ignore: use_build_context_synchronously
-        Navigator.push(
-            context, MaterialPageRoute(builder: (context) => const Dashboard()));
+        Navigator.push(context,
+            MaterialPageRoute(builder: (context) => const Dashboard()));
       } else {
         // ignore: use_build_context_synchronously
-        ScaffoldMessenger.of(context)
-            .showSnackBar(const SnackBar(content: Text("Invalid Credentials. ")));
+        ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(content: Text("Invalid Credentials. ")));
       }
     } else {
-      ScaffoldMessenger.of(context)
-          .showSnackBar(const SnackBar(content: Text("Black Field Not Allowed")));
+      ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Black Field Not Allowed")));
     }
   }
 }
