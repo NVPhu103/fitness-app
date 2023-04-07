@@ -1,5 +1,3 @@
-import 'dart:ffi';
-
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -103,7 +101,7 @@ class ButtonNavBar extends StatelessWidget {
   const ButtonNavBar({
     super.key,
   });
-  
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -118,9 +116,11 @@ class ButtonNavBar extends StatelessWidget {
               svgScr: "assets/icons/dashboard.svg",
               isActive: true,
               press: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return Dashboard();
-                }),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return Dashboard();
+                  }),
                 );
               },
             ),
@@ -128,9 +128,11 @@ class ButtonNavBar extends StatelessWidget {
               title: "Diary",
               svgScr: "assets/icons/diary.svg",
               press: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return Dashboard();
-                }),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return Dashboard();
+                  }),
                 );
               },
             ),
@@ -138,9 +140,11 @@ class ButtonNavBar extends StatelessWidget {
               title: "Settings",
               svgScr: "assets/icons/Settings.svg",
               press: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context){
-                  return Dashboard();
-                }),
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) {
+                    return Dashboard();
+                  }),
                 );
               },
             ),

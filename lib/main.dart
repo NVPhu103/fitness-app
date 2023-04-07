@@ -1,3 +1,5 @@
+import 'package:fitness_app/screen/auth/login_screen.dart';
+import 'package:fitness_app/screen/auth/signup_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
 
@@ -33,21 +35,6 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text('FitnessPal Home Page'),
-      ),
-      body: Center(
-        child: ElevatedButton(
-          child: const Text('Go to the dashboard'),
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => const Dashboard()),
-            );
-          },
-        ),
-      ),
-    );
+    return LoginScreen();
   }
 }
