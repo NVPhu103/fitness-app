@@ -7,17 +7,19 @@ from sqlalchemy import (
     Enum,
     ForeignKey,
     Integer,
+    Float,
     String,
     DateTime,
     UniqueConstraint,
     Index,
     Boolean,
-    DATE as SqlDATE
+    DATE as SqlDATE,
 )
 from sqlalchemy.dialects.postgresql import UUID as SqlUUID
 from sqlalchemy.ext.hybrid import hybrid_property
 from fitness_api.config import declarative_base, BaseMixin, MetaData
 from fitness_api.schemas.food import FoodUnit, FoodStatus
+from fitness_api.schemas.user_profile import UserProfileStatus, UserProfileActivityLevel
 
 from sqlalchemy.orm import relationship, backref
 
@@ -32,9 +34,8 @@ class User(BaseModel):
         primary_key=True,
         index=True,
     )
-    username: str = Column(String, nullable=False, unique=True)
-    hashed_password: str = Column(String, nullable=False)
     _email: str = Column(String, name="email", nullable=False)
+    hashed_password: str = Column(String, nullable=False)
     is_active: bool = Column(Boolean, default=True)
 
     @hybrid_property
@@ -45,7 +46,54 @@ class User(BaseModel):
     def email(self, value: str) -> None:
         self._email = value.lower()
 
-    __table_args__ = (UniqueConstraint(username),)
+    __table_args__ = (UniqueConstraint(_email),)
+
+
+class UserProfile(BaseModel):
+    id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        default=uuid4,
+        nullable=False,
+        primary_key=True,
+        index=True,
+    )
+    user_id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        ForeignKey("user.id"),
+        nullable=False,
+    )
+    user: User = relationship("User", backref="user_profiles", lazy="selectin")
+    current_weight: float = Column(
+        Float,
+        CheckConstraint("current_weight > 0"),
+        nullable=False,
+    )
+    desired_weight: float = Column(
+        Float, CheckConstraint("desired_weight > 0"), nullable=False
+    )
+    height: float = Column(Float, CheckConstraint("height > 0"), nullable=False)
+    _year_of_birth: int = Column(Integer, nullable=False)
+    status: UserProfileStatus = Column(
+        Enum(UserProfileStatus), nullable=False, default=UserProfileStatus.ACTIVE
+    )
+    activity_level: UserProfileActivityLevel = Column(
+        Enum(UserProfileActivityLevel), nullable=False
+    )
+    maximum_calorie_intake: int = Column(Integer, default=2000, nullable=False)
+
+    @hybrid_property
+    def year_of_birth(self) -> int:
+        return self._year_of_birth
+
+    @year_of_birth.setter
+    def year_of_birth(self, value: int) -> None:
+        if (value >= 1950) and (value < (_date.today().year - 5)):
+            self._year_of_birth = value
+
+    __table_args__ = (
+        CheckConstraint(current_weight != desired_weight),
+        CheckConstraint(maximum_calorie_intake >= 1000),
+    )
 
 
 class Food(BaseModel):
@@ -79,8 +127,10 @@ class Diary(BaseModel):
     breakfast_id: UUID = Column(SqlUUID(as_uuid=True), nullable=False)
     lunch_id: UUID = Column(SqlUUID(as_uuid=True), nullable=False)
     dining_id: UUID = Column(SqlUUID(as_uuid=True), nullable=False)
-    daily_calories_goal: int = Column(Integer, default=1500)
-    daily_calories_total: int = Column(Integer, default=0)
+    maximum_calorie_intake: int = Column(Integer, default=2000)
+    total_calorie_intake: int = Column(Integer, default=0)
+
+    __table_args__ = (CheckConstraint(maximum_calorie_intake >= 1000),)
 
 
 class FoodDaily(BaseModel):
