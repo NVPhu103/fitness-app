@@ -20,6 +20,7 @@ from sqlalchemy.ext.hybrid import hybrid_property
 from fitness_api.config import declarative_base, BaseMixin, MetaData
 from fitness_api.schemas.food import FoodUnit, FoodStatus
 from fitness_api.schemas.user_profile import UserProfileStatus, UserProfileActivityLevel
+from fitness_api.schemas.user import UserRole
 
 from sqlalchemy.orm import relationship, backref
 
@@ -37,6 +38,9 @@ class User(BaseModel):
     _email: str = Column(String, name="email", nullable=False)
     hashed_password: str = Column(String, nullable=False)
     is_active: bool = Column(Boolean, default=True)
+    _role: UserRole = Column(
+        Enum(UserRole), name="role", nullable=False, default=UserRole.USER.value
+    )
 
     @hybrid_property
     def email(self) -> str:
@@ -45,6 +49,17 @@ class User(BaseModel):
     @email.setter
     def email(self, value: str) -> None:
         self._email = value.lower()
+
+    @hybrid_property
+    def role(self) -> UserRole:
+        return self._role
+
+    @role.setter
+    def role(self, value: UserRole) -> None:
+        self._role = UserRole.USER.value
+        if value == UserRole.ADMIN:
+            if self._email.endswith("@admin.com"):
+                self._role = UserRole.ADMIN.value
 
     __table_args__ = (UniqueConstraint(_email),)
 
@@ -62,7 +77,7 @@ class UserProfile(BaseModel):
         ForeignKey("user.id"),
         nullable=False,
     )
-    user: User = relationship("User", backref="user_profiles", lazy="selectin")
+    user: User = relationship("User", backref=backref("user_profiles", lazy="selectin"))
     current_weight: float = Column(
         Float,
         CheckConstraint("current_weight > 0"),
@@ -74,7 +89,7 @@ class UserProfile(BaseModel):
     height: float = Column(Float, CheckConstraint("height > 0"), nullable=False)
     _year_of_birth: int = Column(Integer, nullable=False)
     status: UserProfileStatus = Column(
-        Enum(UserProfileStatus), nullable=False, default=UserProfileStatus.ACTIVE
+        Enum(UserProfileStatus), nullable=False, default=UserProfileStatus.ACTIVE.value
     )
     activity_level: UserProfileActivityLevel = Column(
         Enum(UserProfileActivityLevel), nullable=False
@@ -105,10 +120,10 @@ class Food(BaseModel):
         index=True,
     )
     name: str = Column(String, nullable=False, index=True, unique=True)
-    unit: FoodUnit = Column(Enum(FoodUnit), default=FoodUnit.GRAM, nullable=False)
+    unit: FoodUnit = Column(Enum(FoodUnit), default=FoodUnit.GRAM.value, nullable=False)
     calories: int = Column(Integer, nullable=False)
     status: FoodStatus = Column(
-        Enum(FoodStatus), default=FoodStatus.ACTIVE, nullable=False
+        Enum(FoodStatus), default=FoodStatus.ACTIVE.value, nullable=False
     )
 
     __table_args__ = (CheckConstraint(calories > 0),)
@@ -122,18 +137,24 @@ class Diary(BaseModel):
         primary_key=True,
         index=True,
     )
-    user_id: UUID = Column(SqlUUID(as_uuid=True), nullable=False, index=True)
+    user_id: UUID = Column(
+        SqlUUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True
+    )
+    user: User = relationship("User", backref=backref("diaries", lazy="selectin"))
     date: _date = Column(SqlDATE, default=_date.today(), index=True)
-    breakfast_id: UUID = Column(SqlUUID(as_uuid=True), nullable=False)
-    lunch_id: UUID = Column(SqlUUID(as_uuid=True), nullable=False)
-    dining_id: UUID = Column(SqlUUID(as_uuid=True), nullable=False)
+    breakfast_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
+    lunch_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
+    dining_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
     maximum_calorie_intake: int = Column(Integer, default=2000)
     total_calorie_intake: int = Column(Integer, default=0)
 
-    __table_args__ = (CheckConstraint(maximum_calorie_intake >= 1000),)
+    __table_args__ = (
+        CheckConstraint(maximum_calorie_intake >= 1000),
+        UniqueConstraint(user_id, date),
+    )
 
 
-class FoodDaily(BaseModel):
+class FoodDiary(BaseModel):
     id: UUID = Column(
         SqlUUID(as_uuid=True),
         nullable=False,
@@ -149,6 +170,15 @@ class FoodDaily(BaseModel):
         Integer,
         default=1,
     )
+    _total_calories: int = Column(Integer, name="total_calories", nullable=False)
+
+    @hybrid_property
+    def total_calories(self) -> int:
+        return self._total_calories
+
+    @total_calories.setter
+    def total_calories(self) -> None:
+        self._total_calories = self.food.calories * self.quantity
 
     __table_args__ = (
         CheckConstraint(quantity > 1),

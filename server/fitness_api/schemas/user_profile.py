@@ -44,7 +44,7 @@ class PostUserProfileModel(BaseUserProfileModel):
                 "height": "172",
                 "desired_weight": "72",
                 "year_of_birth": 2001,
-                "activity_level": UserProfileActivityLevel.ACTIVE,
+                "activity_level": UserProfileActivityLevel.ACTIVE.value,
             }
         }
 
@@ -71,17 +71,17 @@ class PatchUserProfileModel(BaseModelWithConfig):
                 "desired_weight": "73",
                 "height": "174",
                 "year_of_birth": 1999,
-                "activity_level": UserProfileActivityLevel.ACTIVE,
+                "activity_level": UserProfileActivityLevel.ACTIVE.value,
             }
         }
 
 
 class PatchStatusUserProfileModel(BaseModelWithConfig):
-    status: UserProfileStatus = Field(UserProfileStatus.ACTIVE)
+    status: UserProfileStatus = Field(UserProfileStatus.ACTIVE.value)
 
 
 class UserProfileModel(BaseUserProfileModel):
-    id: UUID = Field(..., title="User ID")
+    id: UUID = Field(..., title="User Profile ID")
     user: Optional[UserModel] = Field(
         None, title="The User to which this profile belongs"
     )
