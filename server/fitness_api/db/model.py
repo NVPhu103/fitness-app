@@ -17,12 +17,16 @@ from sqlalchemy import (
 )
 from sqlalchemy.dialects.postgresql import UUID as SqlUUID
 from sqlalchemy.ext.hybrid import hybrid_property
+from sqlalchemy.orm import relationship, backref
+from sqlalchemy.types import Enum
+
 from fitness_api.config import declarative_base, BaseMixin, MetaData
 from fitness_api.schemas.food import FoodUnit, FoodStatus
 from fitness_api.schemas.user_profile import UserProfileStatus, UserProfileActivityLevel
 from fitness_api.schemas.user import UserRole
 
 from sqlalchemy.orm import relationship, backref
+
 
 BaseModel = declarative_base(metadata=MetaData, cls=BaseMixin)
 
@@ -127,7 +131,6 @@ class Food(BaseModel):
     )
 
     __table_args__ = (CheckConstraint(calories > 0),)
-
 
 class Diary(BaseModel):
     id: UUID = Column(

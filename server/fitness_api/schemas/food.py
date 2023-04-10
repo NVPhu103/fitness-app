@@ -1,8 +1,11 @@
 import enum
+
 from typing import Optional
+
 from .config import BaseModelWithConfig
 from pydantic import Field
 from uuid import UUID
+
 
 
 class FoodUnit(enum.Enum):
@@ -14,6 +17,7 @@ class FoodUnit(enum.Enum):
 class FoodStatus(enum.Enum):
     ACTIVE = "ACTIVE"
     INACTIVE = "INACTIVE"
+
 
 
 class BaseFoodModel(BaseModelWithConfig):
