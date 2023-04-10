@@ -27,7 +27,7 @@ async def create_user(post_user_model: PostUserModel, session: AsyncSession) -> 
 
 async def login(login_user_model: LoginUserModel, session: AsyncSession, response: Response) -> Response:
     try:
-        statement = select(User).filter(func.lower(User.username) == func.lower(login_user_model.username))
+        statement = select(User).filter(func.lower(User.email) == func.lower(login_user_model.email))
         user_record = (await session.execute(statement)).scalar_one()
         if login_user_model.password == user_record.hashed_password:
             response.status_code = 200
@@ -35,7 +35,7 @@ async def login(login_user_model: LoginUserModel, session: AsyncSession, respons
             response.status_code = 401
         return response
     except NoResultFound:
-        raise HTTPException(detail="Username is invalid", status_code=404)
+        raise HTTPException(detail="Email is invalid", status_code=404)
     except Exception as error:
         raise HTTPException(detail="Login failed", status_code=400) from error
     

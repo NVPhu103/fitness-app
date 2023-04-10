@@ -17,7 +17,7 @@ LOGIN_USER_STATUS_CODE: Dict[Union[int, str], Dict[str, Any]] = {
 }
 
 @router.post("", response_model=UserModel, summary="Create a user", status_code=201)
-async def get_user(
+async def create_user(
     post_user_model: PostUserModel,
     request: Request,
     response: Response,
