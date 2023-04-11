@@ -17,6 +17,9 @@ class UserProfileActivityLevel(enum.Enum):
     ACTIVE = "ACTIVE"
     VERY_ACTIVE = "VERY ACTIVE"
 
+class UserProfileGender(enum.Enum):
+    FEMALE = "Female"
+    MALE = "Male"
 
 class BaseUserProfileModel(BaseModelWithConfig):
     user_id: UUID = Field(..., title="User ID", alias="userId")

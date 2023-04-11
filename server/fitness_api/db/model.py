@@ -22,7 +22,7 @@ from sqlalchemy.types import Enum
 
 from fitness_api.config import declarative_base, BaseMixin, MetaData
 from fitness_api.schemas.food import FoodUnit, FoodStatus
-from fitness_api.schemas.user_profile import UserProfileStatus, UserProfileActivityLevel
+from fitness_api.schemas.user_profile import UserProfileStatus, UserProfileActivityLevel, UserProfileGender
 from fitness_api.schemas.user import UserRole
 
 from sqlalchemy.orm import relationship, backref
@@ -82,6 +82,7 @@ class UserProfile(BaseModel):
         nullable=False,
     )
     user: User = relationship("User", backref=backref("user_profiles", lazy="selectin"))
+    gender: UserProfileGender = Column(Enum(UserProfileGender), nullable=False)
     current_weight: float = Column(
         Float,
         CheckConstraint("current_weight > 0"),

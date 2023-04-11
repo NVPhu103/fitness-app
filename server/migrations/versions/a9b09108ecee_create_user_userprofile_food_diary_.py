@@ -1,8 +1,8 @@
-"""create user, user_profile, food, diary, and food_diary tables
+"""create user, userprofile, food, diary, fooddiary
 
-Revision ID: cf267e657d29
+Revision ID: a9b09108ecee
 Revises: 
-Create Date: 2023-04-11 02:21:24.757081
+Create Date: 2023-04-11 22:54:39.642675
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'cf267e657d29'
+revision = 'a9b09108ecee'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -74,6 +74,7 @@ def upgrade():
     op.create_table('user_profile',
     sa.Column('id', postgresql.UUID(as_uuid=True), nullable=False),
     sa.Column('user_id', postgresql.UUID(as_uuid=True), nullable=False),
+    sa.Column('gender', sa.Enum('FEMALE', 'MALE', name='userprofilegender'), nullable=False),
     sa.Column('current_weight', sa.Float(), nullable=False),
     sa.Column('desired_weight', sa.Float(), nullable=False),
     sa.Column('height', sa.Float(), nullable=False),
