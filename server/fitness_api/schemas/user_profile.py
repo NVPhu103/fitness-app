@@ -3,7 +3,6 @@ from .config import BaseModelWithConfig
 from pydantic import Field
 from uuid import UUID
 import enum
-from .user import UserModel
 
 
 class UserProfileStatus(enum.Enum):
@@ -23,6 +22,7 @@ class UserProfileGender(enum.Enum):
 
 class BaseUserProfileModel(BaseModelWithConfig):
     user_id: UUID = Field(..., title="User ID", alias="userId")
+    gender: UserProfileGender = Field(..., title="the user's sex")
     current_weight: float = Field(
         ..., title="The current weight of the User", alias="currentWeight"
     )
@@ -43,9 +43,10 @@ class PostUserProfileModel(BaseUserProfileModel):
         schema_extra = {
             "example": {
                 "user_id": "52cedffd-1e53-4693-9fcb-443d003211fd",
-                "current_weight": "80.5",
-                "height": "172",
-                "desired_weight": "72",
+                "gender": UserProfileGender.FEMALE.value,
+                "current_weight": 80.5,
+                "height": 172,
+                "desired_weight": 72,
                 "year_of_birth": 2001,
                 "activity_level": UserProfileActivityLevel.ACTIVE.value,
             }
@@ -53,6 +54,7 @@ class PostUserProfileModel(BaseUserProfileModel):
 
 
 class PatchUserProfileModel(BaseModelWithConfig):
+    gender: Optional[UserProfileGender] = Field(None, title="the user's sex"),
     current_weight: Optional[float] = Field(
         None, title="The current weight of the User", alias="currentWeight"
     )
@@ -70,9 +72,10 @@ class PatchUserProfileModel(BaseModelWithConfig):
     class Config(BaseModelWithConfig.Config):
         schema_extra = {
             "example": {
-                "current_weight": "78",
-                "desired_weight": "73",
-                "height": "174",
+                "gender": UserProfileGender.FEMALE.value,
+                "current_weight": 78,
+                "desired_weight": 73,
+                "height": 174,
                 "year_of_birth": 1999,
                 "activity_level": UserProfileActivityLevel.ACTIVE.value,
             }
@@ -85,9 +88,6 @@ class PatchStatusUserProfileModel(BaseModelWithConfig):
 
 class UserProfileModel(BaseUserProfileModel):
     id: UUID = Field(..., title="User Profile ID")
-    user: Optional[UserModel] = Field(
-        None, title="The User to which this profile belongs"
-    )
     status: UserProfileStatus = Field(..., title="Staus of the user")
     maximum_calorie_intake: int = Field(
         ..., alias="maximumCalorieIntake", title="Maximum calorie intake per day"

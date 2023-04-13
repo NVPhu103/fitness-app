@@ -3,8 +3,9 @@ from typing import Any, Dict, List, Union
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from fitness_api.db.depends import create_session
-from fitness_api.schemas.user import PostUserModel, UserModel, LoginUserModel
+from fitness_api.schemas.user import PostUserModel, UserModel, LoginUserModel, UserRole
 from fitness_api import ctrl
+from fitness_api.schemas.user_profile import UserProfileModel
 
 
 PREFIX = "users"
@@ -28,12 +29,18 @@ async def create_user(
     return user
 
 
-@router.post("/login", responses=LOGIN_USER_STATUS_CODE, status_code=status.HTTP_200_OK)
+@router.post("/login", response_model= Dict[str, Any], responses=LOGIN_USER_STATUS_CODE, status_code=status.HTTP_202_ACCEPTED)
 async def login(
     login_user_model: LoginUserModel,
     request: Request,
     response: Response,
     session: AsyncSession = Depends(create_session),
-) -> Response:
-    response = await ctrl.user.login(login_user_model, session, response)
-    return response
+) -> Dict[str, Any]:
+    user_model = await ctrl.user.login(login_user_model, session)
+    user_profile_record = await ctrl.user_profile.get_user_profile(session, user_model.id)
+    user_profile_model = None
+    if user_profile_record:
+        user_profile_model = UserProfileModel.from_orm(user_profile_record).dict(by_alias=True)
+    user_model_dict = user_model.dict(by_alias=True)
+    user_model_dict.update({"userProfile": user_profile_model})
+    return user_model_dict

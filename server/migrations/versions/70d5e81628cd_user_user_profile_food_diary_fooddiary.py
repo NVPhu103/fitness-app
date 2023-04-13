@@ -1,8 +1,8 @@
-"""create user, userprofile, food, diary, fooddiary
+"""user, user_profile, food, diary, fooddiary
 
-Revision ID: a9b09108ecee
+Revision ID: 70d5e81628cd
 Revises: 
-Create Date: 2023-04-11 22:54:39.642675
+Create Date: 2023-04-14 04:18:19.119007
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 from sqlalchemy.dialects import postgresql
 
 # revision identifiers, used by Alembic.
-revision = 'a9b09108ecee'
+revision = '70d5e81628cd'
 down_revision = None
 branch_labels = None
 depends_on = None

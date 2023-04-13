@@ -61,7 +61,7 @@ class User(BaseModel):
     @role.setter
     def role(self, value: UserRole) -> None:
         self._role = UserRole.USER.value
-        if value == UserRole.ADMIN:
+        if value == UserRole.ADMIN.value:
             if self._email.endswith("@admin.com"):
                 self._role = UserRole.ADMIN.value
 
@@ -81,7 +81,6 @@ class UserProfile(BaseModel):
         ForeignKey("user.id"),
         nullable=False,
     )
-    user: User = relationship("User", backref=backref("user_profiles", lazy="selectin"))
     gender: UserProfileGender = Column(Enum(UserProfileGender), nullable=False)
     current_weight: float = Column(
         Float,
@@ -144,7 +143,6 @@ class Diary(BaseModel):
     user_id: UUID = Column(
         SqlUUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True
     )
-    user: User = relationship("User", backref=backref("diaries", lazy="selectin"))
     date: _date = Column(SqlDATE, default=_date.today(), index=True)
     breakfast_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
     lunch_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
@@ -169,7 +167,6 @@ class FoodDiary(BaseModel):
     food_id: UUID = Column(
         SqlUUID(as_uuid=True), ForeignKey("food.id"), nullable=False, index=True
     )
-    food: Food = relationship("Food", backref=backref("fooddailys", lazy="selectin"))
     quantity: int = Column(
         Integer,
         default=1,

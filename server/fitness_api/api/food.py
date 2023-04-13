@@ -7,6 +7,7 @@ from fitness_api.db.depends import create_session
 from fitness_api.schemas.food import FoodModel, PatchFoodModel, PostFoodModel
 from fitness_api import ctrl
 from fitness_api.lib.paging import PaginationParams
+from fitness_api.lib.searcher.searcher import SearcherParams
 from fitness_api.db.model import Food, FoodStatus
 
 PREFIX = "foods"
@@ -22,7 +23,7 @@ async def create_food(
     session: AsyncSession = Depends(create_session),
 ) -> FoodModel:
     food_record = await ctrl.food.create_food(post_food_model, session)
-    food = FoodModel.from_orm(food_record).dict()
+    food = FoodModel.from_orm(food_record).dict(by_alias=True)
     return food
 
 
@@ -33,11 +34,12 @@ async def get_all_food(
     request: Request,
     response: Response,
     status: Optional[FoodStatus] = Query(default=FoodStatus.ACTIVE),
+    searcher_params: SearcherParams = Depends(SearcherParams),
     paging_params: PaginationParams = Depends(PaginationParams),
     session: AsyncSession = Depends(create_session),
 ) -> List[Food]:
     content = await ctrl.food.list_all_foods(
-        session, paging_params.page, paging_params.size, status
+        session, searcher_params, paging_params.page, paging_params.size, status
     )
     food_records: List[Food] = content.records
     return food_records
@@ -53,7 +55,7 @@ async def get_food(
     session: AsyncSession = Depends(create_session),
 ) -> FoodModel:
     food_record = await ctrl.food.get_food(session, food_id)
-    food = FoodModel.from_orm(food_record).dict()
+    food = FoodModel.from_orm(food_record).dict(by_alias=True)
     return food
 
 

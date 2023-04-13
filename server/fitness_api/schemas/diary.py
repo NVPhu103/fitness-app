@@ -4,7 +4,7 @@ from .config import BaseModelWithConfig
 from pydantic import Field
 from uuid import UUID
 
-from fitness_api.schemas.user import UserModel
+
 
 
 class BaseDiaryModel(BaseModelWithConfig):
@@ -31,9 +31,6 @@ class PatchDiaryModel(BaseModelWithConfig):
 
 class DiaryModel(BaseDiaryModel):
     id: UUID = Field(..., title="Diary ID")
-    user: Optional[UserModel] = Field(
-        None, title="The User to which this profile belongs"
-    )
     breakfast_id: UUID = Field(..., alias="breakfastId", title="one of the meals")
     lunch_id: UUID = Field(..., alias="lunchId", title="one of the meals")
     dining_id: UUID = Field(..., alias="diningId", title="one of the meals")
