@@ -27,7 +27,7 @@ class DashboardPage extends StatelessWidget {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      bottomNavigationBar: ButtonNavBar(),
+      bottomNavigationBar: const ButtonNavBar(),
       body: Stack(children: <Widget>[
         Container(
           height: size.height * .48,

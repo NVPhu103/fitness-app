@@ -29,7 +29,7 @@ async def create_user(
     return user
 
 
-@router.post("/login", response_model= Dict[str, Any], responses=LOGIN_USER_STATUS_CODE, status_code=status.HTTP_202_ACCEPTED)
+@router.post("/login", response_model= Dict[str, Any], responses=LOGIN_USER_STATUS_CODE, status_code=status.HTTP_201_CREATED)
 async def login(
     login_user_model: LoginUserModel,
     request: Request,
@@ -41,6 +41,7 @@ async def login(
     user_profile_model = None
     if user_profile_record:
         user_profile_model = UserProfileModel.from_orm(user_profile_record).dict(by_alias=True)
+        response.status_code = status.HTTP_202_ACCEPTED
     user_model_dict = user_model.dict(by_alias=True)
     user_model_dict.update({"userProfile": user_profile_model})
     return user_model_dict
