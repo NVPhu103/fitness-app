@@ -1,4 +1,5 @@
 import 'package:fitness_app/screen/Welcome/welcome_screen.dart';
+import 'package:fitness_app/screen/goal/set_goal_screen_1.dart';
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter/material.dart';
 
@@ -39,7 +40,7 @@ class MyApp extends StatelessWidget {
               borderSide: BorderSide.none,
             ),
           )),
-      home: const WelcomeScreen(),
+      home: const SetGoalScreen1(userId: "fc38cee7-ced2-4049-a106-8354c49ca3ae",),
     );
   }
 }

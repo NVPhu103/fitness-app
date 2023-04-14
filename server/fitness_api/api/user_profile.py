@@ -36,7 +36,6 @@ async def create_user_profile(
     response: Response,
     session: AsyncSession = Depends(create_session),
 ) -> UserProfileModel:
-    print(post_user_profile_model.dict())
     user_profile_record = await ctrl.user_profile.create_user_profile(post_user_profile_model, session)
     user_profile = UserProfileModel.from_orm(user_profile_record).dict(by_alias=True)
     return user_profile
