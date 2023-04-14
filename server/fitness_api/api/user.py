@@ -29,7 +29,7 @@ async def create_user(
     return user
 
 
-@router.post("/login", response_model= Dict[str, Any], responses=LOGIN_USER_STATUS_CODE, status_code=status.HTTP_201_CREATED)
+@router.post("/login", response_model= Dict[str, Any], responses=LOGIN_USER_STATUS_CODE, status_code=status.HTTP_200_OK)
 async def login(
     login_user_model: LoginUserModel,
     request: Request,

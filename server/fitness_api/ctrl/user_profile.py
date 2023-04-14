@@ -21,7 +21,7 @@ async def get_user_profile(
     user_id: UUID,
 ) -> Optional[UserProfile]:
     statement = select(UserProfile).filter(UserProfile.user_id == user_id)
-    user_profile_record: Optional[UserProfile] = (await session.execute(statement)).first()
+    user_profile_record: Optional[UserProfile] = (await session.execute(statement)).scalar_one_or_none()
     return user_profile_record
 
 
