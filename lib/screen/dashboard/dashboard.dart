@@ -1,6 +1,7 @@
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:pie_chart/pie_chart.dart';
 
 class Dashboard extends StatelessWidget {
   final int maximumCaloriesIntake;
@@ -20,13 +21,20 @@ class Dashboard extends StatelessWidget {
         scaffoldBackgroundColor: kBackgroundColor,
         textTheme: Theme.of(context).textTheme.apply(displayColor: kTextColor),
       ),
-      home: const DashboardPage(),
+      home: DashboardPage(
+          maximumCaloriesIntake: maximumCaloriesIntake,
+          totalCaloriesIntake: totalCaloriesIntake),
     );
   }
 }
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final int maximumCaloriesIntake;
+  final int totalCaloriesIntake;
+  const DashboardPage(
+      {super.key,
+      required this.maximumCaloriesIntake,
+      required this.totalCaloriesIntake});
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
@@ -92,7 +100,9 @@ class DashboardPage extends StatelessWidget {
                         border: InputBorder.none),
                   ),
                 ),
-                const Statistics(),
+                Statistics(
+                    maximumCaloriesIntake: maximumCaloriesIntake,
+                    totalCaloriesIntake: totalCaloriesIntake),
               ],
             ),
           ),
@@ -174,9 +184,39 @@ class BottomNavItem extends StatelessWidget {
 }
 
 class Statistics extends StatelessWidget {
-  const Statistics({
+  final int maximumCaloriesIntake;
+  final int totalCaloriesIntake;
+
+  Statistics({
     super.key,
+    required this.maximumCaloriesIntake,
+    required this.totalCaloriesIntake,
   });
+
+  Map<String, double> dataMap = {
+    "Intake": 1000,
+    "Remaining": 1564,
+  };
+
+  List<Color> colorList = [
+    Color.fromARGB(255, 128, 183, 235),
+    Color.fromARGB(255, 201, 198, 198)
+  ];
+
+  final gradientList = <List<Color>>[
+    [
+      Color.fromRGBO(223, 250, 92, 1),
+      Color.fromRGBO(129, 250, 112, 1),
+    ],
+    [
+      Color.fromRGBO(129, 182, 205, 1),
+      Color.fromRGBO(91, 253, 199, 1),
+    ],
+    [
+      Color.fromRGBO(175, 63, 62, 1.0),
+      Color.fromRGBO(254, 154, 92, 1),
+    ]
+  ];
 
   @override
   Widget build(BuildContext context) {
@@ -195,16 +235,28 @@ class Statistics extends StatelessWidget {
             ),
           ],
         ),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          mainAxisSize:  MainAxisSize.max,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: <Widget>[
-            // AnimatedCircularChart();
-            // ElevatedButton(onPressed: () => {}, child: const Text("abc")),
-            // ElevatedButton(onPressed: () => {}, child: const Text("def")),
-            // ElevatedButton(onPressed: () => {}, child: const Text("abt")),
-          ],
+        child: Center(
+          child: PieChart(
+            dataMap: dataMap,
+            colorList: colorList,
+            chartRadius: MediaQuery.of(context).size.width / 4,
+            centerText: maximumCaloriesIntake.toString(),
+            ringStrokeWidth: 24,
+            animationDuration: const Duration(seconds: 3),
+            chartType: ChartType.ring,
+            chartValuesOptions: const ChartValuesOptions(
+                showChartValues: true,
+                showChartValuesOutside: true,
+                showChartValuesInPercentage: true,
+                showChartValueBackground: false),
+            legendOptions: const LegendOptions(
+                showLegends: true,
+                legendShape: BoxShape.rectangle,
+                legendTextStyle: TextStyle(fontSize: 15),
+                legendPosition: LegendPosition.right,
+                showLegendsInRow: true),
+            // gradientList: gradientList,
+          ),
         ),
       ),
     );
