@@ -3,7 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 
 class Dashboard extends StatelessWidget {
-  const Dashboard({super.key});
+  final int maximumCaloriesIntake;
+  final int totalCaloriesIntake;
+  const Dashboard(
+      {super.key,
+      required this.maximumCaloriesIntake,
+      required this.totalCaloriesIntake});
 
   @override
   Widget build(BuildContext context) {
@@ -115,38 +120,17 @@ class ButtonNavBar extends StatelessWidget {
               title: "Dashboard",
               svgScr: "assets/icons/dashboard.svg",
               isActive: true,
-              press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return Dashboard();
-                  }),
-                );
-              },
+              press: () {},
             ),
             BottomNavItem(
               title: "Diary",
               svgScr: "assets/icons/diary.svg",
-              press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return Dashboard();
-                  }),
-                );
-              },
+              press: () {},
             ),
             BottomNavItem(
               title: "Settings",
               svgScr: "assets/icons/Settings.svg",
-              press: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(builder: (context) {
-                    return Dashboard();
-                  }),
-                );
-              },
+              press: () {},
             ),
           ]),
     );
@@ -209,6 +193,17 @@ class Statistics extends StatelessWidget {
               spreadRadius: 0,
               color: kShadowColor,
             ),
+          ],
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          mainAxisSize:  MainAxisSize.max,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: <Widget>[
+            // AnimatedCircularChart();
+            // ElevatedButton(onPressed: () => {}, child: const Text("abc")),
+            // ElevatedButton(onPressed: () => {}, child: const Text("def")),
+            // ElevatedButton(onPressed: () => {}, child: const Text("abt")),
           ],
         ),
       ),

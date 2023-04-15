@@ -92,9 +92,11 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           headers: {'Content-Type': 'application/json'},
         );
         if (response.statusCode == 201) {
+          var body = jsonDecode(response.body);
+          var maximumCaloriesIntake = body['maximumCalorieIntake'];
           // ignore: use_build_context_synchronously
           Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const Dashboard()));
+            MaterialPageRoute(builder: (context) => Dashboard(maximumCaloriesIntake: maximumCaloriesIntake, totalCaloriesIntake: 0,)));
         } else {
           var body = jsonDecode(response.body);
           if (response.statusCode == 422) {

@@ -40,7 +40,7 @@ class MyApp extends StatelessWidget {
               borderSide: BorderSide.none,
             ),
           )),
-      home: const SetGoalScreen1(userId: "fc38cee7-ced2-4049-a106-8354c49ca3ae",),
+      home: const WelcomeScreen(),
     );
   }
 }

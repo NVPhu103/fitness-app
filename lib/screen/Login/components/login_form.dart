@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
+import 'package:fitness_app/screen/goal/set_goal_screen_1.dart';
 import 'package:flutter/material.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
@@ -23,8 +24,24 @@ class LoginForm extends StatelessWidget {
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
-        Navigator.push(context,
-            MaterialPageRoute(builder: (context) => const Dashboard()));
+        var body = jsonDecode(response.body);
+        String userId = body['id'];
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => SetGoalScreen1(
+                      userId: userId,
+                    )));
+      } else if (response.statusCode == 202) {
+        var body = jsonDecode(response.body);
+        var maximumCaloriesIntake = body['userProfile']['maximumCalorieIntake'];
+        Navigator.push(
+            context,
+            MaterialPageRoute(
+                builder: (context) => Dashboard(
+                      maximumCaloriesIntake: maximumCaloriesIntake,
+                      totalCaloriesIntake: 0,
+                    )));
       } else {
         var body = jsonDecode(response.body);
         if (response.statusCode == 422) {

@@ -39,6 +39,9 @@ class BaseUserProfileModel(BaseModelWithConfig):
 
 
 class PostUserProfileModel(BaseUserProfileModel):
+    maximum_calorie_intake: Optional[int] = Field(
+        None, alias="maximumCalorieIntake", title="Maximum calorie intake per day"
+    )
     class Config(BaseUserProfileModel.Config):
         schema_extra = {
             "example": {

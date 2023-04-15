@@ -1,3 +1,4 @@
+from datetime import datetime
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +8,7 @@ from sqlalchemy import select, func
 
 from fastapi import HTTPException, Response
 from fastapi.exception_handlers import http_exception_handler
-from fitness_api.schemas.user_profile import UserProfileModel, PostUserProfileModel
+from fitness_api.schemas.user_profile import UserProfileActivityLevel, UserProfileGender, UserProfileModel, PostUserProfileModel
 from fitness_api.db.model import UserProfile
 
 from fitness_api.lib.paging import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE
@@ -27,6 +28,24 @@ async def get_user_profile(
 
 async def create_user_profile(post_user_profile_model: PostUserProfileModel, session: AsyncSession) -> UserProfile:
     try:
+        maximum_calorie_intake = (
+        (6.25 * post_user_profile_model.height)
+        + (10 * post_user_profile_model.current_weight)
+        - (5 * (datetime.today().year - post_user_profile_model.year_of_birth))
+    )
+        if(post_user_profile_model.gender == UserProfileGender.FEMALE):
+            maximum_calorie_intake = maximum_calorie_intake - 161
+        if(post_user_profile_model.gender == UserProfileGender.MALE):
+            maximum_calorie_intake = maximum_calorie_intake + 5
+        if(post_user_profile_model.activity_level == UserProfileActivityLevel.NOT_VERY_ACTIVE):
+            maximum_calorie_intake = maximum_calorie_intake * 1.2
+        if(post_user_profile_model.activity_level == UserProfileActivityLevel.LIGHTLY_ACTIVE):
+            maximum_calorie_intake = maximum_calorie_intake * 1.375
+        if(post_user_profile_model.activity_level == UserProfileActivityLevel.ACTIVE):
+            maximum_calorie_intake = maximum_calorie_intake * 1.725
+        if(post_user_profile_model.activity_level == UserProfileActivityLevel.VERY_ACTIVE):
+            maximum_calorie_intake = maximum_calorie_intake * 1.9
+        post_user_profile_model.maximum_calorie_intake = maximum_calorie_intake
         model = UserProfile(**post_user_profile_model.dict(exclude_unset=True))
         session.add(model)
         await session.commit()
