@@ -1,4 +1,4 @@
-from . import user, food, user_profile
+from . import user, food, user_profile, exercise
 from fastapi import FastAPI
 
 def configure_routes(app: FastAPI) -> None:
@@ -16,4 +16,9 @@ def configure_routes(app: FastAPI) -> None:
         user_profile.router,
         tags=user_profile.TAGS,
         prefix=f"/{user_profile.PREFIX}",
+    )
+    app.include_router(
+        exercise.router,
+        tags=exercise.TAGS,
+        prefix=f"/{exercise.PREFIX}",
     )

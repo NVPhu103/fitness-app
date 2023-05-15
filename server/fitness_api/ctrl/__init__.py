@@ -1,1 +1,1 @@
-from . import user, food, user_profile
+from . import user, food, user_profile, exercise

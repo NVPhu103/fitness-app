@@ -1,12 +1,11 @@
 from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.exc import IntegrityError, NoResultFound
-from sqlalchemy import select, func
+from sqlalchemy.exc import IntegrityError
+from sqlalchemy import select
 
 
-from fastapi import HTTPException, Response
-from fastapi.exception_handlers import http_exception_handler
+from fastapi import HTTPException
 from fitness_api.schemas.food import (
     FoodModel,
     FoodStatus,

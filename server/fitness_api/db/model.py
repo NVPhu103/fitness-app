@@ -24,6 +24,7 @@ from fitness_api.config import declarative_base, BaseMixin, MetaData
 from fitness_api.schemas.food import FoodUnit, FoodStatus
 from fitness_api.schemas.user_profile import UserProfileStatus, UserProfileActivityLevel, UserProfileGender
 from fitness_api.schemas.user import UserRole
+from fitness_api.schemas.exercise import ExerciseType, BurningType
 
 from sqlalchemy.orm import relationship, backref
 
@@ -159,6 +160,7 @@ class Diary(BaseModel):
 class FoodDiary(BaseModel):
     id: UUID = Column(
         SqlUUID(as_uuid=True),
+        default=uuid4,
         nullable=False,
         primary_key=True,
         index=True,
@@ -186,3 +188,35 @@ class FoodDiary(BaseModel):
         UniqueConstraint(meal_id, food_id),
         Index(meal_id, food_id),
     )
+
+
+class Exercise(BaseModel):
+    id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        default=uuid4,
+        nullable=False,
+        primary_key=True,
+        index=True,
+    )
+    name: str = Column(String, nullable=False, index=True, unique=True)
+    _exercise_type: ExerciseType = Column(Enum(ExerciseType), default=ExerciseType.CARDIO.value, name="exercise_type")
+    description: str = Column(String, nullable=True,)
+    _burning_type: BurningType = Column(Enum(BurningType), nullable=False, name="burning_type")
+    burned_calories: int = Column(Integer, CheckConstraint("burned_calories > 0"), nullable=False, )
+
+    @hybrid_property
+    def exercise_type(self) -> ExerciseType:
+        return self._exercise_type
+
+    @exercise_type.setter
+    def exercise_type(self, value: ExerciseType) -> None:
+        self._exercise_type = value.value
+
+    @hybrid_property
+    def burning_type(self) -> BurningType:
+        return self._burning_type
+
+    @burning_type.setter
+    def burning_type(self, value: BurningType) -> None:
+        self._burning_type = value.value
+    

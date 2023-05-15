@@ -9,7 +9,7 @@ from sqlalchemy import MetaData as _MetaData
 from .helpers import camel_to_snake_case
 
 APPLICATION_TITLE = "FITNESS API"
-DATABASE_URI: PostgresDsn = "postgresql+asyncpg://postgres:password@localhost:5432/fitness?prepared_statement_cache_size=0"
+DATABASE_URI: PostgresDsn = "postgresql+asyncpg://postgres:password@localhost:5432/fitness"
 
 async_engine: AsyncEngine = create_async_engine(
     DATABASE_URI,
