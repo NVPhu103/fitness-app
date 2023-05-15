@@ -17,6 +17,7 @@ LOGIN_USER_STATUS_CODE: Dict[Union[int, str], Dict[str, Any]] = {
     401: {"description": "Login failed 1"},
 }
 
+
 @router.post("", response_model=UserModel, summary="Create a user", status_code=201)
 async def create_user(
     post_user_model: PostUserModel,
@@ -29,7 +30,12 @@ async def create_user(
     return user
 
 
-@router.post("/login", response_model= Dict[str, Any], responses=LOGIN_USER_STATUS_CODE, status_code=status.HTTP_200_OK)
+@router.post(
+    "/login",
+    response_model=Dict[str, Any],
+    responses=LOGIN_USER_STATUS_CODE,
+    status_code=status.HTTP_200_OK,
+)
 async def login(
     login_user_model: LoginUserModel,
     request: Request,
@@ -37,10 +43,14 @@ async def login(
     session: AsyncSession = Depends(create_session),
 ) -> Dict[str, Any]:
     user_model = await ctrl.user.login(login_user_model, session)
-    user_profile_record = await ctrl.user_profile.get_user_profile(session, user_model.id)
+    user_profile_record = await ctrl.user_profile.get_user_profile(
+        session, user_model.id
+    )
     user_profile_model = None
     if user_profile_record:
-        user_profile_model = UserProfileModel.from_orm(user_profile_record).dict(by_alias=True)
+        user_profile_model = UserProfileModel.from_orm(user_profile_record).dict(
+            by_alias=True
+        )
         response.status_code = status.HTTP_202_ACCEPTED
     user_model_dict = user_model.dict(by_alias=True)
     user_model_dict.update({"userProfile": user_profile_model})

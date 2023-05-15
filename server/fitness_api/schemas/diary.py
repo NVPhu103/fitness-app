@@ -5,8 +5,6 @@ from pydantic import Field
 from uuid import UUID
 
 
-
-
 class BaseDiaryModel(BaseModelWithConfig):
     user_id: UUID = Field(..., title="User ID", alias="userId")
     date: _date = Field(..., title="the journaling date")

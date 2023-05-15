@@ -18,6 +18,7 @@ from fitness_api.lib.paging.types import PagedResultSet
 from fitness_api.lib.paging.utils import count_query, paginate_query
 from fitness_api.lib.searcher.searcher import SearcherParams, Searcher
 
+
 async def create_food(post_food_model: PostFoodModel, session: AsyncSession) -> Food:
     try:
         model = Food(**post_food_model.dict(exclude_unset=True))
@@ -31,7 +32,7 @@ async def create_food(post_food_model: PostFoodModel, session: AsyncSession) -> 
 
 async def list_all_foods(
     session: AsyncSession,
-    searcher_params: SearcherParams, 
+    searcher_params: SearcherParams,
     page: int = DEFAULT_PAGE_NUMBER,
     size: int = DEFAULT_PAGE_SIZE,
     status: FoodStatus = FoodStatus.ACTIVE,
@@ -69,7 +70,9 @@ async def get_food(
     session: AsyncSession,
     food_id: UUID,
 ) -> Optional[Food]:
-    food_record: Optional[Food] = await session.get(Food, food_id, populate_existing=True)
+    food_record: Optional[Food] = await session.get(
+        Food, food_id, populate_existing=True
+    )
     if food_record:
         return food_record
     else:

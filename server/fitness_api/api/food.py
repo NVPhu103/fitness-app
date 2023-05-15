@@ -60,7 +60,10 @@ async def get_food(
 
 
 @router.patch(
-    "/{food_id}", summary="Update a food", status_code=204, description="Delete the food by its ID"
+    "/{food_id}",
+    summary="Update a food",
+    status_code=204,
+    description="Delete the food by its ID",
 )
 async def update_food(
     request: Request,
@@ -75,9 +78,7 @@ async def update_food(
     return response
 
 
-@router.patch(
-    "/delete/{food_id}", summary="delete a food", status_code=204
-)
+@router.patch("/delete/{food_id}", summary="delete a food", status_code=204)
 async def delete_food(
     request: Request,
     response: Response,

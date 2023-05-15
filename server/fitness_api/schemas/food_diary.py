@@ -5,7 +5,6 @@ from pydantic import Field
 from uuid import UUID
 
 
-
 class BaseFoodDiaryModel(BaseModelWithConfig):
     ...
 

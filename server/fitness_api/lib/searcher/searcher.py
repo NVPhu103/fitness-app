@@ -115,19 +115,27 @@ class Searcher:
                 if self.params.df:
                     parts.insert(0, self.params.df)
                 else:
-                    raise ValueError(INVALID_SEARCH_PARAM, f"Invalid search term {term}")
+                    raise ValueError(
+                        INVALID_SEARCH_PARAM, f"Invalid search term {term}"
+                    )
             parts[0] = await self._map_field(parts[0])
             if not hasattr(self.model, f"{parts[0]}"):
-                raise ValueError(INVALID_SEARCH_PARAM, f"Invalid search term: key={parts[0]}")
+                raise ValueError(
+                    INVALID_SEARCH_PARAM, f"Invalid search term: key={parts[0]}"
+                )
             if subtable_info := await self._jsonb_subtable_info(parts[0]):
                 if not parts[1]:
                     # In case that the operator is OR, or search with only one jsonb column equal to null,
                     # this searcher returns all rows
-                    if self.operator == or_ or (len(filters) == 0 and i >= len(terms) - 1):
+                    if self.operator == or_ or (
+                        len(filters) == 0 and i >= len(terms) - 1
+                    ):
                         return []
                     continue
                 filters.append(
-                    await self._form_jsonb_search_filter(subtable_info["submodel"], parts[1])
+                    await self._form_jsonb_search_filter(
+                        subtable_info["submodel"], parts[1]
+                    )
                 )
             elif parts[0] in self._exact_match_only_uuid_fields():
                 attr = getattr(self.model, parts[0])

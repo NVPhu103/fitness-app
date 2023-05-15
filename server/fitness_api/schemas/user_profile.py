@@ -16,9 +16,11 @@ class UserProfileActivityLevel(enum.Enum):
     ACTIVE = "ACTIVE"
     VERY_ACTIVE = "VERY ACTIVE"
 
+
 class UserProfileGender(enum.Enum):
     FEMALE = "Female"
     MALE = "Male"
+
 
 class BaseUserProfileModel(BaseModelWithConfig):
     user_id: UUID = Field(..., title="User ID", alias="userId")
@@ -42,6 +44,7 @@ class PostUserProfileModel(BaseUserProfileModel):
     maximum_calorie_intake: Optional[int] = Field(
         None, alias="maximumCalorieIntake", title="Maximum calorie intake per day"
     )
+
     class Config(BaseUserProfileModel.Config):
         schema_extra = {
             "example": {
@@ -57,7 +60,7 @@ class PostUserProfileModel(BaseUserProfileModel):
 
 
 class PatchUserProfileModel(BaseModelWithConfig):
-    gender: Optional[UserProfileGender] = Field(None, title="the user's sex"),
+    gender: Optional[UserProfileGender] = (Field(None, title="the user's sex"),)
     current_weight: Optional[float] = Field(
         None, title="The current weight of the User", alias="currentWeight"
     )

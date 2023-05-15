@@ -9,7 +9,9 @@ from sqlalchemy import MetaData as _MetaData
 from .helpers import camel_to_snake_case
 
 APPLICATION_TITLE = "FITNESS API"
-DATABASE_URI: PostgresDsn = "postgresql+asyncpg://postgres:password@localhost:5432/fitness"
+DATABASE_URI: PostgresDsn = (
+    "postgresql+asyncpg://postgres:password@localhost:5432/fitness"
+)
 
 async_engine: AsyncEngine = create_async_engine(
     DATABASE_URI,
@@ -18,10 +20,11 @@ async_engine: AsyncEngine = create_async_engine(
 )
 
 async_session_factory = sessionmaker(
-    bind=async_engine, 
+    bind=async_engine,
     class_=AsyncSession,
     expire_on_commit=False,
 )
+
 
 @declarative_mixin
 class BaseMixin:
@@ -51,5 +54,3 @@ metadata_config = {
 }
 
 MetaData = _MetaData(**metadata_config)
-
-

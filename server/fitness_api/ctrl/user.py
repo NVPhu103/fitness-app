@@ -10,12 +10,13 @@ from fitness_api.schemas.user import PostUserModel, LoginUserModel, UserRole, Us
 from fitness_api.db.model import User
 
 
-
 async def create_user(post_user_model: PostUserModel, session: AsyncSession) -> User:
     try:
         if post_user_model.hashed_password == post_user_model.confirm_hashed_password:
             field_exclude = {"confirm_hashed_password"}
-            model = User(**post_user_model.dict(exclude_unset=True, exclude=field_exclude))
+            model = User(
+                **post_user_model.dict(exclude_unset=True, exclude=field_exclude)
+            )
             session.add(model)
             await session.commit()
             return model
@@ -28,10 +29,12 @@ async def create_user(post_user_model: PostUserModel, session: AsyncSession) -> 
 
 async def login(login_user_model: LoginUserModel, session: AsyncSession) -> UserModel:
     try:
-        statement = select(User).filter(func.lower(User.email) == func.lower(login_user_model.email))
+        statement = select(User).filter(
+            func.lower(User.email) == func.lower(login_user_model.email)
+        )
         user_record = (await session.execute(statement)).scalar_one()
         if login_user_model.password == user_record.hashed_password:
-            if(user_record.role == UserRole.USER):
+            if user_record.role == UserRole.USER:
                 return UserModel.from_orm(user_record)
             else:
                 raise HTTPException(detail="Not have permission", status_code=403)
@@ -41,4 +44,3 @@ async def login(login_user_model: LoginUserModel, session: AsyncSession) -> User
         raise HTTPException(detail="Email is invalid", status_code=404)
     except Exception as error:
         raise HTTPException(detail="Login failed", status_code=400) from error
-    

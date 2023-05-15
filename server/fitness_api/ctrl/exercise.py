@@ -18,7 +18,9 @@ from fitness_api.lib.paging.utils import count_query, paginate_query
 from fitness_api.lib.searcher.searcher import SearcherParams, Searcher
 
 
-async def create_exercise(post_exercise_model: PostExerciseModel, session: AsyncSession) -> Exercise:
+async def create_exercise(
+    post_exercise_model: PostExerciseModel, session: AsyncSession
+) -> Exercise:
     try:
         model = Exercise(**post_exercise_model.dict(exclude_unset=True))
         session.add(model)
@@ -26,4 +28,6 @@ async def create_exercise(post_exercise_model: PostExerciseModel, session: Async
         return model
     except IntegrityError as error:
         await session.rollback()
-        raise HTTPException(detail="Exercise already exists", status_code=409) from error
+        raise HTTPException(
+            detail="Exercise already exists", status_code=409
+        ) from error

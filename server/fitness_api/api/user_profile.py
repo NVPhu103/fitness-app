@@ -5,7 +5,12 @@ from typing import Any, Dict, List, Optional, Union
 from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from fitness_api.db.depends import create_session
-from fitness_api.schemas.user_profile import UserProfileModel, PostUserProfileModel, UserProfileActivityLevel, UserProfileGender
+from fitness_api.schemas.user_profile import (
+    UserProfileModel,
+    PostUserProfileModel,
+    UserProfileActivityLevel,
+    UserProfileGender,
+)
 from fitness_api import ctrl
 
 PREFIX = "userprofiles"
@@ -19,7 +24,7 @@ router = APIRouter()
     summary="Get a user profile",
     status_code=200,
 )
-async def get_food(
+async def get_user_profile(
     request: Request,
     response: Response,
     user_id: UUID,

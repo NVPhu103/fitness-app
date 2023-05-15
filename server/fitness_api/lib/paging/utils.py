@@ -63,7 +63,9 @@ def _set_limit(query: "SelectType", size: int) -> "SelectType":
     return query
 
 
-def count_query(query: "SelectType", from_base: Optional["BaseType"] = None) -> "SelectType":
+def count_query(
+    query: "SelectType", from_base: Optional["BaseType"] = None
+) -> "SelectType":
     if from_base:
         pk = _pk_from_base(from_base).pop(0)
         tables = [pk.table]
@@ -161,7 +163,11 @@ def has_unique_index(column_or_constraint: "IndexableType") -> bool:
             for constraint in table.constraints
             if isinstance(constraint, sa.sql.schema.UniqueConstraint)
         )
-        or any(columns == list(index.columns.values()) for index in table.indexes if index.unique)
+        or any(
+            columns == list(index.columns.values())
+            for index in table.indexes
+            if index.unique
+        )
     )
 
 
@@ -217,7 +223,9 @@ class Inspection:
             raise Exception("This is singleton class. Use get_instance() instead")
         Inspection.__instance = self
 
-    def _get_constraints(self, engine: AsyncConnection, model: Model) -> list[dict[str, str]]:
+    def _get_constraints(
+        self, engine: AsyncConnection, model: Model
+    ) -> list[dict[str, str]]:
         isp = inspect(engine)
         constraints = isp.get_unique_constraints(model.__table__.name, model.__table__.schema)  # type: ignore
         return constraints  # type: ignore

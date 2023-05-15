@@ -10,4 +10,3 @@ async def create_session() -> AsyncGenerator[AsyncSession, None]:  # pragma: no 
     Session = async_scoped_session(async_session_factory, scopefunc=current_task)
     async with Session() as session:
         yield session
-
