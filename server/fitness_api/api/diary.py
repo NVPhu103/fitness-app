@@ -11,8 +11,8 @@ from fitness_api.lib.paging import PaginationParams
 from fitness_api.lib.searcher.searcher import SearcherParams
 
 
-PREFIX = "diary"
-TAGS = ["diary"]
+PREFIX = "diaries"
+TAGS = ["diaries"]
 router = APIRouter()
 
 

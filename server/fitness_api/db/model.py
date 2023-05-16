@@ -153,11 +153,11 @@ class Diary(BaseModel):
     breakfast_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
     lunch_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
     dining_id: UUID = Column(SqlUUID(as_uuid=True), default=uuid4, nullable=False)
-    maximum_calorie_intake: int = Column(Integer, default=2000)
-    total_calorie_intake: int = Column(Integer, default=0)
+    maximum_calorie_intake: int = Column(Integer, nullable=False)
+    total_calorie_intake: int = Column(Integer, default=0, nullable=False)
 
     __table_args__ = (
-        CheckConstraint(maximum_calorie_intake >= 1000),
+        CheckConstraint(maximum_calorie_intake >= 0),
         UniqueConstraint(user_id, date),
     )
 
@@ -178,18 +178,10 @@ class FoodDiary(BaseModel):
         Integer,
         default=1,
     )
-    _total_calories: int = Column(Integer, name="total_calories", nullable=False)
-
-    @hybrid_property
-    def total_calories(self) -> int:
-        return self._total_calories
-
-    @total_calories.setter
-    def total_calories(self) -> None:
-        self._total_calories = self.food.calories * self.quantity
+    total_calories: int = Column(Integer, name="total_calories", nullable=False)
 
     __table_args__ = (
-        CheckConstraint(quantity > 1),
+        CheckConstraint(quantity >= 1),
         UniqueConstraint(meal_id, food_id),
         Index(meal_id, food_id),
     )

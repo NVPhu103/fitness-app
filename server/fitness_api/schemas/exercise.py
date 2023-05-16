@@ -19,13 +19,16 @@ class BurningType(str, enum.Enum):
 
 class BaseExerciseModel(BaseModelWithConfig):
     name: str = Field(..., title="Exercise name")
-    exercise_type: ExerciseType = Field(..., title="Exercise Type")
+    exercise_type: ExerciseType = Field(
+        ..., title="Exercise Type", alias="exerciseType"
+    )
     description: str = Field(..., title="Description of the exercise")
     burning_type: BurningType = Field(
-        ...,
-        title="Type that calories is burned in the exercise",
+        ..., title="Type that calories is burned in the exercise", alias="burningType"
     )
-    burned_calories: int = Field(..., title="Calories is burned in the exercise")
+    burned_calories: int = Field(
+        ..., title="Calories is burned in the exercise", alias="burnedCalories"
+    )
 
 
 class PostExerciseModel(BaseExerciseModel):
@@ -33,10 +36,10 @@ class PostExerciseModel(BaseExerciseModel):
         schema_extra = {
             "example": {
                 "name": "Running, 10.7 kph (5.6 min per km)",
-                "exercise_type": ExerciseType.CARDIO.value,
+                "exerciseType": ExerciseType.CARDIO.value,
                 "description": "You run 10.7 kilometers per hour",
-                "burning_type": BurningType.CPH.value,
-                "burned_calories": 300,
+                "burningType": BurningType.CPH.value,
+                "burnedCalories": 300,
             }
         }
 
@@ -44,7 +47,9 @@ class PostExerciseModel(BaseExerciseModel):
 class PatchExerciseModel(BaseModelWithConfig):
     name: str = Field(None, title="Exercise name")
     description: str = Field(None, title="Description of the exercise")
-    burned_calories: int = Field(None, title="Calories is burned in the exercise")
+    burned_calories: int = Field(
+        None, title="Calories is burned in the exercise", alias="burnedCalories"
+    )
 
     class Config(BaseModelWithConfig.Config):
         schema_extra = {
@@ -64,9 +69,9 @@ class ExerciseModel(BaseExerciseModel):
             "example": {
                 "id": "b65992db-bb4c-43da-8118-5f9696a8c597",
                 "name": "Running, 10.7 kph (5.6 min per km)",
-                "exercise_type": ExerciseType.CARDIO.value,
+                "exerciseType": ExerciseType.CARDIO.value,
                 "description": "You run 10.7 kilometers per hour",
-                "burning_type": BurningType.CPH.value,
-                "burned_calories": 300,
+                "burningType": BurningType.CPH.value,
+                "burnedCalories": 300,
             }
         }

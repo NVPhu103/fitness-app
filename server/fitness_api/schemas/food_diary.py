@@ -28,3 +28,4 @@ class FoodDiaryModel(BaseFoodDiaryModel):
     )
     food_id: UUID = Field(..., title="the food id", alias="foodId")
     quantity: int = Field(..., title="quantities of the food")
+    total_calories: int = Field(..., alias="totalCalories")
