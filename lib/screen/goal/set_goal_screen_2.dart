@@ -1,8 +1,9 @@
 import 'dart:convert';
-import 'dart:ffi';
 
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
+import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/goal/components/UserProfile.dart';
+import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 import 'package:numberpicker/numberpicker.dart';
@@ -45,7 +46,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
     TextEditingController currentWeightController = TextEditingController();
     TextEditingController desiredWeightController = TextEditingController();
 
-    Future<void> create_profile(
+    Future<void> createProfile(
         String userId,
         String gender,
         String goal,
@@ -61,21 +62,21 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
         var doubleCurrentWeight = double.parse(currentWeight);
         var doubleDesiredWeight = double.parse(desiredWeight);
         // ignore: unrelated_type_equality_checks
-        if(gender == Gender.Male.toString()){
+        if (gender == Gender.Male.toString()) {
           gender = "Male";
-        }else{
+        } else {
           gender = "Female";
         }
         // ignore: unrelated_type_equality_checks
-        if(activityLevel == ActivityLevel.VERY_ACTIVE.toString()){
+        if (activityLevel == ActivityLevel.VERY_ACTIVE.toString()) {
           activityLevel = "VERY ACTIVE";
-        // ignore: unrelated_type_equality_checks
-        }else if(activityLevel == ActivityLevel.LIGHTLY_ACTIVE.toString()){
+          // ignore: unrelated_type_equality_checks
+        } else if (activityLevel == ActivityLevel.LIGHTLY_ACTIVE.toString()) {
           activityLevel = "LIGHTLY ACTIVE";
-        // ignore: unrelated_type_equality_checks
-        }else if(activityLevel == ActivityLevel.NOT_VERY_ACTIVE.toString()){
+          // ignore: unrelated_type_equality_checks
+        } else if (activityLevel == ActivityLevel.NOT_VERY_ACTIVE.toString()) {
           activityLevel = "NOT VERY ACTIVE";
-        }else{
+        } else {
           activityLevel = "ACTIVE";
         }
         Response response = await post(
@@ -93,10 +94,24 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
         );
         if (response.statusCode == 201) {
           var body = jsonDecode(response.body);
-          var maximumCaloriesIntake = body['maximumCalorieIntake'];
+          // Get totalCaloriesIntake from diary
+          String userId = body['userId'];
+          String today = getTodayWithYMD();
+          Response diaryResponse = await get(
+            Uri.parse("http://127.0.0.1:8000/diaries/$userId?date=$today"),
+            headers: {'Content-Type': 'application/json'},
+          );
+          var diaryBody = jsonDecode(diaryResponse.body);
+          Diary diary = Diary.fromJson(diaryBody);
           // ignore: use_build_context_synchronously
-          Navigator.push(context,
-            MaterialPageRoute(builder: (context) => Dashboard(maximumCaloriesIntake: maximumCaloriesIntake, totalCaloriesIntake: 0,)));
+          Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) => Dashboard(
+                        maximumCaloriesIntake: diary.maximumCaloriesIntake,
+                        totalCaloriesIntake: diary.totalCaloriesIntake,
+                        diary: diary,
+                      )));
         } else {
           var body = jsonDecode(response.body);
           if (response.statusCode == 422) {
@@ -149,7 +164,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
               "SAVE",
               style: TextStyle(color: Colors.black),
             ),
-            onPressed: () => create_profile(
+            onPressed: () => createProfile(
                 userId,
                 gender,
                 goal,

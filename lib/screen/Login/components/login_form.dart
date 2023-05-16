@@ -1,7 +1,11 @@
+// ignore_for_file: avoid_print
+
 import 'dart:convert';
 
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
+import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/goal/set_goal_screen_1.dart';
+import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
@@ -34,13 +38,22 @@ class LoginForm extends StatelessWidget {
                     )));
       } else if (response.statusCode == 202) {
         var body = jsonDecode(response.body);
-        var maximumCaloriesIntake = body['userProfile']['maximumCalorieIntake'];
+        // Get totalCaloriesIntake from diary
+        String userId = body['id'];
+        String today = getTodayWithYMD();
+        Response diaryResponse = await get(
+          Uri.parse("http://127.0.0.1:8000/diaries/$userId?date=$today"),
+          headers: {'Content-Type': 'application/json'},
+        );
+        var diaryBody = jsonDecode(diaryResponse.body);
+        Diary diary = Diary.fromJson(diaryBody);
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => Dashboard(
-                      maximumCaloriesIntake: maximumCaloriesIntake,
-                      totalCaloriesIntake: 0,
+                      maximumCaloriesIntake: diary.maximumCaloriesIntake,
+                      totalCaloriesIntake: diary.totalCaloriesIntake,
+                      diary: diary,
                     )));
       } else {
         var body = jsonDecode(response.body);

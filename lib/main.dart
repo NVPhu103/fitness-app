@@ -1,5 +1,4 @@
 import 'package:fitness_app/screen/Welcome/welcome_screen.dart';
-import 'package:fitness_app/screen/goal/set_goal_screen_1.dart';
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter/material.dart';
 

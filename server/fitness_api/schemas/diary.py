@@ -35,7 +35,7 @@ class DiaryModel(BaseDiaryModel):
     maximum_calorie_intake: int = Field(
         ...,
         title="The maximum amount of calories that a user can take in per day",
-        alias="maximumCalorieIntake",
+        alias="maximumCaloriesIntake",
     )
     total_calorie_intake: int = Field(
         ...,
