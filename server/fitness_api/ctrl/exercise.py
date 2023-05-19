@@ -33,7 +33,6 @@ async def create_exercise(
         ) from error
 
 
-
 async def list_all_exercises(
     session: AsyncSession,
     searcher_params: SearcherParams,
@@ -51,7 +50,6 @@ async def list_all_exercises(
     total = (await session.execute(total_query)).scalar_one()
 
     return PagedResultSet(page=page, size=size, total=total, records=exercise_records)
-
 
 
 async def get_exercise(

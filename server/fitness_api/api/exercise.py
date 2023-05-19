@@ -52,7 +52,10 @@ async def get_all_exercises(
 
 
 @router.get(
-    "/{exercise_id}", response_model=ExerciseModel, summary="Get a exercise", status_code=200
+    "/{exercise_id}",
+    response_model=ExerciseModel,
+    summary="Get a exercise",
+    status_code=200,
 )
 async def get_exercise(
     request: Request,
