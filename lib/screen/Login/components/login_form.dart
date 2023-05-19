@@ -47,12 +47,11 @@ class LoginForm extends StatelessWidget {
         );
         var diaryBody = jsonDecode(diaryResponse.body);
         Diary diary = Diary.fromJson(diaryBody);
+        String gender = body['userProfile']['gender'];
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Dashboard(
-                      maximumCaloriesIntake: diary.maximumCaloriesIntake,
-                      totalCaloriesIntake: diary.totalCaloriesIntake,
+                builder: (context) => Dashboard(name: gender,
                       diary: diary,
                     )));
       } else {

@@ -18,13 +18,14 @@ class SearchFoodScreen extends StatefulWidget {
 }
 
 class _SearchFoodScreenState extends State<SearchFoodScreen> {
-  final Diary diary;
+  Diary diary;
   final List<String> itemsList = [
     'Breakfast',
     'Lunch',
     'Dining',
   ];
   String? selectedValue;
+  String? mealId;
   List<Food> listFoods = [];
   TextEditingController searchTextController = TextEditingController();
   final listViewController = ScrollController();
@@ -90,7 +91,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
             Icons.arrow_back,
             color: Colors.black,
           ),
-          onPressed: () => {Navigator.of(context).pop()},
+          onPressed: () => Navigator.pop(context, diary),
         ),
         title: dropdownButtonTitle(),
         centerTitle: true,
@@ -113,6 +114,12 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
               child: TextField(
                 textInputAction: TextInputAction.search,
                 onSubmitted: (value) {
+                  setState(() {
+                    listFoods = [];
+                    isLoading = false;
+                    hasMore = true;
+                    page = 2;
+                  });
                   getAllFoods(value);
                 },
                 controller: searchTextController,
@@ -172,7 +179,9 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                           )),
                       trailing: InkWell(
                         borderRadius: BorderRadius.circular(29),
-                        onTap: () {},
+                        onTap: () {
+                          addFood(item.id);
+                        },
                         child: const Icon(
                           Icons.add_circle_rounded,
                           color: Colors.blueAccent,
@@ -239,18 +248,54 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
     );
   }
 
-  Future<void> addFood() async {
-    if (selectedValue!.isEmpty) {
+  Future<void> addFood(String foodId) async {
+    if (selectedValue == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
           content: Text(
         "You have to select a meal",
         textAlign: TextAlign.center,
-      )));
+      ), duration: Duration(seconds: 1),));
     } else {
       switch (selectedValue) {
         case "Breakfast":
+          mealId = diary.breakfastId;
+          break;
+        case "Lunch":
+          mealId = diary.lunchId;
+          break;
+        case "Dining":
+          mealId = diary.diningId;
           break;
         default:
+          mealId = diary.breakfastId;
+      }
+      try {
+        Response postFoodDiaryResponse = await post(
+          Uri.parse("http://127.0.0.1:8000/fooddiaries"),
+          body: jsonEncode({"mealId": mealId, "foodId": foodId, "quantity": 1}),
+          headers: {'Content-Type': 'application/json'},
+        );
+        if (postFoodDiaryResponse.statusCode == 201) {
+          var diaryBody = jsonDecode(postFoodDiaryResponse.body)['diary'];
+          Diary newDiary = Diary.fromJson(diaryBody);
+          setState(() {
+            diary = newDiary;
+          });
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+              "Food added successfully",
+              textAlign: TextAlign.center,
+            ),
+            duration: Duration(seconds: 1),
+          ));
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+            content: Text(
+          "Something wrong",
+          textAlign: TextAlign.center,
+        )));
       }
     }
   }

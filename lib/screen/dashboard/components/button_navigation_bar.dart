@@ -1,11 +1,25 @@
+import 'package:fitness_app/screen/dashboard/dashboard.dart';
+import 'package:fitness_app/screen/diary/components/diary.dart';
+import 'package:fitness_app/screen/diary/diary_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter_svg/svg.dart';
 
+// ignore: must_be_immutable
 class ButtonNavBar extends StatelessWidget {
-  const ButtonNavBar({
-    super.key,
-  });
+  final String name;
+  bool isDashboardActive;
+  bool isDiaryActive;
+  bool isSettingActive;
+  Diary diary;
+
+  ButtonNavBar(
+      {super.key,
+      this.isDashboardActive = false,
+      this.isDiaryActive = false,
+      this.isSettingActive = false,
+      required this.diary,
+      required this.name});
 
   @override
   Widget build(BuildContext context) {
@@ -19,17 +33,35 @@ class ButtonNavBar extends StatelessWidget {
             BottomNavItem(
               title: "Dashboard",
               svgScr: "assets/icons/dashboard.svg",
-              isActive: true,
-              press: () {},
+              isActive: isDashboardActive,
+              press: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => Dashboard(
+                              name: name,
+                              diary: diary,
+                            )));
+              },
             ),
             BottomNavItem(
               title: "Diary",
               svgScr: "assets/icons/diary.svg",
-              press: () {},
+              isActive: isDiaryActive,
+              press: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => DiaryScreen(
+                              name: name,
+                              diary: diary,
+                            )));
+              },
             ),
             BottomNavItem(
               title: "Settings",
               svgScr: "assets/icons/Settings.svg",
+              isActive: isSettingActive,
               press: () {},
             ),
           ]),

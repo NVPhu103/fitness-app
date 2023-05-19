@@ -8,16 +8,22 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
-class Dashboard extends StatelessWidget {
-  final int maximumCaloriesIntake;
-  final int totalCaloriesIntake;
-  final Diary diary;
+// ignore: must_be_immutable
+class Dashboard extends StatefulWidget {
+  final String name;
+  Diary diary;
 
-  const Dashboard(
-      {super.key,
-      required this.maximumCaloriesIntake,
-      required this.totalCaloriesIntake,
-      required this.diary});
+  Dashboard({super.key, required this.diary, required this.name});
+
+  @override
+  State<Dashboard> createState() => _DashboardState(name, diary);
+}
+
+class _DashboardState extends State<Dashboard> {
+  final String name;
+  Diary diary;
+
+  _DashboardState(this.name, this.diary);
 
   @override
   Widget build(BuildContext context) {
@@ -30,31 +36,55 @@ class Dashboard extends StatelessWidget {
         textTheme: Theme.of(context).textTheme.apply(displayColor: kTextColor),
       ),
       home: DashboardPage(
-        maximumCaloriesIntake: maximumCaloriesIntake,
-        totalCaloriesIntake: totalCaloriesIntake,
+        name: name,
         diary: diary,
       ),
     );
   }
 }
 
-class DashboardPage extends StatelessWidget {
-  final int maximumCaloriesIntake;
-  final int totalCaloriesIntake;
-  final Diary diary;
+// ignore: must_be_immutable
+class DashboardPage extends StatefulWidget {
+  final String name;
+  Diary diary;
 
-  const DashboardPage(
-      {super.key,
-      required this.maximumCaloriesIntake,
-      required this.totalCaloriesIntake,
-      required this.diary});
+  DashboardPage({super.key, required this.diary, required this.name});
+
+  @override
+  State<DashboardPage> createState() => _DashboardPageState(name, diary);
+}
+
+class _DashboardPageState extends State<DashboardPage> {
+  String name;
+  Diary diary;
+  _DashboardPageState(this.name, this.diary);
+
+  @override
+  void initState() {
+    name = changeName(name);
+    super.initState();
+  }
+
+  String changeName(String name){
+    if (name == "Female"){
+      return "Madam";
+    }
+    if(name == "Male"){
+      return "Sir";
+    }
+    return "Sir";
+  }
 
   @override
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
     return Scaffold(
-      bottomNavigationBar: const ButtonNavBar(),
+      bottomNavigationBar: ButtonNavBar(
+        name: name,
+        isDashboardActive: true,
+        diary: diary,
+      ),
       body: Stack(children: <Widget>[
         Container(
           height: size.height * .48,
@@ -96,7 +126,7 @@ class DashboardPage extends StatelessWidget {
                   height: size.height * 0.17,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text("Good morning \nSir",
+                    child: Text("Welcome to Fitness, \n$name",
                         textAlign: TextAlign.left,
                         style: Theme.of(context)
                             .textTheme
@@ -121,13 +151,19 @@ class DashboardPage extends StatelessWidget {
                         hintText: "Search",
                         icon: SvgPicture.asset("assets/icons/search.svg"),
                         border: InputBorder.none),
-                    onTap: () => {
-                      Navigator.push(
+                    onTap: () async {
+                      final value = await Navigator.push(
                           context,
                           MaterialPageRoute(
                               builder: (context) => SearchFoodScreen(
                                     diary: diary,
-                                  ))),
+                                  )));
+                      if (!mounted) {
+                        return;
+                      }
+                      setState(() {
+                        diary = value;
+                      });
                     },
                   ),
                 ),
@@ -135,10 +171,7 @@ class DashboardPage extends StatelessWidget {
                   height: size.height * 0.06,
                 ),
                 // Chart
-                Chart(
-                  maximumCaloriesIntake: maximumCaloriesIntake,
-                  totalCaloriesIntake: totalCaloriesIntake,
-                ),
+                chartCard(),
               ],
             ),
           ),
@@ -146,29 +179,8 @@ class DashboardPage extends StatelessWidget {
       ]),
     );
   }
-}
 
-class Chart extends StatefulWidget {
-  final int maximumCaloriesIntake;
-  final int totalCaloriesIntake;
-  const Chart(
-      {super.key,
-      required this.maximumCaloriesIntake,
-      required this.totalCaloriesIntake});
-
-  @override
-  State<Chart> createState() =>
-      _ChartState(maximumCaloriesIntake, totalCaloriesIntake);
-}
-
-class _ChartState extends State<Chart> {
-  final int maximumCaloriesIntake;
-  final int totalCaloriesIntake;
-
-  _ChartState(this.maximumCaloriesIntake, this.totalCaloriesIntake);
-
-  @override
-  Widget build(BuildContext context) {
+  Center chartCard() {
     var size = MediaQuery.of(context).size;
 
     return Center(
@@ -219,10 +231,7 @@ class _ChartState extends State<Chart> {
                 children: <Widget>[
                   Expanded(
                     flex: 3,
-                    child: RadialGauge(
-                      maximumCaloriesIntake: maximumCaloriesIntake,
-                      totalCaloriesIntake: totalCaloriesIntake,
-                    ),
+                    child: sfRadialGauge(),
                   ),
                   Expanded(
                     flex: 2,
@@ -230,13 +239,13 @@ class _ChartState extends State<Chart> {
                       children: <Widget>[
                         RowBehindGauge(
                           text: "Base Goal",
-                          data: maximumCaloriesIntake,
+                          data: diary.maximumCaloriesIntake,
                           icons: Icons.flag,
                           iconColor: Colors.green,
                         ),
                         RowBehindGauge(
                           text: "Food",
-                          data: totalCaloriesIntake,
+                          data: diary.totalCaloriesIntake,
                           icons: Icons.food_bank,
                           iconColor: Colors.blue,
                         ),
@@ -255,6 +264,78 @@ class _ChartState extends State<Chart> {
           ],
         ),
       ),
+    );
+  }
+
+  double calculatePercentageOfGauge() {
+    double percentageOfGauge =
+        (diary.totalCaloriesIntake / diary.maximumCaloriesIntake) * 100;
+    if (percentageOfGauge > 100) {
+      return 100;
+    } else {
+      return percentageOfGauge;
+    }
+  }
+
+  String calculateRemainingCalories() {
+    int remainingCalories =
+        diary.maximumCaloriesIntake - diary.totalCaloriesIntake;
+    return remainingCalories.toString();
+  }
+
+  SfRadialGauge sfRadialGauge() {
+    String textData = calculateRemainingCalories();
+    double percentageOfGauge = calculatePercentageOfGauge();
+
+    return SfRadialGauge(
+      axes: <RadialAxis>[
+        RadialAxis(
+            showLabels: false,
+            showTicks: false,
+            startAngle: 270,
+            endAngle: 270,
+            radiusFactor: 0.7,
+            axisLineStyle: const AxisLineStyle(
+                thicknessUnit: GaugeSizeUnit.factor, thickness: 0.15),
+            annotations: <GaugeAnnotation>[
+              GaugeAnnotation(
+                  angle: 180,
+                  widget: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    mainAxisSize: MainAxisSize.min,
+                    children: <Widget>[
+                      Text(
+                        textData,
+                        style: const TextStyle(
+                            fontSize: 36,
+                            fontWeight: FontWeight.w800,
+                            fontStyle: FontStyle.normal),
+                      ),
+                      const Text(
+                        'Remaining',
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w500,
+                            fontStyle: FontStyle.normal),
+                      ),
+                    ],
+                  )),
+            ],
+            pointers: <GaugePointer>[
+              RangePointer(
+                  value: percentageOfGauge,
+                  cornerStyle: CornerStyle.bothCurve,
+                  enableAnimation: true,
+                  animationDuration: 1200,
+                  sizeUnit: GaugeSizeUnit.factor,
+                  gradient: const SweepGradient(
+                      colors: <Color>[Color(0xFF6A6EF6), Color(0xFFDB82F5)],
+                      stops: <double>[0.25, 0.75]),
+                  color: const Color(0xFF00A8B5),
+                  width: 0.15),
+            ]),
+      ],
     );
   }
 }
@@ -310,98 +391,6 @@ class RowBehindGauge extends StatelessWidget {
           )
         ],
       ),
-    );
-  }
-}
-
-class RadialGauge extends StatefulWidget {
-  final int? maximumCaloriesIntake;
-  final int? totalCaloriesIntake;
-  const RadialGauge(
-      {super.key,
-      required this.maximumCaloriesIntake,
-      required this.totalCaloriesIntake});
-
-  @override
-  State<RadialGauge> createState() =>
-      _RadialGaugeState(maximumCaloriesIntake, totalCaloriesIntake);
-}
-
-class _RadialGaugeState extends State<RadialGauge> {
-  final int? maximumCaloriesIntake;
-  final int? totalCaloriesIntake;
-
-  _RadialGaugeState(this.maximumCaloriesIntake, this.totalCaloriesIntake);
-
-  double calculatePercentageOfGauge() {
-    double percentageOfGauge =
-        (totalCaloriesIntake! / maximumCaloriesIntake!) * 100;
-    if (percentageOfGauge > 100) {
-      return 100;
-    } else {
-      return percentageOfGauge;
-    }
-  }
-
-  String calculateRemainingCalories() {
-    int remainingCalories = maximumCaloriesIntake! - totalCaloriesIntake!;
-    return remainingCalories.toString();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    String textData = calculateRemainingCalories();
-    double percentageOfGauge = calculatePercentageOfGauge();
-
-    return SfRadialGauge(
-      axes: <RadialAxis>[
-        RadialAxis(
-            showLabels: false,
-            showTicks: false,
-            startAngle: 270,
-            endAngle: 270,
-            radiusFactor: 0.7,
-            axisLineStyle: const AxisLineStyle(
-                thicknessUnit: GaugeSizeUnit.factor, thickness: 0.15),
-            annotations: <GaugeAnnotation>[
-              GaugeAnnotation(
-                  angle: 180,
-                  widget: Column(
-                    mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    mainAxisSize: MainAxisSize.min,
-                    children: <Widget>[
-                      Text(
-                        textData,
-                        style: const TextStyle(
-                            fontSize: 36,
-                            fontWeight: FontWeight.w800,
-                            fontStyle: FontStyle.normal),
-                      ),
-                      const Text(
-                        'Remaining',
-                        style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            fontStyle: FontStyle.normal),
-                      ),
-                    ],
-                  )),
-            ],
-            pointers: <GaugePointer>[
-              RangePointer(
-                  value: percentageOfGauge,
-                  cornerStyle: CornerStyle.bothCurve,
-                  enableAnimation: true,
-                  animationDuration: 1200,
-                  sizeUnit: GaugeSizeUnit.factor,
-                  gradient: const SweepGradient(
-                      colors: <Color>[Color(0xFF6A6EF6), Color(0xFFDB82F5)],
-                      stops: <double>[0.25, 0.75]),
-                  color: const Color(0xFF00A8B5),
-                  width: 0.15),
-            ]),
-      ],
     );
   }
 }

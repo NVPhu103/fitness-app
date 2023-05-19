@@ -103,13 +103,12 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           );
           var diaryBody = jsonDecode(diaryResponse.body);
           Diary diary = Diary.fromJson(diaryBody);
+          String gender = body['gender'];
           // ignore: use_build_context_synchronously
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => Dashboard(
-                        maximumCaloriesIntake: diary.maximumCaloriesIntake,
-                        totalCaloriesIntake: diary.totalCaloriesIntake,
+                  builder: (context) => Dashboard(name: gender,
                         diary: diary,
                       )));
         } else {
