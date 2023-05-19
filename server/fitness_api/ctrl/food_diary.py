@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
@@ -78,3 +78,21 @@ async def get_food_diary_by_meal_id_and_food_id(
     result = await session.execute(statement=statement)
     food_diary_record = result.scalar_one_or_none()
     return food_diary_record
+
+
+async def list_all_food_diary_by_meal_id(
+    session: AsyncSession,
+    meal_id: UUID,
+    page: int = DEFAULT_PAGE_NUMBER,
+    size: int = DEFAULT_PAGE_SIZE,
+) -> PagedResultSet[FoodDiary]:
+    statement = select(FoodDiary).filter(FoodDiary.meal_id == meal_id)
+
+    paged_statement = paginate_query(statement, page, size)
+
+    result = await session.execute(paged_statement)
+    food_diary_records: List[FoodDiary] = result.scalars().all()
+    total_query = count_query(paged_statement, FoodDiary)
+    total = (await session.execute(total_query)).scalar_one()
+
+    return PagedResultSet(page=page, size=size, total=total, records=food_diary_records)

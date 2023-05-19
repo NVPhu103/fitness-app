@@ -1,9 +1,11 @@
-from typing import Optional
+from typing import List, Optional
 from datetime import date as _date
 from .config import BaseModelWithConfig
 from pydantic import Field
 from uuid import UUID
 from fitness_api.schemas.diary import DiaryModel
+from fitness_api.schemas.food import FoodModel
+
 
 class BaseFoodDiaryModel(BaseModelWithConfig):
     ...
@@ -30,6 +32,7 @@ class FoodDiaryModel(BaseFoodDiaryModel):
     quantity: int = Field(..., title="quantities of the food")
     total_calories: int = Field(..., alias="totalCalories")
 
+
 class FoodDiaryWithDiaryModel(BaseFoodDiaryModel):
     id: UUID = Field(..., title="Diary ID")
     meal_id: UUID = Field(
@@ -39,3 +42,8 @@ class FoodDiaryWithDiaryModel(BaseFoodDiaryModel):
     quantity: int = Field(..., title="quantities of the food")
     total_calories: int = Field(..., alias="totalCalories")
     diary: DiaryModel = Field(None, title="diary of user")
+
+
+class FoodDiaryModelWithFoodModel(FoodDiaryModel):
+    food: FoodModel = Field(None, title="food model")
+
