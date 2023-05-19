@@ -53,7 +53,7 @@ async def create_food_diary(
             # update diary
             diary.total_calorie_intake += total_calories
             await session.commit()
-            return food_diary_record
+            return food_diary_record, diary
         else:
             model = FoodDiary(**post_food_diary_model.dict(exclude_unset=True))
             model.total_calories = total_calories
@@ -61,7 +61,7 @@ async def create_food_diary(
             # update diary
             diary.total_calorie_intake += total_calories
             await session.commit()
-            return model
+            return model, diary
     except IntegrityError as error:
         await session.rollback()
         raise HTTPException(detail="Something wrong", status_code=409) from error
