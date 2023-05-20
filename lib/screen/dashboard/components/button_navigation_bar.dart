@@ -35,7 +35,7 @@ class ButtonNavBar extends StatelessWidget {
               svgScr: "assets/icons/dashboard.svg",
               isActive: isDashboardActive,
               press: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => Dashboard(
@@ -49,7 +49,7 @@ class ButtonNavBar extends StatelessWidget {
               svgScr: "assets/icons/diary.svg",
               isActive: isDiaryActive,
               press: () {
-                Navigator.push(
+                Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
                         builder: (context) => DiaryScreen(

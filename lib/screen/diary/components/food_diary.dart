@@ -1,0 +1,37 @@
+class Food {
+  late String id;
+  late String name;
+  late int calories;
+  late String unit;
+  late String status;
+
+  Food(this.id, this.name, this.calories, this.unit, this.status);
+
+  Food.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    name = json['name'];
+    calories = json['calories'];
+    unit = json['unit'];
+    status = json['status'];
+  }
+}
+
+class FoodDiary {
+  late String id;
+  late String mealId;
+  late String foodId;
+  late int quantity;
+  late int totalCalories;
+  late Food food;
+
+  FoodDiary(this.id, this.mealId, this.foodId, this.quantity, this.totalCalories, this.food);
+
+  FoodDiary.fromJson(Map<String, dynamic> json) {
+    id = json['id'];
+    mealId = json['mealId'];
+    foodId = json['foodId'];
+    quantity = json['quantity'];
+    totalCalories = json['totalCalories'];
+    food = Food.fromJson(json['food']);
+  }
+}

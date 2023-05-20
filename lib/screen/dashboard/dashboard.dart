@@ -126,7 +126,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   height: size.height * 0.17,
                   child: Padding(
                     padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text("Welcome to Fitness, \n$name",
+                    child: Text("Welcome here \n$name",
                         textAlign: TextAlign.left,
                         style: Theme.of(context)
                             .textTheme

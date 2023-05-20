@@ -1,7 +1,10 @@
+// ignore_for_file: no_logic_in_create_state
+
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
+import 'package:fitness_app/screen/diary/diary_screen.dart';
 import 'package:fitness_app/screen/search_food/components/food.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -9,12 +12,17 @@ import 'package:http/http.dart';
 
 class SearchFoodScreen extends StatefulWidget {
   final Diary diary;
-
-  const SearchFoodScreen({super.key, required this.diary});
+  bool isSelectedValue;
+  String? meal;
+  SearchFoodScreen(
+      {super.key,
+      required this.diary,
+      this.isSelectedValue = false,
+      this.meal});
 
   @override
-  // ignore: no_logic_in_create_state
-  State<SearchFoodScreen> createState() => _SearchFoodScreenState(diary);
+  State<SearchFoodScreen> createState() =>
+      _SearchFoodScreenState(diary, isSelectedValue, meal);
 }
 
 class _SearchFoodScreenState extends State<SearchFoodScreen> {
@@ -25,6 +33,8 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
     'Dining',
   ];
   String? selectedValue;
+  bool isSelectedValue;
+  String? meal;
   String? mealId;
   List<Food> listFoods = [];
   TextEditingController searchTextController = TextEditingController();
@@ -34,7 +44,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
   bool hasMore = true;
   bool isLoading = false;
 
-  _SearchFoodScreenState(this.diary);
+  _SearchFoodScreenState(this.diary, this.isSelectedValue, this.meal);
 
   @override
   void initState() {
@@ -45,6 +55,9 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
         fetch(searchTextController.text);
       }
     });
+    if (isSelectedValue) {
+      selectedValue = meal;
+    }
   }
 
   Future fetch(String value) async {
@@ -91,7 +104,19 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
             Icons.arrow_back,
             color: Colors.black,
           ),
-          onPressed: () => Navigator.pop(context, diary),
+          onPressed: () {
+            if (isSelectedValue == false) {
+              Navigator.pop(context, diary);
+            } else {
+              Navigator.pushReplacement(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => DiaryScreen(
+                            name: "",
+                            diary: diary,
+                          )));
+            }
+          },
         ),
         title: dropdownButtonTitle(),
         centerTitle: true,
@@ -251,10 +276,12 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
   Future<void> addFood(String foodId) async {
     if (selectedValue == null) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-          content: Text(
-        "You have to select a meal",
-        textAlign: TextAlign.center,
-      ), duration: Duration(seconds: 1),));
+        content: Text(
+          "You have to select a meal",
+          textAlign: TextAlign.center,
+        ),
+        duration: Duration(seconds: 1),
+      ));
     } else {
       switch (selectedValue) {
         case "Breakfast":
