@@ -233,7 +233,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       children: <Widget>[
         IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
         Text(
-          date!,
+          date,
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         IconButton(
@@ -266,7 +266,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                     fontWeight: FontWeight.bold),
               ]),
         ),
-        Container(
+        SizedBox(
           width: size.width * 1,
           child: ListView.builder(
             itemCount: listFoodDiaries.length + 1,
@@ -294,6 +294,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       trailing: customText(item.totalCalories.toString(), 20)),
                 );
               }
+              return null;
             },
             shrinkWrap: true,
           ),
