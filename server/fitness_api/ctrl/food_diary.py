@@ -18,6 +18,8 @@ from fitness_api.lib.paging.types import PagedResultSet
 from fitness_api.lib.paging.utils import count_query, paginate_query
 from fitness_api.lib.searcher.searcher import SearcherParams, Searcher
 
+from fitness_api.ctrl.food_history import create_or_update_food_history
+
 
 async def create_food_diary(
     post_food_diary_model: PostFoodDiaryModel, session: AsyncSession
@@ -52,6 +54,7 @@ async def create_food_diary(
             await session.flush()
             # update diary
             diary.total_calorie_intake += total_calories
+            await create_or_update_food_history(session, diary.user_id, food.id)
             await session.commit()
             return food_diary_record, diary
         else:
@@ -60,6 +63,7 @@ async def create_food_diary(
             session.add(model)
             # update diary
             diary.total_calorie_intake += total_calories
+            await create_or_update_food_history(session, diary.user_id, food.id)
             await session.commit()
             return model, diary
     except IntegrityError as error:

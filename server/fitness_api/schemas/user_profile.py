@@ -11,10 +11,16 @@ class UserProfileStatus(enum.Enum):
 
 
 class UserProfileActivityLevel(enum.Enum):
-    NOT_VERY_ACTIVE = "NOT VERY ACTIVE"
-    LIGHTLY_ACTIVE = "LIGHTLY ACTIVE"
+    NOT_VERY_ACTIVE = "NOT_VERY_ACTIVE"
+    LIGHTLY_ACTIVE = "LIGHTLY_ACTIVE"
     ACTIVE = "ACTIVE"
-    VERY_ACTIVE = "VERY ACTIVE"
+    VERY_ACTIVE = "VERY_ACTIVE"
+
+
+class UserProfileGoal(enum.Enum):
+    LOSE_WEIGHT = "LOSE_WEIGHT"
+    MAINTAIN_WEIGHT = "MAINTAIN_WEIGHT"
+    GAIN_WEIGHT = "GAIN_WEIGHT"
 
 
 class UserProfileGender(enum.Enum):
@@ -32,6 +38,7 @@ class BaseUserProfileModel(BaseModelWithConfig):
     desired_weight: float = Field(
         ..., title="The weight that the user wants to achieve", alias="desiredWeight"
     )
+    goal: UserProfileGoal = Field(..., alias="goal")
     year_of_birth: int = Field(
         ..., title="the year of birth of the user", alias="yearOfBirth"
     )
@@ -53,6 +60,7 @@ class PostUserProfileModel(BaseUserProfileModel):
                 "current_weight": 80.5,
                 "height": 172,
                 "desired_weight": 72,
+                "goal": UserProfileGoal.LOSE_WEIGHT.value,
                 "year_of_birth": 2001,
                 "activity_level": UserProfileActivityLevel.ACTIVE.value,
             }
@@ -95,6 +103,9 @@ class PatchStatusUserProfileModel(BaseModelWithConfig):
 class UserProfileModel(BaseUserProfileModel):
     id: UUID = Field(..., title="User Profile ID")
     status: UserProfileStatus = Field(..., title="Staus of the user")
+    starting_weight: float = Field(
+        ..., title="The starting weight of the User before using application", alias="startingWeight"
+    )
     maximum_calorie_intake: int = Field(
         ..., alias="maximumCalorieIntake", title="Maximum calorie intake per day"
     )

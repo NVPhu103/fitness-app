@@ -74,7 +74,7 @@ async def get_exercise(
     status_code=204,
     description="update the exercise by its ID",
 )
-async def update_food(
+async def update_exercise(
     request: Request,
     response: Response,
     exercise_id: UUID,

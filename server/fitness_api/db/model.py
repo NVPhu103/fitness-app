@@ -26,6 +26,7 @@ from fitness_api.schemas.user_profile import (
     UserProfileStatus,
     UserProfileActivityLevel,
     UserProfileGender,
+    UserProfileGoal,
 )
 from fitness_api.schemas.user import UserRole
 from fitness_api.schemas.exercise import ExerciseType, BurningType
@@ -87,6 +88,10 @@ class UserProfile(BaseModel):
         nullable=False,
     )
     gender: UserProfileGender = Column(Enum(UserProfileGender), nullable=False)
+    starting_weight: float = Column(
+        Float,
+        nullable=False,
+    )
     current_weight: float = Column(
         Float,
         CheckConstraint("current_weight > 0"),
@@ -96,14 +101,15 @@ class UserProfile(BaseModel):
         Float, CheckConstraint("desired_weight > 0"), nullable=False
     )
     height: float = Column(Float, CheckConstraint("height > 0"), nullable=False)
-    _year_of_birth: int = Column(Integer, nullable=False)
+    goal: UserProfileGoal = Column(Enum(UserProfileGoal), nullable=False)
+    _year_of_birth: int = Column(Integer, name="year_of_birth", nullable=False)
     status: UserProfileStatus = Column(
         Enum(UserProfileStatus), nullable=False, default=UserProfileStatus.ACTIVE.value
     )
     activity_level: UserProfileActivityLevel = Column(
         Enum(UserProfileActivityLevel), nullable=False
     )
-    maximum_calorie_intake: int = Column(Integer, default=2000, nullable=False)
+    maximum_calorie_intake: int = Column(Integer, default=0, nullable=False)
 
     @hybrid_property
     def year_of_birth(self) -> int:
@@ -113,11 +119,6 @@ class UserProfile(BaseModel):
     def year_of_birth(self, value: int) -> None:
         if (value >= 1950) and (value < (_date.today().year - 5)):
             self._year_of_birth = value
-
-    __table_args__ = (
-        CheckConstraint(current_weight != desired_weight),
-        CheckConstraint(maximum_calorie_intake >= 1000),
-    )
 
 
 class Food(BaseModel):
@@ -134,6 +135,8 @@ class Food(BaseModel):
     status: FoodStatus = Column(
         Enum(FoodStatus), default=FoodStatus.ACTIVE.value, nullable=False
     )
+
+    food_history = relationship("FoodHistory", back_populates="food", lazy="selectin")
 
     __table_args__ = (CheckConstraint(calories > 0),)
 
@@ -227,3 +230,23 @@ class Exercise(BaseModel):
     @burning_type.setter
     def burning_type(self, value: BurningType) -> None:
         self._burning_type = value.value
+
+
+class FoodHistory(BaseModel):
+    id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        default=uuid4,
+        nullable=False,
+        primary_key=True,
+        index=True,
+    )
+    user_id: UUID = Column(SqlUUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True)
+    food_id: UUID = Column(SqlUUID(as_uuid=True), ForeignKey("food.id"), nullable=False, index=True)
+    number_of_uses: int = Column(
+        Integer, CheckConstraint("number_of_uses > 0"), nullable=False, index=True, default=1,
+    )
+
+    food = relationship("Food", back_populates="food_history", lazy="selectin")
+
+    __table_args__ = (UniqueConstraint(user_id, food_id),)
+

@@ -87,6 +87,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
             "current_weight": doubleCurrentWeight,
             "height": doubleHeight,
             "desired_weight": doubleDesiredWeight,
+            "goal": goal,
             "year_of_birth": yearOfBirth,
             "activity_level": activityLevel
           }),

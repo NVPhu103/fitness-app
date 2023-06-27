@@ -222,7 +222,7 @@ class _SetGoalScreen1State extends State<SetGoalScreen1> {
                 ListTile(
                   title: const Text('Very Active'),
                   subtitle: const Text(
-                      "Spend most of the day doing heavy physical activity(e.g. dilivery staff, builders)"),
+                      "Spend most of the day doing heavy physical activity(e.g. sports athletes, builders)"),
                   leading: Radio<ActivityLevel>(
                     value: ActivityLevel.VERY_ACTIVE,
                     groupValue: _activityLevel,
