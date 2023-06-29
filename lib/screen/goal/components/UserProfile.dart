@@ -1,13 +1,11 @@
-// import 'dart:ffi';
 
-import 'dart:ffi';
 
 class UserProfile {
   String userId;  //have
   String gender;  //have
-  Float currentWeight;
-  Float height;
-  Float desiredWeight;
+  double currentWeight;
+  double height;
+  double desiredWeight;
   int yearOfBirth;
   String activityLevel; //have
   

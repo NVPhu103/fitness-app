@@ -33,7 +33,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
   final String gender;
   final String goal;
   final String activityLevel;
-  int _yearOfBirth = 1999;
+  int _yearOfBirth = 2000;
 
   _SetGoalScreen2State(this.userId, this.gender, this.goal, this.activityLevel);
 
@@ -69,15 +69,22 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
         }
         // ignore: unrelated_type_equality_checks
         if (activityLevel == ActivityLevel.VERY_ACTIVE.toString()) {
-          activityLevel = "VERY ACTIVE";
+          activityLevel = "VERY_ACTIVE";
           // ignore: unrelated_type_equality_checks
         } else if (activityLevel == ActivityLevel.LIGHTLY_ACTIVE.toString()) {
-          activityLevel = "LIGHTLY ACTIVE";
+          activityLevel = "LIGHTLY_ACTIVE";
           // ignore: unrelated_type_equality_checks
         } else if (activityLevel == ActivityLevel.NOT_VERY_ACTIVE.toString()) {
-          activityLevel = "NOT VERY ACTIVE";
+          activityLevel = "NOT_VERY_ACTIVE";
         } else {
           activityLevel = "ACTIVE";
+        }
+        if(goal == Goal.GAIN_WEIGHT.toString()){
+          goal = "GAIN_WEIGHT";
+        }else if(goal == Goal.LOSE_WEIGHT.toString()){
+          goal = "LOSE_WEIGHT";
+        }else if(goal == Goal.MAINTAIN_WEIGHT.toString()){
+          goal = "MAINTAIN_WEIGHT";
         }
         Response response = await post(
           Uri.parse("http://127.0.0.1:8000/userprofiles"),

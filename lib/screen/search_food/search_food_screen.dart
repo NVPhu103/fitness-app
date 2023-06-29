@@ -6,6 +6,7 @@ import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
 import 'package:fitness_app/screen/search_food/components/food.dart';
+import 'package:fitness_app/screen/search_food/components/food_history.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
@@ -44,12 +45,15 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
   int perPage = 10;
   bool hasMore = true;
   bool isLoading = false;
+  List<FoodHistory> listFoodHistories = [];
+  bool isShowHistory = true;
 
   _SearchFoodScreenState(this.diary, this.isSelectedValue, this.meal);
 
   @override
   void initState() {
     super.initState();
+    getAllFoodHistories(diary.userId);
     listViewController.addListener(() {
       if (listViewController.position.maxScrollExtent ==
           listViewController.offset) {
@@ -145,6 +149,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                     isLoading = false;
                     hasMore = true;
                     page = 2;
+                    isShowHistory = false;
                   });
                   getAllFoods(value);
                 },
@@ -173,61 +178,151 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
             height: size.height * 0.02,
           ),
           SizedBox(
-            height: size.height * 0.8,
-            width: size.width * 0.96,
-            child: ListView.builder(
-              controller: listViewController,
-              itemCount: listFoods.length + 1,
-              itemBuilder: (context, index) {
-                if (listFoods.isEmpty) {
-                  return null;
-                }
-                if (index < listFoods.length) {
-                  final item = listFoods[index];
-                  return Card(
-                    color: const Color.fromARGB(220, 255, 255, 255),
-                    shadowColor: Colors.grey,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10.0)),
-                    child: ListTile(
-                      title: Padding(
-                        padding: const EdgeInsets.only(bottom: 4.0),
-                        child: Text(item.name,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.w400,
-                            )),
-                      ),
-                      subtitle: Text("${item.calories} calories, ${item.unit}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                          )),
-                      trailing: InkWell(
-                        borderRadius: BorderRadius.circular(29),
-                        onTap: () {
-                          addFood(item.id);
-                        },
-                        child: const Icon(
-                          Icons.add_circle_rounded,
-                          color: Colors.blueAccent,
-                          size: 40,
+              height: size.height * 0.08,
+              width: size.width * 0.96,
+              child: isShowHistory
+                  ? const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Center(
+                        child: Text(
+                          "History",
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
                         ),
                       ),
+                    )
+                  : const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 10),
+                      child: Center(
+                        child: Text(
+                          "Food",
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    )),
+          // ListView
+          SizedBox(
+            height: size.height * 0.72,
+            width: size.width * 0.96,
+            child: isShowHistory
+                ? RefreshIndicator(
+                    onRefresh: () => getAllFoodHistories(diary.userId),
+                    child: ListView.builder(
+                      controller: listViewController,
+                      itemCount: listFoodHistories.length + 1,
+                      itemBuilder: (context, index) {
+                        if (listFoodHistories.isEmpty) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(
+                              child: Text("No history found"),
+                            ),
+                          );
+                        }
+                        if (index < listFoodHistories.length) {
+                          final item = listFoodHistories[index].food;
+                          return Card(
+                            color: const Color.fromARGB(220, 255, 255, 255),
+                            shadowColor: Colors.grey,
+                            shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(10.0)),
+                            child: ListTile(
+                              title: Padding(
+                                padding: const EdgeInsets.only(bottom: 4.0),
+                                child: Text(item.name,
+                                    style: const TextStyle(
+                                      fontSize: 20,
+                                      fontWeight: FontWeight.w400,
+                                    )),
+                              ),
+                              subtitle: Text(
+                                  "${item.calories} calories, ${item.unit}",
+                                  style: const TextStyle(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w300,
+                                  )),
+                              trailing: InkWell(
+                                borderRadius: BorderRadius.circular(29),
+                                onTap: () {
+                                  addFood(item.id);
+                                },
+                                child: const Icon(
+                                  Icons.add_circle_rounded,
+                                  color: Colors.blueAccent,
+                                  size: 40,
+                                ),
+                              ),
+                            ),
+                          );
+                        }
+                        return null;
+                      },
                     ),
-                  );
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 32),
-                    child: Center(
-                      child: hasMore
-                          ? const CircularProgressIndicator()
-                          : const Text("No more data to load"),
-                    ),
-                  );
-                }
-              },
-            ),
+                  )
+                : ListView.builder(
+                    controller: listViewController,
+                    itemCount: listFoods.length + 1,
+                    itemBuilder: (context, index) {
+                      if (listFoods.isEmpty) {
+                        if (isShowHistory == false) {
+                          return const Padding(
+                            padding: EdgeInsets.symmetric(vertical: 32),
+                            child: Center(
+                              child: Text("Not found"),
+                            ),
+                          );
+                        } else {
+                          return null;
+                        }
+                      }
+                      if (index < listFoods.length) {
+                        final item = listFoods[index];
+                        return Card(
+                          color: const Color.fromARGB(220, 255, 255, 255),
+                          shadowColor: Colors.grey,
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10.0)),
+                          child: ListTile(
+                            title: Padding(
+                              padding: const EdgeInsets.only(bottom: 4.0),
+                              child: Text(item.name,
+                                  style: const TextStyle(
+                                    fontSize: 20,
+                                    fontWeight: FontWeight.w400,
+                                  )),
+                            ),
+                            subtitle:
+                                Text("${item.calories} calories, ${item.unit}",
+                                    style: const TextStyle(
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w300,
+                                    )),
+                            trailing: InkWell(
+                              borderRadius: BorderRadius.circular(29),
+                              onTap: () {
+                                addFood(item.id);
+                              },
+                              child: const Icon(
+                                Icons.add_circle_rounded,
+                                color: Colors.blueAccent,
+                                size: 40,
+                              ),
+                            ),
+                          ),
+                        );
+                      } else {
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 32),
+                          child: Center(
+                            child: hasMore
+                                ? const CircularProgressIndicator()
+                                : const Text("No more data to load"),
+                          ),
+                        );
+                      }
+                    },
+                  ),
           ),
         ],
       ),
@@ -372,5 +467,48 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
       )));
     }
     return listFoods;
+  }
+
+  Future<void> getAllFoodHistories(String userId) async {
+    if (userId.isNotEmpty) {
+      String uri = "http://127.0.0.1:8000/foodhistories/$userId";
+      try {
+        // ignore: non_constant_identifier_names    print("step1");
+        Response get_food_history_response = await get(
+          Uri.parse(uri),
+          headers: {'Content-Type': 'application/json'},
+        );
+        if (get_food_history_response.statusCode == 200) {
+          setState(() {
+            // ignore: non_constant_identifier_names
+            List<dynamic> get_food__history_response_body =
+                jsonDecode(get_food_history_response.body);
+            for (int i = 0; i < get_food__history_response_body.length; i++) {
+              listFoodHistories.add(
+                  FoodHistory.fromJson(get_food__history_response_body[i]));
+            }
+          });
+        } else {
+          // ignore: use_build_context_synchronously
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+              content: Text(
+            get_food_history_response.body,
+            textAlign: TextAlign.center,
+          )));
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+          e.toString(),
+          textAlign: TextAlign.center,
+        )));
+      }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+        "Please enter user id",
+        textAlign: TextAlign.center,
+      )));
+    }
   }
 }
