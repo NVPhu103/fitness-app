@@ -1,4 +1,14 @@
-from . import user, food, user_profile, exercise, diary, food_diary, food_history
+from . import (
+    user,
+    food,
+    user_profile,
+    exercise,
+    diary,
+    food_diary,
+    food_history,
+    exercise_diary,
+    exercise_history,
+)
 from fastapi import FastAPI
 
 
@@ -37,4 +47,14 @@ def configure_routes(app: FastAPI) -> None:
         food_history.router,
         tags=food_history.TAGS,
         prefix=f"/{food_history.PREFIX}",
+    )
+    app.include_router(
+        exercise_diary.router,
+        tags=exercise_diary.TAGS,
+        prefix=f"/{exercise_diary.PREFIX}",
+    )
+    app.include_router(
+        exercise_history.router,
+        tags=exercise_history.TAGS,
+        prefix=f"/{exercise_history.PREFIX}",
     )

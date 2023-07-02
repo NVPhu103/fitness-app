@@ -3,23 +3,23 @@ from datetime import date as _date
 from .config import BaseModelWithConfig
 from pydantic import Field
 from uuid import UUID
-from .food import FoodModel
+from .exercise import ExerciseModel
 
 
-class BaseFoodHistoryModel(BaseModelWithConfig):
+class BaseExerciseHistoryModel(BaseModelWithConfig):
     user_id: UUID = Field(..., alias="userId")
-    food_id: UUID = Field(..., alias="foodId")
+    exercise_id: UUID = Field(..., alias="exerciseId")
 
 
-class PostFoodHistoryModel(BaseFoodHistoryModel):
+class PostExerciseHistoryModel(BaseExerciseHistoryModel):
     ...
 
 
-class PatchFoodHistoryModel(BaseModelWithConfig):
+class PatchExerciseHistoryModel(BaseModelWithConfig):
     number_of_uses: int = Field(None, alias="numberOfUses")
 
 
-class FoodHistoryModel(BaseFoodHistoryModel):
+class ExerciseHistoryModel(BaseExerciseHistoryModel):
     id: UUID = Field(..., title="Food history ID")
     number_of_uses: int = Field(..., alias="numberOfUses")
-    food: FoodModel = Field(..., title="food information")
+    exercise: ExerciseModel = Field(..., title="exercise information")

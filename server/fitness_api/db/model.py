@@ -29,7 +29,7 @@ from fitness_api.schemas.user_profile import (
     UserProfileGoal,
 )
 from fitness_api.schemas.user import UserRole
-from fitness_api.schemas.exercise import ExerciseType, BurningType
+from fitness_api.schemas.exercise import ExerciseType, BurningType, ExerciseStatus
 
 from sqlalchemy.orm import relationship, backref
 
@@ -214,7 +214,15 @@ class Exercise(BaseModel):
         CheckConstraint("burned_calories > 0"),
         nullable=False,
     )
-    # exercise_diary = relationship("ExerciseDiary", back_populates="exercise", lazy="selectin")
+    status: ExerciseStatus = Column(
+        Enum(ExerciseStatus), default=ExerciseStatus.ACTIVE.value, nullable=False
+    )
+    exercise_diary = relationship(
+        "ExerciseDiary", back_populates="exercise", lazy="selectin"
+    )
+    exercise_history = relationship(
+        "ExerciseHistory", back_populates="exercise", lazy="selectin"
+    )
 
     @hybrid_property
     def exercise_type(self) -> ExerciseType:
@@ -233,34 +241,44 @@ class Exercise(BaseModel):
         self._burning_type = value.value
 
 
-# class ExerciseDiary(BaseModel):
-#     id: UUID = Column(
-#         SqlUUID(as_uuid=True),
-#         default=uuid4,
-#         nullable=False,
-#         primary_key=True,
-#         index=True,
-#     )
-#     exercise_id: UUID = Column(
-#         SqlUUID(as_uuid=True), ForeignKey("exercise.id"), nullable=False, index=True
-#     )
-#     exercise = relationship("Exercise", back_populates="exercise_diary", lazy="selectin")
-#     diary_id: UUID = Column(
-#         SqlUUID(as_uuid=True), ForeignKey("diary.id", nullable=False, index=True)
-#     )
-#     practice_time: int = Column(
-#         Integer,
-#         nullable=False,
-#         default=0,
-#     )
-#     burned_calories: int = Column(Integer, name="burned_calories", nullable=False, default=0)
+class ExerciseDiary(BaseModel):
+    id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        default=uuid4,
+        nullable=False,
+        primary_key=True,
+        index=True,
+    )
+    exercise_id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        ForeignKey("exercise.id"),
+        nullable=False,
+        index=True,
+    )
+    exercise = relationship(
+        "Exercise", back_populates="exercise_diary", lazy="selectin"
+    )
+    diary_id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        ForeignKey("diary.id"),
+        nullable=False,
+        index=True,
+    )
+    practice_time: int = Column(
+        Integer,
+        nullable=False,
+        default=0,
+    )
+    burned_calories: int = Column(
+        Integer, name="burned_calories", nullable=False, default=0
+    )
 
-#     __table_args__ = (
-#         CheckConstraint(practice_time >= 0),
-#         CheckConstraint(burned_calories >= 0),
-#         UniqueConstraint(exercise_id, diary_id),
-#         Index(exercise_id, diary_id),
-#     )
+    __table_args__ = (
+        CheckConstraint(practice_time >= 0),
+        CheckConstraint(burned_calories >= 0),
+        UniqueConstraint(exercise_id, diary_id),
+    )
+
 
 class FoodHistory(BaseModel):
     id: UUID = Column(
@@ -287,3 +305,32 @@ class FoodHistory(BaseModel):
     food = relationship("Food", back_populates="food_history", lazy="selectin")
 
     __table_args__ = (UniqueConstraint(user_id, food_id),)
+
+
+class ExerciseHistory(BaseModel):
+    id: UUID = Column(
+        SqlUUID(as_uuid=True),
+        default=uuid4,
+        nullable=False,
+        primary_key=True,
+        index=True,
+    )
+    user_id: UUID = Column(
+        SqlUUID(as_uuid=True), ForeignKey("user.id"), nullable=False, index=True
+    )
+    exercise_id: UUID = Column(
+        SqlUUID(as_uuid=True), ForeignKey("exercise.id"), nullable=False, index=True
+    )
+    number_of_uses: int = Column(
+        Integer,
+        CheckConstraint("number_of_uses > 0"),
+        nullable=False,
+        index=True,
+        default=1,
+    )
+
+    exercise = relationship(
+        "Exercise", back_populates="exercise_history", lazy="selectin"
+    )
+
+    __table_args__ = (UniqueConstraint(user_id, exercise_id),)

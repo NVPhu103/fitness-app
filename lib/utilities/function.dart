@@ -21,19 +21,24 @@ String getYesterdayWithYMD() {
     return formatter.format(yesterday);
   }
 
-String getDate(Diary diary) {
+String transferDateTimeToString(DateTime date){
+  DateFormat formatter = DateFormat('yyyy-MM-dd');
+  return formatter.format(date);
+}
+
+String getDate(String diaryDate) {
     String date;
     String today = getTodayWithYMD();
     String tomorrow = getTomorrowWithYMD();
     String yesterday = getYesterdayWithYMD();
-    if (today == diary.date){
+    if (today == diaryDate){
       date = "Today";
-    }else if (tomorrow == diary.date){
+    }else if (tomorrow == diaryDate){
       date = "Tomorrow";
-    }else if(yesterday == diary.date){
+    }else if(yesterday == diaryDate){
       date = "Yesterday";
     }else{
-      date = diary.date;
+      date = diaryDate;
     }
     return date;
   }

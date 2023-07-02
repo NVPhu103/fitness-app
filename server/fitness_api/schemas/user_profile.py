@@ -104,7 +104,9 @@ class UserProfileModel(BaseUserProfileModel):
     id: UUID = Field(..., title="User Profile ID")
     status: UserProfileStatus = Field(..., title="Staus of the user")
     starting_weight: float = Field(
-        ..., title="The starting weight of the User before using application", alias="startingWeight"
+        ...,
+        title="The starting weight of the User before using application",
+        alias="startingWeight",
     )
     maximum_calorie_intake: int = Field(
         ..., alias="maximumCalorieIntake", title="Maximum calorie intake per day"

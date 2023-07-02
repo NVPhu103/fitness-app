@@ -46,4 +46,3 @@ class FoodDiaryWithDiaryModel(BaseFoodDiaryModel):
 
 class FoodDiaryModelWithFoodModel(FoodDiaryModel):
     food: FoodModel = Field(None, title="food model")
-

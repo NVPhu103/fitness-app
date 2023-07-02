@@ -17,6 +17,11 @@ class BurningType(str, enum.Enum):
     CPS = "CALORIES_PER_SET"
 
 
+class ExerciseStatus(enum.Enum):
+    ACTIVE = "ACTIVE"
+    INACTIVE = "INACTIVE"
+
+
 class BaseExerciseModel(BaseModelWithConfig):
     name: str = Field(..., title="Exercise name")
     exercise_type: ExerciseType = Field(
@@ -50,6 +55,9 @@ class PatchExerciseModel(BaseModelWithConfig):
     burned_calories: int = Field(
         None, title="Calories is burned in the exercise", alias="burnedCalories"
     )
+    status: ExerciseStatus = Field(
+        None,
+    )
 
     class Config(BaseModelWithConfig.Config):
         schema_extra = {
@@ -57,12 +65,16 @@ class PatchExerciseModel(BaseModelWithConfig):
                 "name": "Running, 14.5 kph (4.1 min per km)",
                 "description": "edit descriptions",
                 "burned_calories": 300,
+                "status": ExerciseStatus.ACTIVE.value,
             }
         }
 
 
 class ExerciseModel(BaseExerciseModel):
     id: UUID = Field(..., title="Exercise ID")
+    status: ExerciseStatus = Field(
+        ...,
+    )
 
     class Config(BaseModelWithConfig.Config):
         schema_extra = {
@@ -73,5 +85,6 @@ class ExerciseModel(BaseExerciseModel):
                 "description": "You run 10.7 kilometers per hour",
                 "burningType": BurningType.CPH.value,
                 "burnedCalories": 300,
+                "status": ExerciseStatus.ACTIVE.value,
             }
         }

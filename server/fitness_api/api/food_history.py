@@ -10,6 +10,7 @@ from fitness_api.schemas.food_history import (
     PatchFoodHistoryModel,
     FoodHistoryModel,
 )
+
 # from fitness_api.schemas.diary import DiaryModel
 # from fitness_api.schemas.food import FoodModel
 from fitness_api import ctrl
@@ -24,7 +25,10 @@ router = APIRouter()
 
 
 @router.get(
-    "/{user_id}", response_model=List[FoodHistoryModel], summary="Get all food histories", status_code=200
+    "/{user_id}",
+    response_model=List[FoodHistoryModel],
+    summary="Get all food histories",
+    status_code=200,
 )
 async def get_all_food_histories(
     request: Request,

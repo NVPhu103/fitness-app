@@ -32,11 +32,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
   int lunchTotalCalories = 0;
   List<FoodDiary> listDining = [];
   int diningTotalCalories = 0;
+
+  int exerciseBurnedCalories = 0;
   _DiaryScreenState(this.name, this.diary);
 
   @override
   void initState() {
-    date = getDate(diary);
+    date = getDate(diary.date);
     remainingCalories = calculateRemainingCalories();
     getFoodDiary(diary, date);
     super.initState();
@@ -102,6 +104,37 @@ class _DiaryScreenState extends State<DiaryScreen> {
     }
   }
 
+  Future<void> getNewDiary(bool isFutureDate) async {
+    String newDate = getTodayWithYMD();
+    if (isFutureDate == false) {
+      newDate = transferDateTimeToString(
+          DateTime.parse(diary.date).subtract(const Duration(days: 1)));
+    } else {
+      newDate = transferDateTimeToString(
+          DateTime.parse(diary.date).add(const Duration(days: 1)));
+    }
+    Response newDiaryResponse = await get(
+      Uri.parse("http://127.0.0.1:8000/diaries/${diary.userId}?date=$newDate"),
+      headers: {'Content-Type': 'application/json'},
+    );
+    var newDiaryBody = jsonDecode(newDiaryResponse.body);
+    setState(() {
+      diary = Diary.fromJson(newDiaryBody);
+      refreshAllList();
+      date = getDate(diary.date);
+      remainingCalories = calculateRemainingCalories();
+      getFoodDiary(diary, date);
+    });
+  }
+
+  void refreshAllList() {
+    setState(() {
+      listBreakfast = [];
+      listDining = [];
+      listLunch = [];
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
     Size size = MediaQuery.of(context).size;
@@ -154,7 +187,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
           mealContainer(
               size, "Dining", diningTotalCalories, listDining, diary.diningId),
           spacingSizedBox(size),
-          exerciseContainer(size, 0),
+          exerciseContainer(size, exerciseBurnedCalories),
           spacingSizedBox(size),
         ],
       ),
@@ -231,13 +264,19 @@ class _DiaryScreenState extends State<DiaryScreen> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: <Widget>[
-        IconButton(onPressed: () {}, icon: const Icon(Icons.arrow_back)),
+        IconButton(
+            onPressed: () {
+              getNewDiary(false);
+            },
+            icon: const Icon(Icons.arrow_back)),
         Text(
           date,
           style: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            getNewDiary(true);
+          },
           icon: const Icon(Icons.arrow_forward),
         ),
       ],
@@ -334,7 +373,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
     );
   }
 
-  Column exerciseContainer(Size size, int totalCalories) {
+  Column exerciseContainer(Size size, int exerciseBurnedCalories) {
     return Column(
       children: <Widget>[
         Container(
@@ -344,7 +383,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: <Widget>[
                 customText("Exercise", 22, fontWeight: FontWeight.bold),
-                customText(totalCalories.toString(), 22,
+                customText(exerciseBurnedCalories.toString(), 22,
                     fontWeight: FontWeight.bold),
               ]),
         ),
