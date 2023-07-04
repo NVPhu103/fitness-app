@@ -1,4 +1,3 @@
-import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:intl/intl.dart';
 
 String getTodayWithYMD() {
