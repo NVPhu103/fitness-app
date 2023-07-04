@@ -1,7 +1,6 @@
-from datetime import date
 from uuid import UUID
-from fastapi import APIRouter, Depends, Query, Request, Response, status
-from typing import Any, Dict, List, Optional, Union, Tuple
+from fastapi import APIRouter, Depends, Request, Response
+from typing import Any, Dict, List, Optional
 
 from sqlalchemy.ext.asyncio import AsyncSession
 from fitness_api.db.depends import create_session
@@ -11,10 +10,8 @@ from fitness_api.schemas.exercise_diary import (
     ExerciseDiaryWithDiaryModel,
 )
 from fitness_api.schemas.diary import DiaryModel
-from fitness_api.schemas.exercise import ExerciseModel
 from fitness_api import ctrl
 from fitness_api.lib.paging import PaginationParams
-from fitness_api.lib.searcher.searcher import SearcherParams
 from fitness_api.db.model import ExerciseDiary
 
 
@@ -68,13 +65,16 @@ async def get_exercise_diary_by_diary_id(
     )
     burned_calories_of_exercise_diaries = 0
     exercise_diary_records: List[ExerciseDiary] = content.records
-
+    list_exercise_diary = []
     for exercise_diary_record in exercise_diary_records:
-        exercise_diary = ExerciseDiaryModel.from_orm(exercise_diary_record)
-        burned_calories_of_exercise_diaries += exercise_diary.burned_calories
+        exercise_diary = ExerciseDiaryModel.from_orm(exercise_diary_record).dict(
+            by_alias=True
+        )
+        list_exercise_diary.append(exercise_diary)
+        burned_calories_of_exercise_diaries += exercise_diary["burnedCalories"]
 
     dict_result = {
-        "listExerciseDiaries": exercise_diary_records,
+        "listExerciseDiaries": list_exercise_diary,
         "burnedCaloriesOfExerciseDiaries": burned_calories_of_exercise_diaries,
     }
 

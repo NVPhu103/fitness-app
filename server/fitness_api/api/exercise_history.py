@@ -10,6 +10,7 @@ from fitness_api.schemas.exercise_history import (
     PatchExerciseHistoryModel,
     ExerciseHistoryModel,
 )
+from fitness_api.schemas.exercise import ExerciseType
 from fitness_api import ctrl
 from fitness_api.db.model import ExerciseHistory
 
@@ -20,7 +21,7 @@ router = APIRouter()
 
 
 @router.get(
-    "/{user_id}",
+    "/{user_id}/{exercise_type}",
     response_model=List[ExerciseHistoryModel],
     summary="Get all exercise histories",
     status_code=200,
@@ -29,9 +30,10 @@ async def get_all_exercise_histories(
     request: Request,
     response: Response,
     user_id: UUID,
+    exercise_type: ExerciseType,
     session: AsyncSession = Depends(create_session),
 ) -> List[ExerciseHistory]:
     list_exercise_histories = await ctrl.exercise_history.list_all_exercise_histories(
-        session, user_id
+        session, user_id, exercise_type
     )
     return list_exercise_histories

@@ -2,7 +2,7 @@ from typing import List, Optional
 from uuid import UUID
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy import select, desc, and_
+from sqlalchemy import select, desc, and_, or_
 
 
 from fastapi import HTTPException
@@ -11,16 +11,24 @@ from fitness_api.schemas.exercise_history import (
     PatchExerciseHistoryModel,
     ExerciseHistoryModel,
 )
-from fitness_api.db.model import ExerciseHistory
+from fitness_api.db.model import ExerciseHistory, Exercise
+from fitness_api.schemas.exercise import ExerciseType
 
 
 async def list_all_exercise_histories(
     session: AsyncSession,
     user_id: int,
+    exercise_type: ExerciseType,
 ) -> List[ExerciseHistory]:
     statement = (
         select(ExerciseHistory)
-        .filter(ExerciseHistory.user_id == user_id)
+        .join(Exercise)
+        .filter(
+            and_(
+                ExerciseHistory.user_id == user_id,
+                Exercise.exercise_type == exercise_type,
+            )
+        )
         .order_by(desc(ExerciseHistory.number_of_uses))
     )
     result = await session.execute(statement)

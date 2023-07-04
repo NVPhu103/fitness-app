@@ -4,7 +4,9 @@ import 'dart:convert';
 
 import 'package:fitness_app/screen/dashboard/components/button_navigation_bar.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
+import 'package:fitness_app/screen/diary/components/exercise_diary.dart';
 import 'package:fitness_app/screen/diary/components/food_diary.dart';
+import 'package:fitness_app/screen/search_exercise/search_exercise.dart';
 import 'package:fitness_app/screen/search_food/search_food_screen.dart';
 import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
@@ -32,7 +34,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
   int lunchTotalCalories = 0;
   List<FoodDiary> listDining = [];
   int diningTotalCalories = 0;
-
+  int foodTotalCalories = 0;
+  List<ExerciseDiary> listExercicse = [];
   int exerciseBurnedCalories = 0;
   _DiaryScreenState(this.name, this.diary);
 
@@ -40,7 +43,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
   void initState() {
     date = getDate(diary.date);
     remainingCalories = calculateRemainingCalories();
-    getFoodDiary(diary, date);
+    getFoodDiary(diary);
+    getExerciseDiary(diary);
     super.initState();
   }
 
@@ -50,9 +54,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
     return remainingCalories.toString();
   }
 
-  Future<void> getFoodDiary(Diary diary, String date) async {
+  Future<void> getFoodDiary(Diary diary) async {
     String breakfastUrl =
         "http://127.0.0.1:8000/fooddiaries/${diary.breakfastId}";
+    // ignore: non_constant_identifier_names
     Response get_list_breakfast_response = await get(
       Uri.parse(breakfastUrl),
       headers: {'Content-Type': 'application/json'},
@@ -66,10 +71,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
         }
         breakfastTotalCalories = jsonDecode(
             get_list_breakfast_response.body)['totalCaloriesOfFoodDiaries'];
+        foodTotalCalories += breakfastTotalCalories;
       });
     }
     // Lunch
     String lunchUrl = "http://127.0.0.1:8000/fooddiaries/${diary.lunchId}";
+    // ignore: non_constant_identifier_names
     Response get_list_lunch_response = await get(
       Uri.parse(lunchUrl),
       headers: {'Content-Type': 'application/json'},
@@ -83,10 +90,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
         }
         lunchTotalCalories = jsonDecode(
             get_list_lunch_response.body)['totalCaloriesOfFoodDiaries'];
+        foodTotalCalories += lunchTotalCalories;
       });
     }
     // Dining
     String diningUrl = "http://127.0.0.1:8000/fooddiaries/${diary.diningId}";
+    // ignore: non_constant_identifier_names
     Response get_list_dining_response = await get(
       Uri.parse(diningUrl),
       headers: {'Content-Type': 'application/json'},
@@ -100,6 +109,29 @@ class _DiaryScreenState extends State<DiaryScreen> {
         }
         diningTotalCalories = jsonDecode(
             get_list_dining_response.body)['totalCaloriesOfFoodDiaries'];
+        foodTotalCalories += diningTotalCalories;
+      });
+    }
+    
+  }
+
+  Future<void> getExerciseDiary(Diary diary) async {
+    String breakfastUrl =
+        "http://127.0.0.1:8000/exercisediaries/${diary.id}";
+    // ignore: non_constant_identifier_names
+    Response get_exercise_diary_response = await get(
+      Uri.parse(breakfastUrl),
+      headers: {'Content-Type': 'application/json'},
+    );
+    if (get_exercise_diary_response.body.isNotEmpty) {
+      List<dynamic> listNewExerciseDiary =
+          jsonDecode(get_exercise_diary_response.body)['listExerciseDiaries'];
+      setState(() {
+        for (int i = 0; i < listNewExerciseDiary.length; i++) {
+          listExercicse.add(ExerciseDiary.fromJson(listNewExerciseDiary[i]));
+        }
+        exerciseBurnedCalories = jsonDecode(
+            get_exercise_diary_response.body)['burnedCaloriesOfExerciseDiaries'];
       });
     }
   }
@@ -123,7 +155,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       refreshAllList();
       date = getDate(diary.date);
       remainingCalories = calculateRemainingCalories();
-      getFoodDiary(diary, date);
+      getFoodDiary(diary);
     });
   }
 
@@ -132,6 +164,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       listBreakfast = [];
       listDining = [];
       listLunch = [];
+      listExercicse = [];
     });
   }
 
@@ -235,14 +268,14 @@ class _DiaryScreenState extends State<DiaryScreen> {
               customText("-", 26),
               Column(
                 children: <Widget>[
-                  customText(diary.totalCaloriesIntake.toString(), 20),
+                  customText(foodTotalCalories.toString(), 20),
                   customText("Food", 20, fontWeight: FontWeight.w200),
                 ],
               ),
               customText("+", 20),
               Column(
                 children: <Widget>[
-                  customText("0", 20),
+                  customText(exerciseBurnedCalories.toString(), 20),
                   customText("Exercise", 20, fontWeight: FontWeight.w200),
                 ],
               ),
@@ -387,6 +420,46 @@ class _DiaryScreenState extends State<DiaryScreen> {
                     fontWeight: FontWeight.bold),
               ]),
         ),
+        // ListView
+        SizedBox(
+          width: size.width * 1,
+          child: ListView.builder(
+            itemCount: listExercicse.length + 1,
+            itemBuilder: (context, index) {
+              if (listExercicse.isEmpty) {
+                return null;
+              }
+              if (index < listExercicse.length) {
+                final item = listExercicse[index];
+                bool isPerHour = false;
+                if (item.exercise.burningType.toString() == "CALORIES_PER_HOUR"){
+                  isPerHour = true;
+                }
+                return Card(
+                  color: Colors.white,
+                  shadowColor: Colors.white,
+                  child: ListTile(
+                      title: Text(item.exercise.name,
+                          style: const TextStyle(
+                            fontSize: 20,
+                            fontWeight: FontWeight.w400,
+                          )),
+                      subtitle: Text(
+                          isPerHour ?
+                          "time: ${item.practiceTime.toString()} minutes x ${item.exercise.burnedCalories.toString()}/hour"
+                          :"times: ${item.practiceTime.toString()} times x ${item.exercise.burnedCalories.toString()}/set",
+                          style: const TextStyle(
+                            fontSize: 14,
+                            fontWeight: FontWeight.w300,
+                          )),
+                      trailing: customText(item.burnedCalories.toString(), 20)),
+                );
+              }
+              return null;
+            },
+            shrinkWrap: true,
+          ),
+        ),
         ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor: Colors.white,
@@ -407,9 +480,73 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       )),
                 ]),
           ),
-          onPressed: () {},
+          onPressed: () {
+            _showDialog(context);
+          },
         ),
       ],
     );
+  }
+
+  Future<void> _showDialog(BuildContext context) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              "Select a exercise type",
+              style: TextStyle(fontSize: 26),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop("CARDIO"),
+                    child: const Text(
+                      "Cardio",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.normal),
+                    )),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop("STRENGTH"),
+                    child: const Text(
+                      "Strength",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.normal),
+                    ))
+              ],
+            ),
+          );
+        }).then((value) => {
+          if (value == "CARDIO")
+            {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SearchExerciseScreen(
+                            diary: diary,
+                            exerciseType: "CARDIO",
+                          )))
+            }
+          else if (value == "STRENGTH")
+            {
+              Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => SearchExerciseScreen(
+                            diary: diary,
+                            exerciseType: "STRENGTH",
+                          )))
+            }
+        });
   }
 }

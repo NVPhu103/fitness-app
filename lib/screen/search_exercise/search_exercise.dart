@@ -2,66 +2,60 @@
 
 import 'dart:convert';
 
-import 'package:dropdown_button2/dropdown_button2.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
-import 'package:fitness_app/screen/search_food/components/food.dart';
-import 'package:fitness_app/screen/search_food/components/food_history.dart';
+import 'package:fitness_app/screen/search_exercise/components/exercise.dart';
+import 'package:fitness_app/screen/search_exercise/components/exercise_history.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 
 // ignore: must_be_immutable
-class SearchFoodScreen extends StatefulWidget {
+class SearchExerciseScreen extends StatefulWidget {
   final Diary diary;
-  bool isSelectedValue;
-  String? meal;
-  SearchFoodScreen(
-      {super.key,
-      required this.diary,
-      this.isSelectedValue = false,
-      this.meal});
+  final String exerciseType;
+
+  const SearchExerciseScreen({
+    super.key,
+    required this.diary,
+    required this.exerciseType,
+  });
 
   @override
-  State<SearchFoodScreen> createState() =>
-      _SearchFoodScreenState(diary, isSelectedValue, meal);
+  State<SearchExerciseScreen> createState() =>
+      _SearchExerciseScreenState(diary, exerciseType);
 }
 
-class _SearchFoodScreenState extends State<SearchFoodScreen> {
+class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
   Diary diary;
-  final List<String> itemsList = [
-    'Breakfast',
-    'Lunch',
-    'Dining',
-  ];
-  String? selectedValue;
-  bool isSelectedValue;
-  String? meal;
-  String? mealId;
-  List<Food> listFoods = [];
+  String exerciseType;
+  bool isCardio = false;
+  List<Exercise> listExercises = [];
   TextEditingController searchTextController = TextEditingController();
   final listViewController = ScrollController();
   int page = 2;
   int perPage = 10;
   bool hasMore = true;
   bool isLoading = false;
-  List<FoodHistory> listFoodHistories = [];
+  List<ExerciseHistory> listExerciseHistories = [];
   bool isShowHistory = true;
+  TextEditingController exerciseController = TextEditingController();
 
-  _SearchFoodScreenState(this.diary, this.isSelectedValue, this.meal);
+  _SearchExerciseScreenState(this.diary, this.exerciseType);
 
   @override
   void initState() {
     super.initState();
-    getAllFoodHistories(diary.userId);
+    getAllExerciseHistories(diary.userId);
     listViewController.addListener(() {
       if (listViewController.position.maxScrollExtent ==
           listViewController.offset) {
         fetch(searchTextController.text);
       }
     });
-    if (isSelectedValue) {
-      selectedValue = meal;
+    if (exerciseType == "CARDIO") {
+      isCardio = true;
     }
   }
 
@@ -70,22 +64,22 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
     isLoading = true;
     // ignore: constant_identifier_names
     String url =
-        "http://127.0.0.1:8000/foods?q=$value&page=$page&per_page=$perPage";
+        "http://127.0.0.1:8000/exercises?q=${value}%2BexerciseType%3A${exerciseType}&default_operator=and&page=$page&per_page=$perPage";
     // ignore: non_constant_identifier_names
-    Response get_food_response = await get(
+    Response get_exercise_response = await get(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
     );
-    if (get_food_response.body.isNotEmpty) {
-      List<dynamic> listNewFoods = jsonDecode(get_food_response.body);
+    if (get_exercise_response.body.isNotEmpty) {
+      List<dynamic> listNewExercises = jsonDecode(get_exercise_response.body);
       setState(() {
         page++;
         isLoading = false;
-        if (listNewFoods.length < perPage) {
+        if (listNewExercises.length < perPage) {
           hasMore = false;
         }
-        for (int i = 0; i < listNewFoods.length; i++) {
-          listFoods.add(Food.fromJson(listNewFoods[i]));
+        for (int i = 0; i < listNewExercises.length; i++) {
+          listExercises.add(Exercise.fromJson(listNewExercises[i]));
         }
       });
     }
@@ -110,20 +104,23 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
             color: Colors.black,
           ),
           onPressed: () {
-            if (isSelectedValue == false) {
-              Navigator.pop(context, diary);
-            } else {
-              Navigator.pushReplacement(
-                  context,
-                  MaterialPageRoute(
-                      builder: (context) => DiaryScreen(
-                            name: "",
-                            diary: diary,
-                          )));
-            }
+            Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => DiaryScreen(
+                          name: "",
+                          diary: diary,
+                        )));
           },
         ),
-        title: dropdownButtonTitle(),
+        title: const Text(
+          "Exercise",
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w800,
+            fontSize: 26,
+          ),
+        ),
         centerTitle: true,
       ),
       body: Column(
@@ -145,13 +142,13 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                 textInputAction: TextInputAction.search,
                 onSubmitted: (value) {
                   setState(() {
-                    listFoods = [];
+                    listExercises = [];
                     isLoading = false;
                     hasMore = true;
                     page = 2;
                     isShowHistory = false;
                   });
-                  getAllFoods(value);
+                  getAllExercises(value);
                 },
                 controller: searchTextController,
                 textAlign: TextAlign.start,
@@ -159,7 +156,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                   hintStyle: const TextStyle(
                     fontSize: 16,
                   ),
-                  hintText: "Search for a food",
+                  hintText: "Search for exercises",
                   icon: SvgPicture.asset(
                     "assets/icons/search.svg",
                     color: Colors.black87,
@@ -185,7 +182,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Center(
                         child: Text(
-                          "Food History",
+                          "Exercise History",
                           style: TextStyle(
                               fontSize: 22, fontWeight: FontWeight.bold),
                         ),
@@ -195,7 +192,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                       padding: EdgeInsets.symmetric(vertical: 10),
                       child: Center(
                         child: Text(
-                          "Food",
+                          "Exercise",
                           style: TextStyle(
                               fontSize: 22, fontWeight: FontWeight.bold),
                         ),
@@ -207,12 +204,14 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
             width: size.width * 0.96,
             child: isShowHistory
                 ? RefreshIndicator(
-                    onRefresh: () => getAllFoodHistories(diary.userId),
+                    onRefresh: () => getAllExerciseHistories(
+                      diary.userId,
+                    ),
                     child: ListView.builder(
                       controller: listViewController,
-                      itemCount: listFoodHistories.length + 1,
+                      itemCount: listExerciseHistories.length + 1,
                       itemBuilder: (context, index) {
-                        if (listFoodHistories.isEmpty) {
+                        if (listExerciseHistories.isEmpty) {
                           return const Padding(
                             padding: EdgeInsets.symmetric(vertical: 32),
                             child: Center(
@@ -220,8 +219,8 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                             ),
                           );
                         }
-                        if (index < listFoodHistories.length) {
-                          final item = listFoodHistories[index].food;
+                        if (index < listExerciseHistories.length) {
+                          final item = listExerciseHistories[index].exercise;
                           return Card(
                             color: const Color.fromARGB(220, 255, 255, 255),
                             shadowColor: Colors.grey,
@@ -237,7 +236,10 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                                     )),
                               ),
                               subtitle: Text(
-                                  "${item.calories} calories, ${item.unit}",
+                                  isCardio
+                                      ? "Burn ${item.burnedCalories} calories per hour"
+                                      : ""
+                                          "Burn ${item.burnedCalories} calories per set",
                                   style: const TextStyle(
                                     fontSize: 14,
                                     fontWeight: FontWeight.w300,
@@ -245,7 +247,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                               trailing: InkWell(
                                 borderRadius: BorderRadius.circular(29),
                                 onTap: () {
-                                  addFood(item.id);
+                                  _showDialog(context, item.id);
                                 },
                                 child: const Icon(
                                   Icons.add_circle_rounded,
@@ -262,9 +264,9 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                   )
                 : ListView.builder(
                     controller: listViewController,
-                    itemCount: listFoods.length + 1,
+                    itemCount: listExercises.length + 1,
                     itemBuilder: (context, index) {
-                      if (listFoods.isEmpty) {
+                      if (listExercises.isEmpty) {
                         if (isShowHistory == false) {
                           return const Padding(
                             padding: EdgeInsets.symmetric(vertical: 32),
@@ -276,8 +278,8 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                           return null;
                         }
                       }
-                      if (index < listFoods.length) {
-                        final item = listFoods[index];
+                      if (index < listExercises.length) {
+                        final item = listExercises[index];
                         return Card(
                           color: const Color.fromARGB(220, 255, 255, 255),
                           shadowColor: Colors.grey,
@@ -292,16 +294,19 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                                     fontWeight: FontWeight.w400,
                                   )),
                             ),
-                            subtitle:
-                                Text("${item.calories} calories, ${item.unit}",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                    )),
+                            subtitle: Text(
+                                isCardio
+                                    ? "Burn ${item.burnedCalories} calories per hour"
+                                    : ""
+                                        "Burn ${item.burnedCalories} calories per set",
+                                style: const TextStyle(
+                                  fontSize: 14,
+                                  fontWeight: FontWeight.w300,
+                                )),
                             trailing: InkWell(
                               borderRadius: BorderRadius.circular(29),
                               onTap: () {
-                                addFood(item.id);
+                                _showDialog(context, item.id);
                               },
                               child: const Icon(
                                 Icons.add_circle_rounded,
@@ -329,118 +334,89 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
     );
   }
 
-  DropdownButtonHideUnderline dropdownButtonTitle() {
-    return DropdownButtonHideUnderline(
-      child: DropdownButton2(
-        buttonStyleData: const ButtonStyleData(
-            decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(Radius.circular(28)))),
-        value: selectedValue,
-        hint: const Text(
-          "Select a Meal",
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w800,
-            fontSize: 20,
-          ),
-        ),
-        items: itemsList
-            .map((item) => DropdownMenuItem(
-                  value: item,
-                  alignment: AlignmentDirectional.centerStart,
-                  child: Text(item),
-                ))
-            .toList(),
-        onChanged: (value) {
-          setState(() {
-            selectedValue = value;
-          });
-        },
-        style: const TextStyle(
-            color: Colors.black, fontWeight: FontWeight.w800, fontSize: 20),
-        focusNode: FocusNode(canRequestFocus: false),
-        dropdownStyleData: DropdownStyleData(
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(14),
-          ),
-        ),
-        menuItemStyleData: const MenuItemStyleData(),
-      ),
-    );
-  }
-
-  Future<void> addFood(String foodId) async {
-    if (selectedValue == null) {
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-          "You have to select a meal",
-          textAlign: TextAlign.center,
-        ),
-        duration: Duration(seconds: 1),
-      ));
-    } else {
-      switch (selectedValue) {
-        case "Breakfast":
-          mealId = diary.breakfastId;
-          break;
-        case "Lunch":
-          mealId = diary.lunchId;
-          break;
-        case "Dining":
-          mealId = diary.diningId;
-          break;
-        default:
-          mealId = diary.breakfastId;
-      }
-      try {
-        Response postFoodDiaryResponse = await post(
-          Uri.parse("http://127.0.0.1:8000/fooddiaries"),
-          body: jsonEncode({"mealId": mealId, "foodId": foodId, "quantity": 1}),
-          headers: {'Content-Type': 'application/json'},
-        );
-        if (postFoodDiaryResponse.statusCode == 201) {
-          var diaryBody = jsonDecode(postFoodDiaryResponse.body)['diary'];
-          Diary newDiary = Diary.fromJson(diaryBody);
-          setState(() {
-            diary = newDiary;
-          });
-          // ignore: use_build_context_synchronously
+  Future<bool> addExercise(String strPracticeTime, String exerciseId) async {
+    if (strPracticeTime.isNotEmpty &&
+        strPracticeTime != "0" &&
+        exerciseId.isNotEmpty) {
+      int practiceTime = int.parse(strPracticeTime);
+      if ((practiceTime <= 50 && exerciseType == "STRENGTH") ||
+          (practiceTime <= 480 && exerciseType == "CARDIO")) {
+        try {
+          Response postExerciseDiaryResponse = await post(
+            Uri.parse("http://127.0.0.1:8000/exercisediaries"),
+            body: jsonEncode({
+              "exerciseId": exerciseId,
+              "diaryId": diary.id,
+              "practiceTime": practiceTime
+            }),
+            headers: {'Content-Type': 'application/json'},
+          );
+          if (postExerciseDiaryResponse.statusCode == 201) {
+            var diaryBody = jsonDecode(postExerciseDiaryResponse.body)['diary'];
+            Diary newDiary = Diary.fromJson(diaryBody);
+            setState(() {
+              diary = newDiary;
+            });
+            // ignore: use_build_context_synchronously
+            ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+              content: Text(
+                "Exercise added successfully",
+                textAlign: TextAlign.center,
+              ),
+              duration: Duration(seconds: 1),
+            ));
+            return true;
+          }
+        } catch (e) {
           ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
             content: Text(
-              "Food added successfully",
+              "Something wrong",
               textAlign: TextAlign.center,
             ),
             duration: Duration(seconds: 1),
           ));
         }
-      } catch (e) {
+      } else {
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-            content: Text(
-          "Something wrong",
-          textAlign: TextAlign.center,
-        )));
+          content: Text(
+            "Practice times < 50 times || practice minutes < 480 minutes",
+            textAlign: TextAlign.center,
+          ),
+          duration: Duration(seconds: 2),
+        ));
       }
+    } else {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          "Practice times/minutes cannot be empty or equal to 0",
+          textAlign: TextAlign.center,
+        ),
+        duration: Duration(seconds: 2),
+      ));
     }
+    return false;
   }
 
-  Future<List<Food>> getAllFoods(String value) async {
+  Future<List<Exercise>> getAllExercises(String value) async {
     if (value.isNotEmpty) {
-      String uri = "http://127.0.0.1:8000/foods?q=$value&page=1&per_page=10";
+      String uri =
+          "http://127.0.0.1:8000/exercises?q=${value}%2BexerciseType%3A${exerciseType}&default_operator=and&page=1&per_page=10";
       try {
         // ignore: non_constant_identifier_names
-        Response get_food_response = await get(
+        Response get_exercise_response = await get(
           Uri.parse(uri),
           headers: {'Content-Type': 'application/json'},
         );
-        if (get_food_response.statusCode == 200) {
+        if (get_exercise_response.statusCode == 200) {
           setState(() {
             // ignore: non_constant_identifier_names
-            List<dynamic> get_food_response_body =
-                jsonDecode(get_food_response.body);
-            for (int i = 0; i < get_food_response_body.length; i++) {
-              listFoods.add(Food.fromJson(get_food_response_body[i]));
+            List<dynamic> get_exercise_response_body =
+                jsonDecode(get_exercise_response.body);
+            for (int i = 0; i < get_exercise_response_body.length; i++) {
+              listExercises
+                  .add(Exercise.fromJson(get_exercise_response_body[i]));
             }
-            if (listFoods.length < perPage) {
+            if (listExercises.length < perPage) {
               hasMore = false;
             }
           });
@@ -448,7 +424,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
           // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-            get_food_response.body,
+            get_exercise_response.body,
             textAlign: TextAlign.center,
           )));
         }
@@ -466,33 +442,36 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
         textAlign: TextAlign.center,
       )));
     }
-    return listFoods;
+    return listExercises;
   }
 
-  Future<void> getAllFoodHistories(String userId) async {
+  Future<void> getAllExerciseHistories(String userId) async {
     if (userId.isNotEmpty) {
-      String uri = "http://127.0.0.1:8000/foodhistories/$userId";
+      String uri =
+          "http://127.0.0.1:8000/exercisehistories/$userId/$exerciseType";
       try {
         // ignore: non_constant_identifier_names    print("step1");
-        Response get_food_history_response = await get(
+        Response get_exercise_history_response = await get(
           Uri.parse(uri),
           headers: {'Content-Type': 'application/json'},
         );
-        if (get_food_history_response.statusCode == 200) {
+        if (get_exercise_history_response.statusCode == 200) {
           setState(() {
             // ignore: non_constant_identifier_names
-            List<dynamic> get_food__history_response_body =
-                jsonDecode(get_food_history_response.body);
-            for (int i = 0; i < get_food__history_response_body.length; i++) {
-              listFoodHistories.add(
-                  FoodHistory.fromJson(get_food__history_response_body[i]));
+            List<dynamic> get_exercise_history_response_body =
+                jsonDecode(get_exercise_history_response.body);
+            for (int i = 0;
+                i < get_exercise_history_response_body.length;
+                i++) {
+              listExerciseHistories.add(ExerciseHistory.fromJson(
+                  get_exercise_history_response_body[i]));
             }
           });
         } else {
           // ignore: use_build_context_synchronously
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
-            get_food_history_response.body,
+            get_exercise_history_response.body,
             textAlign: TextAlign.center,
           )));
         }
@@ -510,5 +489,45 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
         textAlign: TextAlign.center,
       )));
     }
+  }
+
+  Future<void> _showDialog(BuildContext context, String exerciseId) {
+    return showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) {
+          return AlertDialog(
+            title: const Text(
+              "Enter your practice times/minutes",
+              style: TextStyle(fontSize: 24),
+            ),
+            content: TextFormField(
+              controller: exerciseController,
+              keyboardType: TextInputType.number,
+              inputFormatters: <TextInputFormatter>[
+                FilteringTextInputFormatter.digitsOnly
+              ],
+              decoration: const InputDecoration(
+                hintText: "times for strength/minutes for cardio",
+              ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                  onPressed: () {
+                    addExercise(exerciseController.text.toString(), exerciseId)
+                        .then((value) => {
+                              if (value == true) {Navigator.of(context).pop()}
+                            });
+                  },
+                  child: const Text("OK", style: TextStyle(fontSize: 20))),
+              TextButton(
+                  onPressed: () {
+                    exerciseController.clear();
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text("Cancel", style: TextStyle(fontSize: 20)))
+            ],
+          );
+        });
   }
 }

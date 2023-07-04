@@ -59,7 +59,7 @@ class ButtonNavBar extends StatelessWidget {
               },
             ),
             BottomNavItem(
-              title: "Settings",
+              title: "Profile",
               svgScr: "assets/icons/Settings.svg",
               isActive: isSettingActive,
               press: () {},

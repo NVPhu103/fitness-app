@@ -1,11 +1,14 @@
 // ignore_for_file: no_logic_in_create_state
 
+import 'dart:convert';
+
 import 'package:fitness_app/screen/dashboard/components/button_navigation_bar.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/search_food/search_food_screen.dart';
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:http/http.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
 
 // ignore: must_be_immutable
@@ -57,11 +60,14 @@ class DashboardPage extends StatefulWidget {
 class _DashboardPageState extends State<DashboardPage> {
   String name;
   Diary diary;
+  int totalCaloriesOfFoodDiaries = 0;
+  int burnedCaloriesOfExerciseDiaries = 0;
   _DashboardPageState(this.name, this.diary);
 
   @override
   void initState() {
     name = changeName(name);
+    getAllCalories();
     super.initState();
   }
 
@@ -73,6 +79,20 @@ class _DashboardPageState extends State<DashboardPage> {
       return "Sir";
     }
     return "Sir";
+  }
+
+  Future<void> getAllCalories() async{
+    String url =
+        "http://127.0.0.1:8000/diaries/calories/${diary.userId}?date=${diary.date}";
+    Response response = await get(
+      Uri.parse(url),
+      headers: {'Content-Type': 'application/json'},
+    );
+    var responseBody = jsonDecode(response.body);
+    setState(() {
+      totalCaloriesOfFoodDiaries = responseBody['totalCaloriesOfFoodDiaries'];
+      burnedCaloriesOfExerciseDiaries = responseBody['burnedCaloriesOfExerciseDiaries'];
+    });
   }
 
   @override
@@ -163,6 +183,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       }
                       setState(() {
                         diary = value;
+                        getAllCalories();
                       });
                     },
                   ),
@@ -245,13 +266,13 @@ class _DashboardPageState extends State<DashboardPage> {
                         ),
                         RowBehindGauge(
                           text: "Food",
-                          data: diary.totalCaloriesIntake,
+                          data: totalCaloriesOfFoodDiaries,
                           icons: Icons.food_bank,
                           iconColor: Colors.blue,
                         ),
-                        const RowBehindGauge(
+                        RowBehindGauge(
                           text: "Exercise",
-                          data: 0,
+                          data: burnedCaloriesOfExerciseDiaries,
                           icons: Icons.fitness_center,
                           iconColor: Colors.orange,
                         ),
