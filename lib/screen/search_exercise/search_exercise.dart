@@ -6,6 +6,7 @@ import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
 import 'package:fitness_app/screen/search_exercise/components/exercise.dart';
 import 'package:fitness_app/screen/search_exercise/components/exercise_history.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,20 +16,23 @@ import 'package:http/http.dart';
 class SearchExerciseScreen extends StatefulWidget {
   final Diary diary;
   final String exerciseType;
+  final UserProfile userProfile;
 
   const SearchExerciseScreen({
     super.key,
     required this.diary,
     required this.exerciseType,
+    required this.userProfile,
   });
 
   @override
   State<SearchExerciseScreen> createState() =>
-      _SearchExerciseScreenState(diary, exerciseType);
+      _SearchExerciseScreenState(diary, exerciseType, userProfile);
 }
 
 class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
   Diary diary;
+  UserProfile userProfile;
   String exerciseType;
   bool isCardio = false;
   List<Exercise> listExercises = [];
@@ -42,7 +46,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
   bool isShowHistory = true;
   TextEditingController exerciseController = TextEditingController();
 
-  _SearchExerciseScreenState(this.diary, this.exerciseType);
+  _SearchExerciseScreenState(this.diary, this.exerciseType, this.userProfile);
 
   @override
   void initState() {
@@ -110,6 +114,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
                     builder: (context) => DiaryScreen(
                           name: "",
                           diary: diary,
+                          userProfile: userProfile,
                         )));
           },
         ),

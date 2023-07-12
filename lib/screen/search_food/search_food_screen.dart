@@ -7,6 +7,7 @@ import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
 import 'package:fitness_app/screen/search_food/components/food.dart';
 import 'package:fitness_app/screen/search_food/components/food_history.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
@@ -14,21 +15,24 @@ import 'package:http/http.dart';
 // ignore: must_be_immutable
 class SearchFoodScreen extends StatefulWidget {
   final Diary diary;
+  final UserProfile userProfile;
   bool isSelectedValue;
   String? meal;
   SearchFoodScreen(
       {super.key,
       required this.diary,
+      required this.userProfile,
       this.isSelectedValue = false,
       this.meal});
 
   @override
   State<SearchFoodScreen> createState() =>
-      _SearchFoodScreenState(diary, isSelectedValue, meal);
+      _SearchFoodScreenState(diary, isSelectedValue, meal, userProfile);
 }
 
 class _SearchFoodScreenState extends State<SearchFoodScreen> {
   Diary diary;
+  UserProfile userProfile;
   final List<String> itemsList = [
     'Breakfast',
     'Lunch',
@@ -48,7 +52,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
   List<FoodHistory> listFoodHistories = [];
   bool isShowHistory = true;
 
-  _SearchFoodScreenState(this.diary, this.isSelectedValue, this.meal);
+  _SearchFoodScreenState(this.diary, this.isSelectedValue, this.meal, this.userProfile);
 
   @override
   void initState() {
@@ -119,6 +123,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                       builder: (context) => DiaryScreen(
                             name: "",
                             diary: diary,
+                            userProfile: userProfile,
                           )));
             }
           },

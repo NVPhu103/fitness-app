@@ -1,6 +1,8 @@
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
+import 'package:fitness_app/screen/user_profile/edit_user_profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter_svg/svg.dart';
@@ -12,6 +14,7 @@ class ButtonNavBar extends StatelessWidget {
   bool isDiaryActive;
   bool isSettingActive;
   Diary diary;
+  UserProfile userProfile;
 
   ButtonNavBar(
       {super.key,
@@ -19,7 +22,8 @@ class ButtonNavBar extends StatelessWidget {
       this.isDiaryActive = false,
       this.isSettingActive = false,
       required this.diary,
-      required this.name});
+      required this.name,
+      required this.userProfile});
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +45,7 @@ class ButtonNavBar extends StatelessWidget {
                         builder: (context) => Dashboard(
                               name: name,
                               diary: diary,
+                              userProfile: userProfile,
                             )));
               },
             ),
@@ -55,6 +60,7 @@ class ButtonNavBar extends StatelessWidget {
                         builder: (context) => DiaryScreen(
                               name: name,
                               diary: diary,
+                              userProfile: userProfile,
                             )));
               },
             ),
@@ -62,7 +68,16 @@ class ButtonNavBar extends StatelessWidget {
               title: "Profile",
               svgScr: "assets/icons/Settings.svg",
               isActive: isSettingActive,
-              press: () {},
+              press: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => EditUserprofileScreen(
+                              name: name,
+                              diary: diary,
+                              userProfile: userProfile,
+                            )));
+              },
             ),
           ]),
     );

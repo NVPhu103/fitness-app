@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/goal/set_goal_screen_1.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 
@@ -48,11 +49,14 @@ class LoginForm extends StatelessWidget {
         var diaryBody = jsonDecode(diaryResponse.body);
         Diary diary = Diary.fromJson(diaryBody);
         String gender = body['userProfile']['gender'];
+        var userProfileBody = body['userProfile'];
+        UserProfile userProfile = UserProfile.fromJson(userProfileBody);
         Navigator.push(
             context,
             MaterialPageRoute(
                 builder: (context) => Dashboard(name: gender,
                       diary: diary,
+                      userProfile: userProfile,
                     )));
       } else {
         var body = jsonDecode(response.body);

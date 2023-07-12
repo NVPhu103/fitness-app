@@ -8,6 +8,7 @@ import 'package:fitness_app/screen/diary/components/exercise_diary.dart';
 import 'package:fitness_app/screen/diary/components/food_diary.dart';
 import 'package:fitness_app/screen/search_exercise/search_exercise.dart';
 import 'package:fitness_app/screen/search_food/search_food_screen.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -16,16 +17,17 @@ import 'package:http/http.dart';
 class DiaryScreen extends StatefulWidget {
   final String name;
   Diary diary;
-
-  DiaryScreen({super.key, required this.diary, required this.name});
+  UserProfile userProfile;
+  DiaryScreen({super.key, required this.diary, required this.name, required this.userProfile});
 
   @override
-  State<DiaryScreen> createState() => _DiaryScreenState(name, diary);
+  State<DiaryScreen> createState() => _DiaryScreenState(name, diary, userProfile);
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
   final String name;
   Diary diary;
+  UserProfile userProfile;
   late String date;
   String? remainingCalories;
   List<FoodDiary> listBreakfast = [];
@@ -37,7 +39,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
   int foodTotalCalories = 0;
   List<ExerciseDiary> listExercicse = [];
   int exerciseBurnedCalories = 0;
-  _DiaryScreenState(this.name, this.diary);
+  _DiaryScreenState(this.name, this.diary, this.userProfile);
 
   @override
   void initState() {
@@ -156,6 +158,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       date = getDate(diary.date);
       remainingCalories = calculateRemainingCalories();
       getFoodDiary(diary);
+      getExerciseDiary(diary);
     });
   }
 
@@ -165,6 +168,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       listDining = [];
       listLunch = [];
       listExercicse = [];
+      foodTotalCalories = 0;
     });
   }
 
@@ -177,6 +181,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
         name: name,
         isDiaryActive: true,
         diary: diary,
+        userProfile: userProfile,
       ),
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 243, 240, 240),
@@ -399,6 +404,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           diary: diary,
                           isSelectedValue: true,
                           meal: meal,
+                          userProfile: userProfile,
                         )));
           },
         ),
@@ -535,6 +541,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       builder: (context) => SearchExerciseScreen(
                             diary: diary,
                             exerciseType: "CARDIO",
+                            userProfile: userProfile,
                           )))
             }
           else if (value == "STRENGTH")
@@ -545,6 +552,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                       builder: (context) => SearchExerciseScreen(
                             diary: diary,
                             exerciseType: "STRENGTH",
+                            userProfile: userProfile,
                           )))
             }
         });

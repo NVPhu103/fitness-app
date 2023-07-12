@@ -5,6 +5,7 @@ import 'dart:convert';
 import 'package:fitness_app/screen/dashboard/components/button_navigation_bar.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/search_food/search_food_screen.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -15,18 +16,18 @@ import 'package:syncfusion_flutter_gauges/gauges.dart';
 class Dashboard extends StatefulWidget {
   final String name;
   Diary diary;
-
-  Dashboard({super.key, required this.diary, required this.name});
+  UserProfile userProfile;
+  Dashboard({super.key, required this.diary, required this.name, required this.userProfile});
 
   @override
-  State<Dashboard> createState() => _DashboardState(name, diary);
+  State<Dashboard> createState() => _DashboardState(name, diary, userProfile);
 }
 
 class _DashboardState extends State<Dashboard> {
   final String name;
   Diary diary;
-
-  _DashboardState(this.name, this.diary);
+  UserProfile userProfile;
+  _DashboardState(this.name, this.diary, this.userProfile);
 
   @override
   Widget build(BuildContext context) {
@@ -41,6 +42,7 @@ class _DashboardState extends State<Dashboard> {
       home: DashboardPage(
         name: name,
         diary: diary,
+        userProfile: userProfile,
       ),
     );
   }
@@ -50,19 +52,20 @@ class _DashboardState extends State<Dashboard> {
 class DashboardPage extends StatefulWidget {
   final String name;
   Diary diary;
-
-  DashboardPage({super.key, required this.diary, required this.name});
+  UserProfile userProfile;
+  DashboardPage({super.key, required this.diary, required this.name, required this.userProfile});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState(name, diary);
+  State<DashboardPage> createState() => _DashboardPageState(name, diary, userProfile);
 }
 
 class _DashboardPageState extends State<DashboardPage> {
   String name;
   Diary diary;
+  UserProfile userProfile;
   int totalCaloriesOfFoodDiaries = 0;
   int burnedCaloriesOfExerciseDiaries = 0;
-  _DashboardPageState(this.name, this.diary);
+  _DashboardPageState(this.name, this.diary, this.userProfile);
 
   @override
   void initState() {
@@ -104,6 +107,7 @@ class _DashboardPageState extends State<DashboardPage> {
         name: name,
         isDashboardActive: true,
         diary: diary,
+        userProfile: userProfile,
       ),
       body: Stack(children: <Widget>[
         Container(
@@ -177,6 +181,7 @@ class _DashboardPageState extends State<DashboardPage> {
                           MaterialPageRoute(
                               builder: (context) => SearchFoodScreen(
                                     diary: diary,
+                                    userProfile: userProfile,
                                   )));
                       if (!mounted) {
                         return;

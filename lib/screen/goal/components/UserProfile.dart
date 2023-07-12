@@ -1,19 +1,5 @@
 
 
-class UserProfile {
-  String userId;  //have
-  String gender;  //have
-  double currentWeight;
-  double height;
-  double desiredWeight;
-  int yearOfBirth;
-  String activityLevel; //have
-  
-
-  UserProfile(this.userId, this.gender, this.currentWeight, this.height,
-      this.desiredWeight, this.yearOfBirth, this.activityLevel);
-
-}
 
 
 // ignore: constant_identifier_names

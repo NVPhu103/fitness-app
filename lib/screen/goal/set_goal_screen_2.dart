@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/goal/components/UserProfile.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
@@ -112,12 +113,14 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           var diaryBody = jsonDecode(diaryResponse.body);
           Diary diary = Diary.fromJson(diaryBody);
           String gender = body['gender'];
+          UserProfile userProfile = UserProfile.fromJson(body);
           // ignore: use_build_context_synchronously
           Navigator.push(
               context,
               MaterialPageRoute(
                   builder: (context) => Dashboard(name: gender,
                         diary: diary,
+                        userProfile: userProfile,
                       )));
         } else {
           var body = jsonDecode(response.body);
