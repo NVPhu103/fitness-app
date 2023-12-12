@@ -64,65 +64,133 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
           )
         ],
       ),
-      body: Column(
-        children: [
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              customText("Starting weight", 24),
-              TextButton(
-                  onPressed: () {},
-                  child: customText(userProfile.startingWeight.toString(), 24))
-            ],
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              customText("Current weight", 24),
-              TextButton(
-                  onPressed: () {},
-                  child: customText(userProfile.currentWeight.toString(), 24))
-            ],
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              customText("   Goal weight   ", 24),
-              TextButton(
-                  onPressed: () {},
-                  child: customText(userProfile.desiredWeight.toString(), 24))
-            ],
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          Row(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: <Widget>[
-              customText("Starting weight", 24),
-              TextButton(
-                  onPressed: () {},
-                  child: customText(userProfile.startingWeight.toString(), 24))
-            ],
-          )
-        ],
+      body: Container(
+        color: const Color.fromARGB(255, 236, 236, 236),
+        child: Column(
+          children: [
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Starting weight", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(
+                              userProfile.startingWeight.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.004,
+            ),
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Current weight", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(
+                              userProfile.currentWeight.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.004,
+            ),
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Goal weight", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(
+                              userProfile.desiredWeight.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.004,
+            ),
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Goal", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(userProfile.goal.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.004,
+            ),
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Activity Level", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(
+                              userProfile.activityLevel.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -135,6 +203,13 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
         fontSize: size,
         fontWeight: fontWeight,
       ),
+    );
+  }
+
+  SizedBox spacingSizedBox(Size size) {
+    return SizedBox(
+      height: size.height * 0.004,
+      child: Container(color: const Color.fromARGB(255, 236, 236, 236)),
     );
   }
 }

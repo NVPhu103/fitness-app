@@ -18,9 +18,7 @@ from fitness_api.db.model import BaseModel
 
 logger = logging.getLogger(__name__)
 
-QSTRING_SYNTAX_HELP = (
-    "https://confluence.zonarsystems.net/display/VHDS/Entity+API+Query+String+Syntax"
-)
+QSTRING_SYNTAX_HELP = ""
 INVALID_SEARCH_PARAM = "a84c062c"  # Invalid search param
 
 

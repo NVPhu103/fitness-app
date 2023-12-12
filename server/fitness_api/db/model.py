@@ -334,3 +334,111 @@ class ExerciseHistory(BaseModel):
     )
 
     __table_args__ = (UniqueConstraint(user_id, exercise_id),)
+
+
+class Nutrition(BaseModel):
+    food_id: UUID = Column(
+        SqlUUID(as_uuid=True), ForeignKey("food.id"), primary_key=True, nullable=False, index=True,
+    )
+    calories: int = Column(Integer, nullable=False)
+    protein: float = Column(
+        Float, nullable=True, default=0
+    )
+    total_fat: float = Column(
+        Float, CheckConstraint("total_fat >= 0"), nullable=True, default=0
+    )
+    cholesterol: int = Column(
+        Integer, CheckConstraint("cholesterol >= 0"), nullable=True, default=0
+    )
+    carbohydrate: float = Column(
+        Float, CheckConstraint("carbohydrate >= 0"), nullable=True, default=0
+    )
+    sugars: float = Column(
+        Float, CheckConstraint("sugars >= 0"), nullable=True, default=0
+    )
+    dietary_fiber: float = Column(
+        Float, CheckConstraint("dietary_fiber >= 0"), nullable=True, default=0
+    )
+    vitamin_a: int = Column(
+        Integer, CheckConstraint("vitamin_a >= 0"), nullable=True, default=0
+    )
+    vitamin_b_1: int = Column(
+        Integer, CheckConstraint("vitamin_b_1 >= 0"), nullable=True, default=0
+    )
+    vitamin_b_2: int = Column(
+        Integer, CheckConstraint("vitamin_b_2 >= 0"), nullable=True, default=0
+    )
+    vitamin_b_6: int = Column(
+        Integer, CheckConstraint("vitamin_b_6 >= 0"), nullable=True, default=0
+    )
+    vitamin_b_9: int = Column(
+        Integer, CheckConstraint("vitamin_b_9 >= 0"), nullable=True, default=0
+    )
+    vitamin_b_12: int = Column(
+        Integer, CheckConstraint("vitamin_b_12 >= 0"), nullable=True, default=0
+    )
+    vitamin_c: int = Column(
+        Integer, CheckConstraint("vitamin_c >= 0"), nullable=True, default=0
+    )
+    vitamin_d: int = Column(
+        Integer, CheckConstraint("vitamin_d >= 0"), nullable=True, default=0
+    )
+    vitamin_e: int = Column(
+        Integer, CheckConstraint("vitamin_e >= 0"), nullable=True, default=0
+    )
+    vitamin_k: int = Column(
+        Integer, CheckConstraint("vitamin_k >= 0"), nullable=True, default=0
+    )
+    canxi: int = Column(
+        Integer, CheckConstraint("canxi >= 0"), nullable=True, default=0
+    )
+    phospho: int = Column(
+        Integer, CheckConstraint("phospho >= 0"), nullable=True, default=0
+    )
+    fe: int = Column(Integer, CheckConstraint("fe >= 0"), nullable=True, default=0)
+    magie: int = Column(
+        Integer, CheckConstraint("magie >= 0"), nullable=True, default=0
+    )
+    zn: int = Column(Integer, CheckConstraint("zn >= 0"), nullable=True, default=0)
+    natri: int = Column(
+        Integer, CheckConstraint("natri >= 0"), nullable=True, default=0
+    )
+    iod: int = Column(Integer, CheckConstraint("iod >= 0"), nullable=True, default=0)
+    omega_3: int = Column(
+        Integer, CheckConstraint("omega_3 >= 0"), nullable=True, default=0
+    )
+    omega_6: int = Column(
+        Integer, CheckConstraint("omega_6 >= 0"), nullable=True, default=0
+    )
+    omega_9: int = Column(
+        Integer, CheckConstraint("omega_9 >= 0"), nullable=True, default=0
+    )
+
+    __table_args__ = (
+        CheckConstraint(protein >= 0),
+        CheckConstraint(total_fat >= 0),
+        CheckConstraint(cholesterol >= 0),
+        CheckConstraint(carbohydrate >= 0),
+        CheckConstraint(sugars >= 0),
+        CheckConstraint(dietary_fiber >= 0),
+        CheckConstraint(vitamin_a >= 0),
+        CheckConstraint(vitamin_b_1 >= 0),
+        CheckConstraint(vitamin_b_2 >= 0),
+        CheckConstraint(vitamin_b_6 >= 0),
+        CheckConstraint(vitamin_b_9 >= 0),
+        CheckConstraint(vitamin_b_12 >= 0),
+        CheckConstraint(vitamin_c >= 0),
+        CheckConstraint(vitamin_d >= 0),
+        CheckConstraint(vitamin_e >= 0),
+        CheckConstraint(vitamin_k >= 0),
+        CheckConstraint(canxi >= 0),
+        CheckConstraint(phospho >= 0),
+        CheckConstraint(fe >= 0),
+        CheckConstraint(magie >= 0),
+        CheckConstraint(zn >= 0),
+        CheckConstraint(natri >= 0),
+        CheckConstraint(iod >= 0),
+        CheckConstraint(omega_3 >= 0),
+        CheckConstraint(omega_6 >= 0),
+        CheckConstraint(omega_9 >= 0),
+    )

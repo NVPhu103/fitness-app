@@ -12,22 +12,28 @@ from fitness_api.schemas.food import (
     PatchFoodModel,
     PostFoodModel,
 )
+from fitness_api.schemas.nutrition import PostNutritionModel
 from fitness_api.db.model import Food
 from fitness_api.lib.paging import DEFAULT_PAGE_NUMBER, DEFAULT_PAGE_SIZE
 from fitness_api.lib.paging.types import PagedResultSet
 from fitness_api.lib.paging.utils import count_query, paginate_query
 from fitness_api.lib.searcher.searcher import SearcherParams, Searcher
+from fitness_api.ctrl.nutrition import create_nutrition
 
 
 async def create_food(post_food_model: PostFoodModel, session: AsyncSession) -> Food:
     try:
-        model = Food(**post_food_model.dict(exclude_unset=True))
-        session.add(model)
-        await session.commit()
-        return model
-    except IntegrityError as error:
+        food = Food(**post_food_model.dict(exclude_unset=True))
+        session.add(food)
+        await session.flush()
+        post_nutrition_model = PostNutritionModel(
+            **{"food_id": food.id, "calories": food.calories}
+        )
+        await create_nutrition(post_nutrition_model, session)
+        return food
+    except IntegrityError as err:
         await session.rollback()
-        raise HTTPException(detail="Food already exists", status_code=409) from error
+        raise HTTPException(detail=f"{err}", status_code=409)
 
 
 async def list_all_foods(

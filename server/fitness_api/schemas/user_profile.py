@@ -68,16 +68,11 @@ class PostUserProfileModel(BaseUserProfileModel):
 
 
 class PatchUserProfileModel(BaseModelWithConfig):
-    gender: Optional[UserProfileGender] = (Field(None, title="the user's sex"),)
     current_weight: Optional[float] = Field(
         None, title="The current weight of the User", alias="currentWeight"
     )
-    height: Optional[float] = Field(None, title="The height of the user")
     desired_weight: Optional[float] = Field(
         None, title="The weight that the user wants to achieve", alias="desiredWeight"
-    )
-    year_of_birth: Optional[int] = Field(
-        None, title="the year of birth of the user", alias="yearOfBirth"
     )
     activity_level: Optional[UserProfileActivityLevel] = Field(
         None, title="the exercise frequency", alias="activityLevel"
@@ -86,11 +81,8 @@ class PatchUserProfileModel(BaseModelWithConfig):
     class Config(BaseModelWithConfig.Config):
         schema_extra = {
             "example": {
-                "gender": UserProfileGender.FEMALE.value,
                 "current_weight": 78,
                 "desired_weight": 73,
-                "height": 174,
-                "year_of_birth": 1999,
                 "activity_level": UserProfileActivityLevel.ACTIVE.value,
             }
         }

@@ -8,4 +8,5 @@ from . import (
     food_history,
     exercise_diary,
     exercise_history,
+    nutrition
 )

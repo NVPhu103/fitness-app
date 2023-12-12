@@ -1,15 +1,12 @@
 from uuid import UUID
-from fastapi import APIRouter, Depends, Request, Response, status, HTTPException
-from typing import Any, Dict, List, Optional, Union
+from fastapi import APIRouter, Depends, Request, Response, HTTPException
+from typing import Optional
 
-from datetime import datetime
 from sqlalchemy.ext.asyncio import AsyncSession
 from fitness_api.db.depends import create_session
 from fitness_api.schemas.user_profile import (
     UserProfileModel,
     PostUserProfileModel,
-    UserProfileActivityLevel,
-    UserProfileGender,
 )
 from fitness_api import ctrl
 

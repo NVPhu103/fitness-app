@@ -8,6 +8,7 @@ from . import (
     food_history,
     exercise_diary,
     exercise_history,
+    nutrition,
 )
 from fastapi import FastAPI
 
@@ -57,4 +58,9 @@ def configure_routes(app: FastAPI) -> None:
         exercise_history.router,
         tags=exercise_history.TAGS,
         prefix=f"/{exercise_history.PREFIX}",
+    )
+    app.include_router(
+        nutrition.router,
+        tags=nutrition.TAGS,
+        prefix=f"/{nutrition.PREFIX}",
     )
