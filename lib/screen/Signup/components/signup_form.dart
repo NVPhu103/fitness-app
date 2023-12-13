@@ -21,7 +21,7 @@ class SignUpForm extends StatelessWidget {
       String email, String password, String confirmPassword, context) async {
     if (email.isNotEmpty && confirmPassword.isNotEmpty && password.isNotEmpty) {
       Response response = await post(
-        Uri.parse("http://127.0.0.1:8000/users"),
+        Uri.parse("https://fitness-app-e0xl.onrender.com/users"),
         body: jsonEncode({
           'email': email,
           'password': password,

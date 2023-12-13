@@ -74,7 +74,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
     isLoading = true;
     // ignore: constant_identifier_names
     String url =
-        "http://127.0.0.1:8000/foods?q=$value&page=$page&per_page=$perPage";
+        "https://fitness-app-e0xl.onrender.com/foods?q=$value&page=$page&per_page=$perPage";
     // ignore: non_constant_identifier_names
     Response get_food_response = await get(
       Uri.parse(url),
@@ -399,7 +399,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
       }
       try {
         Response postFoodDiaryResponse = await post(
-          Uri.parse("http://127.0.0.1:8000/fooddiaries"),
+          Uri.parse("https://fitness-app-e0xl.onrender.com/fooddiaries"),
           body: jsonEncode({"mealId": mealId, "foodId": foodId, "quantity": 1}),
           headers: {'Content-Type': 'application/json'},
         );
@@ -430,7 +430,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
 
   Future<List<Food>> getAllFoods(String value) async {
     if (value.isNotEmpty) {
-      String uri = "http://127.0.0.1:8000/foods?q=$value&page=1&per_page=10";
+      String uri = "https://fitness-app-e0xl.onrender.com/foods?q=$value&page=1&per_page=10";
       try {
         // ignore: non_constant_identifier_names
         Response get_food_response = await get(
@@ -476,7 +476,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
 
   Future<void> getAllFoodHistories(String userId) async {
     if (userId.isNotEmpty) {
-      String uri = "http://127.0.0.1:8000/foodhistories/$userId";
+      String uri = "https://fitness-app-e0xl.onrender.com/foodhistories/$userId";
       try {
         // ignore: non_constant_identifier_names    print("step1");
         Response get_food_history_response = await get(

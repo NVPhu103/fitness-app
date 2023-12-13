@@ -58,7 +58,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   Future<void> getFoodDiary(Diary diary) async {
     String breakfastUrl =
-        "http://127.0.0.1:8000/fooddiaries/${diary.breakfastId}";
+        "https://fitness-app-e0xl.onrender.com/fooddiaries/${diary.breakfastId}";
     // ignore: non_constant_identifier_names
     Response get_list_breakfast_response = await get(
       Uri.parse(breakfastUrl),
@@ -77,7 +77,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       });
     }
     // Lunch
-    String lunchUrl = "http://127.0.0.1:8000/fooddiaries/${diary.lunchId}";
+    String lunchUrl = "https://fitness-app-e0xl.onrender.com/fooddiaries/${diary.lunchId}";
     // ignore: non_constant_identifier_names
     Response get_list_lunch_response = await get(
       Uri.parse(lunchUrl),
@@ -96,7 +96,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       });
     }
     // Dining
-    String diningUrl = "http://127.0.0.1:8000/fooddiaries/${diary.diningId}";
+    String diningUrl = "https://fitness-app-e0xl.onrender.com/fooddiaries/${diary.diningId}";
     // ignore: non_constant_identifier_names
     Response get_list_dining_response = await get(
       Uri.parse(diningUrl),
@@ -119,7 +119,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
 
   Future<void> getExerciseDiary(Diary diary) async {
     String breakfastUrl =
-        "http://127.0.0.1:8000/exercisediaries/${diary.id}";
+        "https://fitness-app-e0xl.onrender.com/exercisediaries/${diary.id}";
     // ignore: non_constant_identifier_names
     Response get_exercise_diary_response = await get(
       Uri.parse(breakfastUrl),
@@ -148,7 +148,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
           DateTime.parse(diary.date).add(const Duration(days: 1)));
     }
     Response newDiaryResponse = await get(
-      Uri.parse("http://127.0.0.1:8000/diaries/${diary.userId}?date=$newDate"),
+      Uri.parse("https://fitness-app-e0xl.onrender.com/diaries/${diary.userId}?date=$newDate"),
       headers: {'Content-Type': 'application/json'},
     );
     var newDiaryBody = jsonDecode(newDiaryResponse.body);

@@ -88,7 +88,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           goal = "MAINTAIN_WEIGHT";
         }
         Response response = await post(
-          Uri.parse("http://127.0.0.1:8000/userprofiles"),
+          Uri.parse("https://fitness-app-e0xl.onrender.com/userprofiles"),
           body: jsonEncode({
             "user_id": userId,
             "gender": gender,
@@ -107,7 +107,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           String userId = body['userId'];
           String today = getTodayWithYMD();
           Response diaryResponse = await get(
-            Uri.parse("http://127.0.0.1:8000/diaries/$userId?date=$today"),
+            Uri.parse("https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
             headers: {'Content-Type': 'application/json'},
           );
           var diaryBody = jsonDecode(diaryResponse.body);

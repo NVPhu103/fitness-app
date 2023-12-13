@@ -86,7 +86,7 @@ class _DashboardPageState extends State<DashboardPage> {
 
   Future<void> getAllCalories() async{
     String url =
-        "http://127.0.0.1:8000/diaries/calories/${diary.userId}?date=${diary.date}";
+        "https://fitness-app-e0xl.onrender.com/diaries/calories/${diary.userId}?date=${diary.date}";
     Response response = await get(
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},

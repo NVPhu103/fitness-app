@@ -24,7 +24,7 @@ class LoginForm extends StatelessWidget {
   Future<void> login(String email, String password, context) async {
     if (email.isNotEmpty && password.isNotEmpty) {
       Response response = await post(
-        Uri.parse("http://127.0.0.1:8000/users/login"),
+        Uri.parse("https://fitness-app-e0xl.onrender.com/users/login"),
         body: jsonEncode({'email': email, 'password': password}),
         headers: {'Content-Type': 'application/json'},
       );
@@ -43,7 +43,7 @@ class LoginForm extends StatelessWidget {
         String userId = body['id'];
         String today = getTodayWithYMD();
         Response diaryResponse = await get(
-          Uri.parse("http://127.0.0.1:8000/diaries/$userId?date=$today"),
+          Uri.parse("https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
           headers: {'Content-Type': 'application/json'},
         );
         var diaryBody = jsonDecode(diaryResponse.body);

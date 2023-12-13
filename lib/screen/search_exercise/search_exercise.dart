@@ -68,7 +68,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
     isLoading = true;
     // ignore: constant_identifier_names
     String url =
-        "http://127.0.0.1:8000/exercises?q=${value}%2BexerciseType%3A${exerciseType}&default_operator=and&page=$page&per_page=$perPage";
+        "https://fitness-app-e0xl.onrender.com/exercises?q=${value}%2BexerciseType%3A${exerciseType}&default_operator=and&page=$page&per_page=$perPage";
     // ignore: non_constant_identifier_names
     Response get_exercise_response = await get(
       Uri.parse(url),
@@ -348,7 +348,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
           (practiceTime <= 480 && exerciseType == "CARDIO")) {
         try {
           Response postExerciseDiaryResponse = await post(
-            Uri.parse("http://127.0.0.1:8000/exercisediaries"),
+            Uri.parse("https://fitness-app-e0xl.onrender.com/exercisediaries"),
             body: jsonEncode({
               "exerciseId": exerciseId,
               "diaryId": diary.id,
@@ -405,7 +405,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
   Future<List<Exercise>> getAllExercises(String value) async {
     if (value.isNotEmpty) {
       String uri =
-          "http://127.0.0.1:8000/exercises?q=${value}%2BexerciseType%3A${exerciseType}&default_operator=and&page=1&per_page=10";
+          "https://fitness-app-e0xl.onrender.com/exercises?q=${value}%2BexerciseType%3A${exerciseType}&default_operator=and&page=1&per_page=10";
       try {
         // ignore: non_constant_identifier_names
         Response get_exercise_response = await get(
@@ -453,7 +453,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
   Future<void> getAllExerciseHistories(String userId) async {
     if (userId.isNotEmpty) {
       String uri =
-          "http://127.0.0.1:8000/exercisehistories/$userId/$exerciseType";
+          "https://fitness-app-e0xl.onrender.com/exercisehistories/$userId/$exerciseType";
       try {
         // ignore: non_constant_identifier_names    print("step1");
         Response get_exercise_history_response = await get(
