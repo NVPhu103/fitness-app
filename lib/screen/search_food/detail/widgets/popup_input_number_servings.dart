@@ -31,6 +31,12 @@ class _PopupInputNumBerServingsState extends State<PopupInputNumBerServings> {
   String text = '';
 
   @override
+  void initState() {
+    super.initState();
+    text = widget.initValue;
+  }
+
+  @override
   Widget build(BuildContext context) {
     return TitleBottomSheetAutoHeightWrapper(
       title: 'Change Number of Servings',

@@ -23,7 +23,7 @@ class DetailFoodState {
     this.foodId = '',
     this.foodName = '',
     this.unit = '',
-    this.quantity = 0,
+    this.quantity = 1,
     this.isSuccess = false,
     this.dataSuccess,
   });
