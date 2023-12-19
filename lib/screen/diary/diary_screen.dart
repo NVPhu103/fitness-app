@@ -7,6 +7,7 @@ import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/components/exercise_diary.dart';
 import 'package:fitness_app/screen/diary/components/food_diary.dart';
 import 'package:fitness_app/screen/search_exercise/search_exercise.dart';
+import 'package:fitness_app/screen/search_food/detail/detail_food_screen.dart';
 import 'package:fitness_app/screen/search_food/search_food_screen.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/function.dart';
@@ -18,10 +19,15 @@ class DiaryScreen extends StatefulWidget {
   final String name;
   Diary diary;
   UserProfile userProfile;
-  DiaryScreen({super.key, required this.diary, required this.name, required this.userProfile});
+  DiaryScreen(
+      {super.key,
+      required this.diary,
+      required this.name,
+      required this.userProfile});
 
   @override
-  State<DiaryScreen> createState() => _DiaryScreenState(name, diary, userProfile);
+  State<DiaryScreen> createState() =>
+      _DiaryScreenState(name, diary, userProfile);
 }
 
 class _DiaryScreenState extends State<DiaryScreen> {
@@ -77,7 +83,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
       });
     }
     // Lunch
-    String lunchUrl = "https://fitness-app-e0xl.onrender.com/fooddiaries/${diary.lunchId}";
+    String lunchUrl =
+        "https://fitness-app-e0xl.onrender.com/fooddiaries/${diary.lunchId}";
     // ignore: non_constant_identifier_names
     Response get_list_lunch_response = await get(
       Uri.parse(lunchUrl),
@@ -96,7 +103,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
       });
     }
     // Dining
-    String diningUrl = "https://fitness-app-e0xl.onrender.com/fooddiaries/${diary.diningId}";
+    String diningUrl =
+        "https://fitness-app-e0xl.onrender.com/fooddiaries/${diary.diningId}";
     // ignore: non_constant_identifier_names
     Response get_list_dining_response = await get(
       Uri.parse(diningUrl),
@@ -114,7 +122,6 @@ class _DiaryScreenState extends State<DiaryScreen> {
         foodTotalCalories += diningTotalCalories;
       });
     }
-    
   }
 
   Future<void> getExerciseDiary(Diary diary) async {
@@ -132,8 +139,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
         for (int i = 0; i < listNewExerciseDiary.length; i++) {
           listExercicse.add(ExerciseDiary.fromJson(listNewExerciseDiary[i]));
         }
-        exerciseBurnedCalories = jsonDecode(
-            get_exercise_diary_response.body)['burnedCaloriesOfExerciseDiaries'];
+        exerciseBurnedCalories = jsonDecode(get_exercise_diary_response.body)[
+            'burnedCaloriesOfExerciseDiaries'];
       });
     }
   }
@@ -148,7 +155,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
           DateTime.parse(diary.date).add(const Duration(days: 1)));
     }
     Response newDiaryResponse = await get(
-      Uri.parse("https://fitness-app-e0xl.onrender.com/diaries/${diary.userId}?date=$newDate"),
+      Uri.parse(
+          "https://fitness-app-e0xl.onrender.com/diaries/${diary.userId}?date=$newDate"),
       headers: {'Content-Type': 'application/json'},
     );
     var newDiaryBody = jsonDecode(newDiaryResponse.body);
@@ -353,22 +361,48 @@ class _DiaryScreenState extends State<DiaryScreen> {
               }
               if (index < listFoodDiaries.length) {
                 final item = listFoodDiaries[index];
-                return Card(
-                  color: Colors.white,
-                  shadowColor: Colors.white,
-                  child: ListTile(
-                      title: Text(item.food.name,
-                          style: const TextStyle(
-                            fontSize: 20,
-                            fontWeight: FontWeight.w400,
-                          )),
-                      subtitle: Text(
-                          "quantity: ${item.quantity.toString()} x ${item.food.unit.toString()}",
-                          style: const TextStyle(
-                            fontSize: 14,
-                            fontWeight: FontWeight.w300,
-                          )),
-                      trailing: customText(item.totalCalories.toString(), 20)),
+                return InkWell(
+                  onTap: () {
+                    Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => DetailFoodScreen(
+                                  mealId: mealId,
+                                  mealName: meal,
+                                  foodId: item.food.id,
+                                  foodName: item.food.name,
+                                  unit: item.food.unit,
+                                  quantity: item.quantity,
+                                  isUpdate: true,
+                                  onReload: (value) {
+                                    // reload (value trả về)
+                                    setState(() {
+                                      diary = value.diary;
+                                      refreshAllList();
+                                      remainingCalories = calculateRemainingCalories();
+                                      getFoodDiary(diary);
+                                    });
+                                  },
+                                )));
+                  },
+                  child: Card(
+                    color: Colors.white,
+                    shadowColor: Colors.white,
+                    child: ListTile(
+                        title: Text(item.food.name,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w400,
+                            )),
+                        subtitle: Text(
+                            "quantity: ${item.quantity.toString()} x ${item.food.unit.toString()}",
+                            style: const TextStyle(
+                              fontSize: 14,
+                              fontWeight: FontWeight.w300,
+                            )),
+                        trailing:
+                            customText(item.totalCalories.toString(), 20)),
+                  ),
                 );
               }
               return null;
@@ -405,6 +439,10 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           isSelectedValue: true,
                           meal: meal,
                           userProfile: userProfile,
+                          isUpdate: false,
+                          onReload: (value) {
+                            // reload 
+                          },
                         )));
           },
         ),
@@ -438,7 +476,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
               if (index < listExercicse.length) {
                 final item = listExercicse[index];
                 bool isPerHour = false;
-                if (item.exercise.burningType.toString() == "CALORIES_PER_HOUR"){
+                if (item.exercise.burningType.toString() ==
+                    "CALORIES_PER_HOUR") {
                   isPerHour = true;
                 }
                 return Card(
@@ -451,9 +490,9 @@ class _DiaryScreenState extends State<DiaryScreen> {
                             fontWeight: FontWeight.w400,
                           )),
                       subtitle: Text(
-                          isPerHour ?
-                          "time: ${item.practiceTime.toString()} minutes x ${item.exercise.burnedCalories.toString()}/hour"
-                          :"times: ${item.practiceTime.toString()} times x ${item.exercise.burnedCalories.toString()}/set",
+                          isPerHour
+                              ? "time: ${item.practiceTime.toString()} minutes x ${item.exercise.burnedCalories.toString()}/hour"
+                              : "times: ${item.practiceTime.toString()} times x ${item.exercise.burnedCalories.toString()}/set",
                           style: const TextStyle(
                             fontSize: 14,
                             fontWeight: FontWeight.w300,

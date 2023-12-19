@@ -1,3 +1,4 @@
+
 class Food {
   late String id;
   late String name;
@@ -20,11 +21,12 @@ class FoodDiary {
   late String id;
   late String mealId;
   late String foodId;
-  late int quantity;
+  late num quantity;
   late int totalCalories;
   late Food food;
 
-  FoodDiary(this.id, this.mealId, this.foodId, this.quantity, this.totalCalories, this.food);
+  FoodDiary(this.id, this.mealId, this.foodId, this.quantity,
+      this.totalCalories, this.food);
 
   FoodDiary.fromJson(Map<String, dynamic> json) {
     id = json['id'];
