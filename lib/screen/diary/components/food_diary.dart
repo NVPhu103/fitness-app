@@ -1,3 +1,5 @@
+import 'package:copy_with_extension/copy_with_extension.dart';
+part 'food_diary.g.dart';
 class Food {
   late String id;
   late String name;
@@ -16,15 +18,17 @@ class Food {
   }
 }
 
+@CopyWith()
 class FoodDiary {
   late String id;
   late String mealId;
   late String foodId;
-  late int quantity;
+  late num quantity;
   late int totalCalories;
   late Food food;
 
-  FoodDiary(this.id, this.mealId, this.foodId, this.quantity, this.totalCalories, this.food);
+  FoodDiary(this.id, this.mealId, this.foodId, this.quantity,
+      this.totalCalories, this.food);
 
   FoodDiary.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -17,7 +17,11 @@ class Dashboard extends StatefulWidget {
   final String name;
   Diary diary;
   UserProfile userProfile;
-  Dashboard({super.key, required this.diary, required this.name, required this.userProfile});
+  Dashboard(
+      {super.key,
+      required this.diary,
+      required this.name,
+      required this.userProfile});
 
   @override
   State<Dashboard> createState() => _DashboardState(name, diary, userProfile);
@@ -53,10 +57,15 @@ class DashboardPage extends StatefulWidget {
   final String name;
   Diary diary;
   UserProfile userProfile;
-  DashboardPage({super.key, required this.diary, required this.name, required this.userProfile});
+  DashboardPage(
+      {super.key,
+      required this.diary,
+      required this.name,
+      required this.userProfile});
 
   @override
-  State<DashboardPage> createState() => _DashboardPageState(name, diary, userProfile);
+  State<DashboardPage> createState() =>
+      _DashboardPageState(name, diary, userProfile);
 }
 
 class _DashboardPageState extends State<DashboardPage> {
@@ -74,17 +83,17 @@ class _DashboardPageState extends State<DashboardPage> {
     super.initState();
   }
 
-  String changeName(String name){
-    if (name == "Female"){
+  String changeName(String name) {
+    if (name == "Female") {
       return "Madam";
     }
-    if(name == "Male"){
+    if (name == "Male") {
       return "Sir";
     }
     return "Sir";
   }
 
-  Future<void> getAllCalories() async{
+  Future<void> getAllCalories() async {
     String url =
         "https://fitness-app-e0xl.onrender.com/diaries/calories/${diary.userId}?date=${diary.date}";
     Response response = await get(
@@ -94,7 +103,8 @@ class _DashboardPageState extends State<DashboardPage> {
     var responseBody = jsonDecode(response.body);
     setState(() {
       totalCaloriesOfFoodDiaries = responseBody['totalCaloriesOfFoodDiaries'];
-      burnedCaloriesOfExerciseDiaries = responseBody['burnedCaloriesOfExerciseDiaries'];
+      burnedCaloriesOfExerciseDiaries =
+          responseBody['burnedCaloriesOfExerciseDiaries'];
     });
   }
 
@@ -119,7 +129,7 @@ class _DashboardPageState extends State<DashboardPage> {
                   image: AssetImage("assets/images/undraw_pilates_gpdb.png"))),
         ),
         SafeArea(
-          child: Padding(
+          child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -182,6 +192,8 @@ class _DashboardPageState extends State<DashboardPage> {
                               builder: (context) => SearchFoodScreen(
                                     diary: diary,
                                     userProfile: userProfile,
+                                    isUpdate: false,
+                                    onReload: () {},
                                   )));
                       if (!mounted) {
                         return;

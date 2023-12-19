@@ -7,6 +7,7 @@ import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
 import 'package:fitness_app/screen/search_food/components/food.dart';
 import 'package:fitness_app/screen/search_food/components/food_history.dart';
+import 'package:fitness_app/screen/search_food/detail/detail_food_screen.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
@@ -18,12 +19,17 @@ class SearchFoodScreen extends StatefulWidget {
   final UserProfile userProfile;
   bool isSelectedValue;
   String? meal;
-  SearchFoodScreen(
-      {super.key,
-      required this.diary,
-      required this.userProfile,
-      this.isSelectedValue = false,
-      this.meal});
+  bool isUpdate;
+  final VoidCallback onReload;
+  SearchFoodScreen({
+    super.key,
+    required this.diary,
+    required this.userProfile,
+    this.isSelectedValue = false,
+    this.meal,
+    required this.isUpdate,
+    required this.onReload,
+  });
 
   @override
   State<SearchFoodScreen> createState() =>
@@ -52,7 +58,8 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
   List<FoodHistory> listFoodHistories = [];
   bool isShowHistory = true;
 
-  _SearchFoodScreenState(this.diary, this.isSelectedValue, this.meal, this.userProfile);
+  _SearchFoodScreenState(
+      this.diary, this.isSelectedValue, this.meal, this.userProfile);
 
   @override
   void initState() {
@@ -131,102 +138,203 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
         title: dropdownButtonTitle(),
         centerTitle: true,
       ),
-      body: Column(
-        children: <Widget>[
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          Center(
-            child: Container(
-              height: size.height * 0.08,
-              width: size.width * 0.94,
-              alignment: Alignment.center,
-              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-              decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(29.5),
-                  border: Border.all(color: Colors.blueAccent, width: 2)),
-              child: TextField(
-                textInputAction: TextInputAction.search,
-                onSubmitted: (value) {
-                  setState(() {
-                    listFoods = [];
-                    isLoading = false;
-                    hasMore = true;
-                    page = 2;
-                    isShowHistory = false;
-                  });
-                  getAllFoods(value);
-                },
-                controller: searchTextController,
-                textAlign: TextAlign.start,
-                decoration: InputDecoration(
-                  hintStyle: const TextStyle(
-                    fontSize: 16,
-                  ),
-                  hintText: "Search for a food",
-                  icon: SvgPicture.asset(
-                    "assets/icons/search.svg",
-                    color: Colors.black87,
-                  ),
-                  border: InputBorder.none,
-                  suffixIcon: IconButton(
-                    onPressed: searchTextController.clear,
-                    icon: const Icon(Icons.clear, color: null),
-                    hoverColor: Colors.white10,
+      body: SingleChildScrollView(
+        child: Column(
+          children: <Widget>[
+            SizedBox(
+              height: size.height * 0.02,
+            ),
+            Center(
+              child: Container(
+                height: size.height * 0.08,
+                width: size.width * 0.94,
+                alignment: Alignment.center,
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(29.5),
+                    border: Border.all(color: Colors.blueAccent, width: 2)),
+                child: TextField(
+                  textInputAction: TextInputAction.search,
+                  onSubmitted: (value) {
+                    setState(() {
+                      listFoods = [];
+                      isLoading = false;
+                      hasMore = true;
+                      page = 2;
+                      isShowHistory = false;
+                    });
+                    getAllFoods(value);
+                  },
+                  controller: searchTextController,
+                  textAlign: TextAlign.start,
+                  decoration: InputDecoration(
+                    hintStyle: const TextStyle(
+                      fontSize: 16,
+                    ),
+                    hintText: "Search for a food",
+                    icon: SvgPicture.asset(
+                      "assets/icons/search.svg",
+                      color: Colors.black87,
+                    ),
+                    border: InputBorder.none,
+                    suffixIcon: IconButton(
+                      onPressed: searchTextController.clear,
+                      icon: const Icon(Icons.clear, color: null),
+                      hoverColor: Colors.white10,
+                    ),
                   ),
                 ),
               ),
             ),
-          ),
-          SizedBox(
-            height: size.height * 0.02,
-          ),
-          SizedBox(
-              height: size.height * 0.08,
+            SizedBox(
+              height: size.height * 0.02,
+            ),
+            SizedBox(
+                height: size.height * 0.08,
+                width: size.width * 0.96,
+                child: isShowHistory
+                    ? const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Center(
+                          child: Text(
+                            "Food History",
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )
+                    : const Padding(
+                        padding: EdgeInsets.symmetric(vertical: 10),
+                        child: Center(
+                          child: Text(
+                            "Food",
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      )),
+            // ListView
+            SizedBox(
+              height: size.height * 0.72,
               width: size.width * 0.96,
               child: isShowHistory
-                  ? const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Center(
-                        child: Text(
-                          "Food History",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
+                  ? RefreshIndicator(
+                      onRefresh: () => getAllFoodHistories(diary.userId),
+                      child: ListView.builder(
+                        controller: listViewController,
+                        itemCount: listFoodHistories.length + 1,
+                        itemBuilder: (context, index) {
+                          if (listFoodHistories.isEmpty) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              child: Center(
+                                child: Text("No history found"),
+                              ),
+                            );
+                          }
+                          if (index < listFoodHistories.length) {
+                            final item = listFoodHistories[index].food;
+                            return InkWell(
+                              onTap: () {
+                                if (selectedValue == null) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text(
+                                      "You have to select a meal",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    duration: Duration(seconds: 1),
+                                  ));
+                                } else {
+                                  switch (selectedValue) {
+                                    case "Breakfast":
+                                      mealId = diary.breakfastId;
+                                      break;
+                                    case "Lunch":
+                                      mealId = diary.lunchId;
+                                      break;
+                                    case "Dining":
+                                      mealId = diary.diningId;
+                                      break;
+                                    default:
+                                      mealId = diary.breakfastId;
+                                  }
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailFoodScreen(
+                                                mealId: mealId ?? '',
+                                                mealName: selectedValue ?? '',
+                                                foodId: item.id,
+                                                foodName: item.name,
+                                                unit: item.unit,
+                                                isUpdate: widget.isUpdate,
+                                                onReload: (value) {
+                                                  widget.onReload.call();
+                                                },
+                                              )));
+                                }
+                              },
+                              child: Card(
+                                color: const Color.fromARGB(220, 255, 255, 255),
+                                shadowColor: Colors.grey,
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(10.0)),
+                                child: ListTile(
+                                  title: Padding(
+                                    padding: const EdgeInsets.only(bottom: 4.0),
+                                    child: Text(item.name,
+                                        style: const TextStyle(
+                                          fontSize: 20,
+                                          fontWeight: FontWeight.w400,
+                                        )),
+                                  ),
+                                  subtitle: Text(
+                                      "${item.calories} calories, ${item.unit}",
+                                      style: const TextStyle(
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w300,
+                                      )),
+                                  trailing: InkWell(
+                                    borderRadius: BorderRadius.circular(29),
+                                    onTap: () {
+                                      addFood(item.id);
+                                    },
+                                    child: const Icon(
+                                      Icons.add_circle_rounded,
+                                      color: Colors.blueAccent,
+                                      size: 40,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            );
+                          }
+                          return null;
+                        },
                       ),
                     )
-                  : const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 10),
-                      child: Center(
-                        child: Text(
-                          "Food",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
-                      ),
-                    )),
-          // ListView
-          SizedBox(
-            height: size.height * 0.72,
-            width: size.width * 0.96,
-            child: isShowHistory
-                ? RefreshIndicator(
-                    onRefresh: () => getAllFoodHistories(diary.userId),
-                    child: ListView.builder(
+                  : ListView.builder(
                       controller: listViewController,
-                      itemCount: listFoodHistories.length + 1,
+                      itemCount: listFoods.length + 1,
                       itemBuilder: (context, index) {
-                        if (listFoodHistories.isEmpty) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 32),
-                            child: Center(
-                              child: Text("No history found"),
-                            ),
-                          );
+                        if (listFoods.isEmpty) {
+                          if (isShowHistory == false) {
+                            return const Padding(
+                              padding: EdgeInsets.symmetric(vertical: 32),
+                              child: Center(
+                                child: Text("Not found"),
+                              ),
+                            );
+                          } else {
+                            return null;
+                          }
                         }
-                        if (index < listFoodHistories.length) {
-                          final item = listFoodHistories[index].food;
+                        if (index < listFoods.length) {
+                          final item = listFoods[index];
                           return Card(
                             color: const Color.fromARGB(220, 255, 255, 255),
                             shadowColor: Colors.grey,
@@ -260,76 +368,21 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                               ),
                             ),
                           );
-                        }
-                        return null;
-                      },
-                    ),
-                  )
-                : ListView.builder(
-                    controller: listViewController,
-                    itemCount: listFoods.length + 1,
-                    itemBuilder: (context, index) {
-                      if (listFoods.isEmpty) {
-                        if (isShowHistory == false) {
-                          return const Padding(
-                            padding: EdgeInsets.symmetric(vertical: 32),
+                        } else {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 32),
                             child: Center(
-                              child: Text("Not found"),
+                              child: hasMore
+                                  ? const CircularProgressIndicator()
+                                  : const Text("No more data to load"),
                             ),
                           );
-                        } else {
-                          return null;
                         }
-                      }
-                      if (index < listFoods.length) {
-                        final item = listFoods[index];
-                        return Card(
-                          color: const Color.fromARGB(220, 255, 255, 255),
-                          shadowColor: Colors.grey,
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(10.0)),
-                          child: ListTile(
-                            title: Padding(
-                              padding: const EdgeInsets.only(bottom: 4.0),
-                              child: Text(item.name,
-                                  style: const TextStyle(
-                                    fontSize: 20,
-                                    fontWeight: FontWeight.w400,
-                                  )),
-                            ),
-                            subtitle:
-                                Text("${item.calories} calories, ${item.unit}",
-                                    style: const TextStyle(
-                                      fontSize: 14,
-                                      fontWeight: FontWeight.w300,
-                                    )),
-                            trailing: InkWell(
-                              borderRadius: BorderRadius.circular(29),
-                              onTap: () {
-                                addFood(item.id);
-                              },
-                              child: const Icon(
-                                Icons.add_circle_rounded,
-                                color: Colors.blueAccent,
-                                size: 40,
-                              ),
-                            ),
-                          ),
-                        );
-                      } else {
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 32),
-                          child: Center(
-                            child: hasMore
-                                ? const CircularProgressIndicator()
-                                : const Text("No more data to load"),
-                          ),
-                        );
-                      }
-                    },
-                  ),
-          ),
-        ],
+                      },
+                    ),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -430,7 +483,8 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
 
   Future<List<Food>> getAllFoods(String value) async {
     if (value.isNotEmpty) {
-      String uri = "https://fitness-app-e0xl.onrender.com/foods?q=$value&page=1&per_page=10";
+      String uri =
+          "https://fitness-app-e0xl.onrender.com/foods?q=$value&page=1&per_page=10";
       try {
         // ignore: non_constant_identifier_names
         Response get_food_response = await get(
@@ -476,7 +530,8 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
 
   Future<void> getAllFoodHistories(String userId) async {
     if (userId.isNotEmpty) {
-      String uri = "https://fitness-app-e0xl.onrender.com/foodhistories/$userId";
+      String uri =
+          "https://fitness-app-e0xl.onrender.com/foodhistories/$userId";
       try {
         // ignore: non_constant_identifier_names    print("step1");
         Response get_food_history_response = await get(
