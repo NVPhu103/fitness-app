@@ -376,6 +376,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                   isUpdate: true,
                                   onReload: (value) {
                                     // reload (value trả về)
+                                    setState(() {
+                                      diary = value.diary;
+                                      refreshAllList();
+                                      remainingCalories = calculateRemainingCalories();
+                                      getFoodDiary(diary);
+                                    });
                                   },
                                 )));
                   },

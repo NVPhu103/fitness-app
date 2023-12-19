@@ -195,6 +195,10 @@ class _DashboardPageState extends State<DashboardPage> {
                                     isUpdate: false,
                                     onReload: (value) {
                                       // reload
+                                      setState(() {
+                                        diary = value.diary;
+                                        getAllCalories();
+                                      });
                                     },
                                   )));
                       if (!mounted) {
