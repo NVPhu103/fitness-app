@@ -262,22 +262,6 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                                     default:
                                       mealId = diary.breakfastId;
                                   }
-                                  Navigator.push(
-                                      context,
-                                      MaterialPageRoute(
-                                          builder: (context) =>
-                                              DetailFoodScreen(
-                                                mealId: mealId ?? '',
-                                                mealName: selectedValue ?? '',
-                                                foodId: item.id,
-                                                foodName: item.name,
-                                                unit: item.unit,
-                                                isUpdate: widget.isUpdate,
-                                                onReload: (value) {
-                                                  widget.onReload.call(value);
-                                                  // reload
-                                                },
-                                              )));
                                 }
                               },
                               child: Card(
@@ -311,6 +295,53 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                                       size: 40,
                                     ),
                                   ),
+                                  onTap: () {
+                                    if (selectedValue == null) {
+                                      ScaffoldMessenger.of(context)
+                                          .showSnackBar(const SnackBar(
+                                        content: Text(
+                                          "You have to select a meal",
+                                          textAlign: TextAlign.center,
+                                        ),
+                                        duration: Duration(seconds: 1),
+                                      ));
+                                    } else {
+                                      switch (selectedValue) {
+                                        case "Breakfast":
+                                          mealId = diary.breakfastId;
+                                          break;
+                                        case "Lunch":
+                                          mealId = diary.lunchId;
+                                          break;
+                                        case "Dining":
+                                          mealId = diary.diningId;
+                                          break;
+                                        default:
+                                          mealId = diary.breakfastId;
+                                      }
+                                      Navigator.push(
+                                          context,
+                                          MaterialPageRoute(
+                                              builder: (context) =>
+                                                  DetailFoodScreen(
+                                                    mealId: mealId ?? '',
+                                                    mealName:
+                                                        selectedValue ?? '',
+                                                    foodId: item.id,
+                                                    foodName: item.name,
+                                                    unit: item.unit,
+                                                    isUpdate: widget.isUpdate,
+                                                    onReload: (value) {
+                                                      widget.onReload
+                                                          .call(value);
+                                                      // reload
+                                                      setState(() {
+                                                        diary = value.diary;
+                                                      });
+                                                    },
+                                                  )));
+                                    }
+                                  },
                                 ),
                               ),
                             );
@@ -368,6 +399,51 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                                   size: 40,
                                 ),
                               ),
+                              onTap: () {
+                                if (selectedValue == null) {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(const SnackBar(
+                                    content: Text(
+                                      "You have to select a meal",
+                                      textAlign: TextAlign.center,
+                                    ),
+                                    duration: Duration(seconds: 1),
+                                  ));
+                                } else {
+                                  switch (selectedValue) {
+                                    case "Breakfast":
+                                      mealId = diary.breakfastId;
+                                      break;
+                                    case "Lunch":
+                                      mealId = diary.lunchId;
+                                      break;
+                                    case "Dining":
+                                      mealId = diary.diningId;
+                                      break;
+                                    default:
+                                      mealId = diary.breakfastId;
+                                  }
+                                  Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                          builder: (context) =>
+                                              DetailFoodScreen(
+                                                mealId: mealId ?? '',
+                                                mealName: selectedValue ?? '',
+                                                foodId: item.id,
+                                                foodName: item.name,
+                                                unit: item.unit,
+                                                isUpdate: widget.isUpdate,
+                                                onReload: (value) {
+                                                  // widget.onReload.call(value);
+                                                  // reload
+                                                  setState(() {
+                                                    diary = value.diary;
+                                                  });
+                                                },
+                                              )));
+                                }
+                              },
                             ),
                           );
                         } else {
