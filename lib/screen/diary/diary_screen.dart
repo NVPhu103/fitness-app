@@ -434,8 +434,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           meal: meal,
                           userProfile: userProfile,
                           isUpdate: false,
-                          onReload: () {
-                            //
+                          onReload: (value) {
+                            // reload 
                           },
                         )));
           },

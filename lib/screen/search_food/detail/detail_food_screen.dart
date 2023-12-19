@@ -1,4 +1,5 @@
 import 'package:fitness_app/components/loading.dart';
+import 'package:fitness_app/repository/food_diaries/models/food_diary_response.dart';
 import 'package:fitness_app/utilities/context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -27,7 +28,7 @@ class DetailFoodScreen extends StatefulWidget {
   final String unit;
   final num quantity;
   final bool isUpdate;
-  final void Function(num) onReload;
+  final void Function(FoodDiaryResponse) onReload;
 
   @override
   State<DetailFoodScreen> createState() => _DetailFoodScreenState();
@@ -57,8 +58,10 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
         listenWhen: (previous, current) =>
             previous.isSuccess != current.isSuccess && current.isSuccess,
         listener: (context, state) {
-          widget.onReload.call(state.quantity);
-          Navigator.of(context).pop();
+          if (state.dataSuccess != null) {
+            widget.onReload.call(state.dataSuccess!);
+            Navigator.of(context).pop();
+          }
         },
         child: BlocBuilder<DetailFoodBloc, DetailFoodState>(
           builder: (context, state) {

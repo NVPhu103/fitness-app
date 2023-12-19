@@ -3,6 +3,7 @@
 import 'dart:convert';
 
 import 'package:dropdown_button2/dropdown_button2.dart';
+import 'package:fitness_app/repository/food_diaries/models/food_diary_response.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
 import 'package:fitness_app/screen/search_food/components/food.dart';
@@ -20,7 +21,7 @@ class SearchFoodScreen extends StatefulWidget {
   bool isSelectedValue;
   String? meal;
   bool isUpdate;
-  final VoidCallback onReload;
+  final void Function(FoodDiaryResponse) onReload;
   SearchFoodScreen({
     super.key,
     required this.diary,
@@ -273,7 +274,8 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
                                                 unit: item.unit,
                                                 isUpdate: widget.isUpdate,
                                                 onReload: (value) {
-                                                  widget.onReload.call();
+                                                  widget.onReload.call(value);
+                                                  // reload
                                                 },
                                               )));
                                 }

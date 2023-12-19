@@ -1,5 +1,4 @@
-import 'package:copy_with_extension/copy_with_extension.dart';
-part 'food_diary.g.dart';
+
 class Food {
   late String id;
   late String name;
@@ -18,7 +17,6 @@ class Food {
   }
 }
 
-@CopyWith()
 class FoodDiary {
   late String id;
   late String mealId;

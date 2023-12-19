@@ -193,7 +193,9 @@ class _DashboardPageState extends State<DashboardPage> {
                                     diary: diary,
                                     userProfile: userProfile,
                                     isUpdate: false,
-                                    onReload: () {},
+                                    onReload: (value) {
+                                      // reload
+                                    },
                                   )));
                       if (!mounted) {
                         return;

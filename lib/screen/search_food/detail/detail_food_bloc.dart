@@ -1,5 +1,6 @@
 import 'package:fitness_app/api/services/food_diaries/models/food_diary_request.dart';
 import 'package:fitness_app/repository/food_diaries/food_diaries_repository.dart';
+import 'package:fitness_app/repository/food_diaries/models/food_diary_response.dart';
 import 'package:fitness_app/repository/nutritions/nutritions_repository.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -48,8 +49,10 @@ class DetailFoodBloc extends Cubit<DetailFoodState> {
     try {
       emit(state.copyWith(isSuccess: false));
 
+      FoodDiaryResponse? data;
+
       if (isUpdate) {
-        await _foodDiariesRepository.updateFoodDiary(
+        data = await _foodDiariesRepository.updateFoodDiary(
           request: FoodDiaryRequest(
             mealId: state.mealId,
             foodId: state.foodId,
@@ -57,7 +60,7 @@ class DetailFoodBloc extends Cubit<DetailFoodState> {
           ),
         );
       } else {
-        await _foodDiariesRepository.creatFoodDiary(
+        data = await _foodDiariesRepository.creatFoodDiary(
           request: FoodDiaryRequest(
             mealId: state.mealId,
             foodId: state.foodId,
@@ -66,7 +69,7 @@ class DetailFoodBloc extends Cubit<DetailFoodState> {
         );
       }
 
-      emit(state.copyWith(isSuccess: true, quantity: num.tryParse(quantity)));
+      emit(state.copyWith(isSuccess: true, dataSuccess: data));
     } catch (error, statckTrace) {
       if (kDebugMode) {
         print("$error + $statckTrace");
