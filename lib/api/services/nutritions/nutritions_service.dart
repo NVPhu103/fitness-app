@@ -11,4 +11,13 @@ class NutritionsService extends BaseService {
     );
     return response;
   }
+
+  Future<Response> getDailynutritionById({
+    required String id,
+  }) async {
+    final response = await get(
+      NutritionsApi.dailynutritionById.replaceAll(RegExp('{id}'), id),
+    );
+    return response;
+  }
 }

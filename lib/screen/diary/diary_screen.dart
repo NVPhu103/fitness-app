@@ -14,6 +14,8 @@ import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
+import 'detail/detail_diary_screen.dart';
+
 // ignore: must_be_immutable
 class DiaryScreen extends StatefulWidget {
   final String name;
@@ -200,6 +202,18 @@ class _DiaryScreenState extends State<DiaryScreen> {
         ),
         actions: <Widget>[
           IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DetailDiaryScreen()));
+              },
+              icon: const Icon(
+                Icons.pie_chart_outline,
+                color: Colors.black,
+                size: 36,
+              )),
+          IconButton(
               onPressed: () {},
               icon: const Icon(
                 Icons.more_vert,
@@ -379,7 +393,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                     setState(() {
                                       diary = value.diary;
                                       refreshAllList();
-                                      remainingCalories = calculateRemainingCalories();
+                                      remainingCalories =
+                                          calculateRemainingCalories();
                                       getFoodDiary(diary);
                                     });
                                   },
@@ -441,7 +456,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           userProfile: userProfile,
                           isUpdate: false,
                           onReload: (value) {
-                            // reload 
+                            // reload
                           },
                         )));
           },

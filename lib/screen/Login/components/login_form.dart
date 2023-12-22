@@ -8,6 +8,7 @@ import 'package:fitness_app/screen/goal/set_goal_screen_1.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../components/already_have_an_account_acheck.dart';
 import 'package:fitness_app/utilities/constants.dart';
@@ -22,6 +23,8 @@ class LoginForm extends StatelessWidget {
   TextEditingController passwordController = TextEditingController();
 
   Future<void> login(String email, String password, context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+
     if (email.isNotEmpty && password.isNotEmpty) {
       Response response = await post(
         Uri.parse("https://fitness-app-e0xl.onrender.com/users/login"),
@@ -43,7 +46,8 @@ class LoginForm extends StatelessWidget {
         String userId = body['id'];
         String today = getTodayWithYMD();
         Response diaryResponse = await get(
-          Uri.parse("https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
+          Uri.parse(
+              "https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
           headers: {'Content-Type': 'application/json'},
         );
         var diaryBody = jsonDecode(diaryResponse.body);
@@ -51,10 +55,12 @@ class LoginForm extends StatelessWidget {
         String gender = body['userProfile']['gender'];
         var userProfileBody = body['userProfile'];
         UserProfile userProfile = UserProfile.fromJson(userProfileBody);
+        await prefs.setString('USER_PROFILE', jsonEncode(userProfile.toJson()));
         Navigator.push(
             context,
             MaterialPageRoute(
-                builder: (context) => Dashboard(name: gender,
+                builder: (context) => Dashboard(
+                      name: gender,
                       diary: diary,
                       userProfile: userProfile,
                     )));

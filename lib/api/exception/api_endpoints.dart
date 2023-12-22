@@ -6,4 +6,5 @@ class FoodDiariesApi {
 
 class NutritionsApi {
   static const nutritionById = "/nutritions/{id}";
+  static const dailynutritionById = "/dailynutrition/{id}";
 }

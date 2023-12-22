@@ -14,7 +14,8 @@ class WelcomeImage extends StatelessWidget {
       children: [
         const Text(
           "WELCOME TO MYFITNESS APP",
-          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20, color: Colors.purple),
+          style: TextStyle(
+              fontWeight: FontWeight.bold, fontSize: 20, color: Colors.purple),
         ),
         const SizedBox(height: defaultPadding * 2),
         Row(

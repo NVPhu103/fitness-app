@@ -80,11 +80,11 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
         } else {
           activityLevel = "ACTIVE";
         }
-        if(goal == Goal.GAIN_WEIGHT.toString()){
+        if (goal == Goal.GAIN_WEIGHT.toString()) {
           goal = "GAIN_WEIGHT";
-        }else if(goal == Goal.LOSE_WEIGHT.toString()){
+        } else if (goal == Goal.LOSE_WEIGHT.toString()) {
           goal = "LOSE_WEIGHT";
-        }else if(goal == Goal.MAINTAIN_WEIGHT.toString()){
+        } else if (goal == Goal.MAINTAIN_WEIGHT.toString()) {
           goal = "MAINTAIN_WEIGHT";
         }
         Response response = await post(
@@ -107,7 +107,8 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           String userId = body['userId'];
           String today = getTodayWithYMD();
           Response diaryResponse = await get(
-            Uri.parse("https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
+            Uri.parse(
+                "https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
             headers: {'Content-Type': 'application/json'},
           );
           var diaryBody = jsonDecode(diaryResponse.body);
@@ -118,7 +119,8 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           Navigator.push(
               context,
               MaterialPageRoute(
-                  builder: (context) => Dashboard(name: gender,
+                  builder: (context) => Dashboard(
+                        name: gender,
                         diary: diary,
                         userProfile: userProfile,
                       )));

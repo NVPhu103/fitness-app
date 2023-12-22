@@ -1,4 +1,3 @@
-
 class Food {
   late String id;
   late String name;

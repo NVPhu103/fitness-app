@@ -12,8 +12,8 @@ class UserProfile {
   final double startingWeight;
   final int maximumCalorieIntake;
 
-  const UserProfile({
-      required this.id,
+  const UserProfile(
+      {required this.id,
       required this.userId,
       required this.gender,
       required this.goal,
@@ -40,5 +40,22 @@ class UserProfile {
         yearOfBirth: json['yearOfBirth'],
         startingWeight: json['startingWeight'],
         maximumCalorieIntake: json['maximumCalorieIntake']);
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'userId': userId,
+      'gender': gender,
+      'goal': goal,
+      'activityLevel': activityLevel,
+      'status': status,
+      'currentWeight': currentWeight,
+      'height': height,
+      'desiredWeight': desiredWeight,
+      'yearOfBirth': yearOfBirth,
+      'startingWeight': startingWeight,
+      'maximumCalorieIntake': maximumCalorieIntake
+    };
   }
 }

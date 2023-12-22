@@ -1,0 +1,157 @@
+import 'dart:convert';
+
+import 'package:fitness_app/repository/food_diaries/food_diaries_repository.dart';
+import 'package:fitness_app/repository/nutritions/nutritions_repository.dart';
+import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
+import 'package:fitness_app/utilities/date_time.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import 'detail_diary_state.dart';
+
+class DetailDiaryBloc extends Cubit<DetailDiaryState> {
+  final FoodDiariesRepository _foodDiariesRepository = FoodDiariesRepository();
+  final NutritionsRepository _nutritionsRepository = NutritionsRepository();
+  DetailDiaryBloc() : super(const DetailDiaryState());
+
+  getData() async {
+    try {
+      emit(state.copyWith(isLoading: true));
+
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      final userJson = prefs.getString('USER_PROFILE');
+      if (userJson != null) {
+        final user = UserProfile.fromJson(json.decode(userJson));
+        final data = await _nutritionsRepository.getDailynutritionById(
+          id: user.id,
+        );
+
+        emit(state.copyWith(
+          data: data,
+          currentTime: DateTime.now().toDay,
+          startDate: DateTime.now().toDay,
+        ));
+      }
+    } catch (error, statckTrace) {
+      if (kDebugMode) {
+        print("$error + $statckTrace");
+      }
+    } finally {
+      emit(state.copyWith(isLoading: false));
+    }
+  }
+
+  onChangeType(int type) {
+    if (type == 0) {
+      emit(state.copyWith(
+        type: type,
+        startDate: state.currentTime,
+        timeDisplay: _convertText(
+          state.currentTime?.add(
+            const Duration(days: 7),
+          ),
+          null,
+          type,
+        ),
+      ));
+    } else {
+      emit(state.copyWith(
+        type: type,
+        startDate: state.currentTime?.add(
+          const Duration(days: 7),
+        ),
+        endDate: state.currentTime,
+        timeDisplay: _convertText(
+          state.currentTime?.add(
+            const Duration(days: 7),
+          ),
+          state.currentTime,
+          type,
+        ),
+      ));
+    }
+  }
+
+  onNext() {
+    if (state.type == 0) {
+      emit(
+        state.copyWith(
+          startDate: state.startDate?.add(
+            const Duration(days: 1),
+          ),
+          endDate: null,
+          timeDisplay: _convertText(
+            state.startDate?.add(
+              const Duration(days: 1),
+            ),
+            null,
+            0,
+          ),
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          startDate: state.startDate?.add(
+            const Duration(days: 7),
+          ),
+          endDate: state.startDate,
+          timeDisplay: _convertText(
+            state.startDate?.add(
+              const Duration(days: 7),
+            ),
+            state.startDate,
+            1,
+          ),
+        ),
+      );
+    }
+  }
+
+  onBack() {
+    if (state.type == 0) {
+      emit(
+        state.copyWith(
+          startDate: state.startDate?.subtract(
+            const Duration(days: 1),
+          ),
+          endDate: null,
+          timeDisplay: _convertText(
+            state.startDate?.subtract(
+              const Duration(days: 1),
+            ),
+            null,
+            0,
+          ),
+        ),
+      );
+    } else {
+      emit(
+        state.copyWith(
+          startDate: state.endDate,
+          endDate: state.endDate?.subtract(
+            const Duration(days: 7),
+          ),
+          timeDisplay: _convertText(
+            state.endDate,
+            state.endDate?.subtract(
+              const Duration(days: 7),
+            ),
+            1,
+          ),
+        ),
+      );
+    }
+  }
+
+  String _convertText(DateTime? startDate, DateTime? endDate, int type) {
+    if (type == 0) {
+      return startDate == state.startDate
+          ? 'Today'
+          : '${startDate?.format(pattern: yy_mm_dd)}';
+    }
+    return '${endDate?.format(pattern: yy_mm_dd)} to ${startDate?.format(pattern: yy_mm_dd)}';
+  }
+}

@@ -2,8 +2,6 @@ import 'package:fitness_app/screen/Signup/components/or_divider.dart';
 import 'package:fitness_app/screen/Signup/components/social_icon.dart';
 import 'package:flutter/material.dart';
 
-
-
 class SocalSignUp extends StatelessWidget {
   const SocalSignUp({
     Key? key,
