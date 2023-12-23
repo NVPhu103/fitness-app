@@ -5,6 +5,7 @@ class AppColor {
   final BuildContext context;
   final Color colorPink = Colors.pink;
   final Color colorOrange = Colors.orange;
+  final Color colorYello = Colors.yellow;
   final Color colorWhite = Colors.white;
   final Color colorBlack = Colors.black;
   final Color colorGrey = Colors.grey;

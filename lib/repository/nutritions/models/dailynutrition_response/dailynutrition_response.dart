@@ -6,6 +6,7 @@ part 'dailynutrition_response.g.dart';
 class DailynutritionResponse {
   @JsonKey(name: 'user_profile_id')
   String? userProfileId;
+  String? userId;
   num? protein;
   num? totalFat;
   num? cholesterol;
@@ -21,6 +22,7 @@ class DailynutritionResponse {
 
   DailynutritionResponse({
     this.userProfileId,
+    this.userId,
     this.protein,
     this.totalFat,
     this.cholesterol,

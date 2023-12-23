@@ -20,4 +20,20 @@ class NutritionsService extends BaseService {
     );
     return response;
   }
+
+  Future<Response> getDailynutritionTotalById({
+    required String id,
+    required String startDate,
+    required String endDate,
+    required String type,
+  }) async {
+    final response = await get(
+      NutritionsApi.dailynutritionTotalById
+          .replaceAll(RegExp('{id}'), id)
+          .replaceAll(RegExp('{startDate}'), startDate)
+          .replaceAll(RegExp('{endDate}'), endDate)
+          .replaceAll(RegExp('{type}'), type),
+    );
+    return response;
+  }
 }

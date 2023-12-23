@@ -1,18 +1,15 @@
 import 'dart:convert';
 
-import 'package:fitness_app/repository/food_diaries/food_diaries_repository.dart';
 import 'package:fitness_app/repository/nutritions/nutritions_repository.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/date_time.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'detail_diary_state.dart';
 
 class DetailDiaryBloc extends Cubit<DetailDiaryState> {
-  final FoodDiariesRepository _foodDiariesRepository = FoodDiariesRepository();
   final NutritionsRepository _nutritionsRepository = NutritionsRepository();
   DetailDiaryBloc() : super(const DetailDiaryState());
 
@@ -32,6 +29,7 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
           data: data,
           currentTime: DateTime.now().toDay,
           startDate: DateTime.now().toDay,
+          userId: user.userId,
         ));
       }
     } catch (error, statckTrace) {
@@ -144,6 +142,32 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
         ),
       );
     }
+  }
+
+  onFetch() async {
+    try {
+      final dataTotal = await _nutritionsRepository.getDailynutritionTotalById(
+        id: state.userId,
+        startDate: state.startDate ?? DateTime.now().toDay,
+        endDate: state.endDate,
+        type: _convertType(state.type),
+      );
+
+      emit(state.copyWith(
+        dataTotal: dataTotal,
+      ));
+    } catch (error, statckTrace) {
+      if (kDebugMode) {
+        print("$error + $statckTrace");
+      }
+    }
+  }
+
+  String _convertType(int type) {
+    if (type == 0) {
+      return 'DAY';
+    }
+    return 'WEEK';
   }
 
   String _convertText(DateTime? startDate, DateTime? endDate, int type) {

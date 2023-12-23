@@ -40,114 +40,123 @@ class _DetailDiaryScreenState extends State<DetailDiaryScreen>
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => bloc,
-      child: BlocBuilder<DetailDiaryBloc, DetailDiaryState>(
-        builder: (context, state) {
-          return Scaffold(
-              appBar: AppBar(
-                backgroundColor: const Color.fromARGB(255, 243, 240, 240),
-                title: const Text(
-                  "DETAIL",
-                  style: TextStyle(
-                      color: Colors.black, fontWeight: FontWeight.bold),
-                ),
-                leading: BackButton(color: context.appColor.colorBlack),
-              ),
-              body: state.data == null
-                  ? const Loading()
-                  : SingleChildScrollView(
-                      child: Column(
-                        children: [
-                          _tabBar(context),
-                          _dateBar(),
-                          _itemTitle(context),
-                          _item(
-                            context,
-                            title: 'Protein',
-                            avg: 10,
-                            goal: state.data?.protein ?? 0.0,
-                            unit: 'gram',
-                          ),
-                          _item(
-                            context,
-                            title: 'TotalFat',
-                            avg: 20,
-                            goal: state.data?.totalFat ?? 0.0,
-                            unit: 'gram',
-                          ),
-                          _item(
-                            context,
-                            title: 'Cholesterol',
-                            avg: 200,
-                            goal: state.data?.cholesterol ?? 0,
-                            unit: 'milligram',
-                          ),
-                          _item(
-                            context,
-                            title: 'Carbohydrate',
-                            avg: 100,
-                            goal: state.data?.carbohydrate ?? 0.0,
-                            unit: 'gram',
-                          ),
-                          _item(
-                            context,
-                            title: 'Sugars',
-                            avg: 10,
-                            goal: state.data?.sugars ?? 0.0,
-                            unit: 'gram',
-                          ),
-                          _item(
-                            context,
-                            title: 'DietaryFiber',
-                            avg: 10,
-                            goal: state.data?.dietaryFiber ?? 0.0,
-                            unit: 'gram',
-                          ),
-                          _item(
-                            context,
-                            title: 'VitaminA',
-                            avg: 500,
-                            goal: state.data?.vitaminA ?? 0,
-                            unit: 'microgram',
-                          ),
-                          _item(
-                            context,
-                            title: 'VitaminC',
-                            avg: 100,
-                            goal: state.data?.vitaminC ?? 0,
-                            unit: 'microgram',
-                          ),
-                          _item(
-                            context,
-                            title: 'Canxi',
-                            avg: 500,
-                            goal: state.data?.canxi ?? 0,
-                            unit: 'milligram',
-                          ),
-                          _item(
-                            context,
-                            title: 'Natri',
-                            avg: 1000,
-                            goal: state.data?.natri ?? 0,
-                            unit: 'milligram',
-                          ),
-                          _item(
-                            context,
-                            title: 'Kali',
-                            avg: 2000,
-                            goal: state.data?.kali ?? 0,
-                            unit: 'milligram',
-                          ),
-                          _item(
-                            context,
-                            title: 'Iod',
-                            avg: 100,
-                            goal: state.data?.iod ?? 0,
-                            unit: 'milligram',
-                          ),
-                        ],
-                      ),
-                    ));
+      child: BlocListener<DetailDiaryBloc, DetailDiaryState>(
+        listenWhen: (p, c) =>
+            p.startDate != c.startDate ||
+            p.endDate != c.endDate ||
+            p.type != c.type,
+        listener: (context, state) {
+          bloc.onFetch();
         },
+        child: BlocBuilder<DetailDiaryBloc, DetailDiaryState>(
+          builder: (context, state) {
+            return Scaffold(
+                appBar: AppBar(
+                  backgroundColor: const Color.fromARGB(255, 243, 240, 240),
+                  title: const Text(
+                    "DETAIL",
+                    style: TextStyle(
+                        color: Colors.black, fontWeight: FontWeight.bold),
+                  ),
+                  leading: BackButton(color: context.appColor.colorBlack),
+                ),
+                body: state.data == null
+                    ? const Loading()
+                    : SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            _tabBar(context),
+                            _dateBar(),
+                            _itemTitle(context),
+                            _item(
+                              context,
+                              title: 'Protein',
+                              avg: state.dataTotal?.protein ?? 0.0,
+                              goal: state.data?.protein ?? 0.0,
+                              unit: 'gram',
+                            ),
+                            _item(
+                              context,
+                              title: 'TotalFat',
+                              avg: state.dataTotal?.totalFat ?? 0.0,
+                              goal: state.data?.totalFat ?? 0.0,
+                              unit: 'gram',
+                            ),
+                            _item(
+                              context,
+                              title: 'Cholesterol',
+                              avg: state.dataTotal?.cholesterol ?? 0,
+                              goal: state.data?.cholesterol ?? 0,
+                              unit: 'milligram',
+                            ),
+                            _item(
+                              context,
+                              title: 'Carbohydrate',
+                              avg: state.dataTotal?.carbohydrate ?? 0.0,
+                              goal: state.data?.carbohydrate ?? 0.0,
+                              unit: 'gram',
+                            ),
+                            _item(
+                              context,
+                              title: 'Sugars',
+                              avg: state.dataTotal?.sugars ?? 0.0,
+                              goal: state.data?.sugars ?? 0.0,
+                              unit: 'gram',
+                            ),
+                            _item(
+                              context,
+                              title: 'DietaryFiber',
+                              avg: state.dataTotal?.dietaryFiber ?? 0.0,
+                              goal: state.data?.dietaryFiber ?? 0.0,
+                              unit: 'gram',
+                            ),
+                            _item(
+                              context,
+                              title: 'VitaminA',
+                              avg: state.dataTotal?.vitaminA ?? 0,
+                              goal: state.data?.vitaminA ?? 0,
+                              unit: 'microgram',
+                            ),
+                            _item(
+                              context,
+                              title: 'VitaminC',
+                              avg: state.dataTotal?.vitaminC ?? 0,
+                              goal: state.data?.vitaminC ?? 0,
+                              unit: 'microgram',
+                            ),
+                            _item(
+                              context,
+                              title: 'Canxi',
+                              avg: state.dataTotal?.canxi ?? 0,
+                              goal: state.data?.canxi ?? 0,
+                              unit: 'milligram',
+                            ),
+                            _item(
+                              context,
+                              title: 'Natri',
+                              avg: state.dataTotal?.natri ?? 0,
+                              goal: state.data?.natri ?? 0,
+                              unit: 'milligram',
+                            ),
+                            _item(
+                              context,
+                              title: 'Kali',
+                              avg: state.dataTotal?.kali ?? 0,
+                              goal: state.data?.kali ?? 0,
+                              unit: 'milligram',
+                            ),
+                            _item(
+                              context,
+                              title: 'Iod',
+                              avg: state.dataTotal?.iod ?? 0,
+                              goal: state.data?.iod ?? 0,
+                              unit: 'milligram',
+                            ),
+                          ],
+                        ),
+                      ));
+          },
+        ),
       ),
     );
   }
@@ -320,7 +329,7 @@ class _DetailDiaryScreenState extends State<DetailDiaryScreen>
                 width: 1.sw / 1.1,
                 lineHeight: 20,
                 percent: (avg / goal) >= 1 ? 1 : (avg / goal),
-                progressColor: context.appColor.colorBlue,
+                progressColor: _mapperColor(avg / goal),
               )
             ],
           ),
@@ -328,6 +337,15 @@ class _DetailDiaryScreenState extends State<DetailDiaryScreen>
         const Divider(height: 0, thickness: 1)
       ],
     );
+  }
+
+  Color _mapperColor(num percent) {
+    if (percent < 0.5) {
+      return context.appColor.colorRed;
+    } else if (0.5 <= percent && percent <= 1) {
+      return context.appColor.colorBlue;
+    }
+    return context.appColor.colorYello;
   }
 
   Widget _tabBar(
