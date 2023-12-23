@@ -244,24 +244,47 @@ class _DetailDiaryScreenState extends State<DetailDiaryScreen>
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  'Avg',
-                  style: context.textTheme.titleMedium,
-                ),
                 Row(
                   children: [
                     Text(
-                      'Goal',
-                      style: context.textTheme.titleMedium,
+                      'Avg',
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
-                    spaceW2,
+                    spaceW4,
+                  ],
+                ),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Goal',
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    spaceW8,
                   ],
                 ),
                 Row(
                   children: [
                     Text(
                       'Left',
-                      style: context.textTheme.titleMedium,
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    spaceW12,
+                  ],
+                ),
+                Row(
+                  children: [
+                    Text(
+                      'Unit',
+                      style: context.textTheme.titleMedium?.copyWith(
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                     spaceW16,
                   ],
@@ -311,10 +334,14 @@ class _DetailDiaryScreenState extends State<DetailDiaryScreen>
                           goal.toString(),
                           style: context.textTheme.titleMedium,
                         ),
+                        Text(
+                          (goal - avg).toStringAsFixed(2),
+                          style: context.textTheme.titleMedium,
+                        ),
                         SizedBox(
                           width: 100,
                           child: Text(
-                            '${goal - avg} $unit',
+                            unit,
                             style: context.textTheme.titleMedium,
                           ),
                         ),

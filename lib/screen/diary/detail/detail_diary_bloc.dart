@@ -47,9 +47,7 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
         type: type,
         startDate: state.currentTime,
         timeDisplay: _convertText(
-          state.currentTime?.add(
-            const Duration(days: 7),
-          ),
+          state.currentTime,
           null,
           type,
         ),
@@ -57,12 +55,12 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
     } else {
       emit(state.copyWith(
         type: type,
-        startDate: state.currentTime?.add(
+        startDate: state.currentTime?.subtract(
           const Duration(days: 7),
         ),
         endDate: state.currentTime,
         timeDisplay: _convertText(
-          state.currentTime?.add(
+          state.currentTime?.subtract(
             const Duration(days: 7),
           ),
           state.currentTime,
@@ -92,15 +90,15 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
     } else {
       emit(
         state.copyWith(
-          startDate: state.startDate?.add(
+          startDate: state.endDate,
+          endDate: state.endDate?.add(
             const Duration(days: 7),
           ),
-          endDate: state.startDate,
           timeDisplay: _convertText(
-            state.startDate?.add(
+            state.endDate,
+            state.endDate?.add(
               const Duration(days: 7),
             ),
-            state.startDate,
             1,
           ),
         ),
@@ -128,15 +126,15 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
     } else {
       emit(
         state.copyWith(
-          startDate: state.endDate,
-          endDate: state.endDate?.subtract(
+          startDate: state.startDate?.subtract(
             const Duration(days: 7),
           ),
+          endDate: state.startDate,
           timeDisplay: _convertText(
-            state.endDate,
-            state.endDate?.subtract(
+            state.startDate?.subtract(
               const Duration(days: 7),
             ),
+            state.startDate,
             1,
           ),
         ),
@@ -172,10 +170,10 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
 
   String _convertText(DateTime? startDate, DateTime? endDate, int type) {
     if (type == 0) {
-      return startDate == state.startDate
+      return startDate == state.currentTime
           ? 'Today'
-          : '${startDate?.format(pattern: yy_mm_dd)}';
+          : '${startDate?.format(pattern: yyyy_mm_dd)}';
     }
-    return '${endDate?.format(pattern: yy_mm_dd)} to ${startDate?.format(pattern: yy_mm_dd)}';
+    return '${startDate?.format(pattern: yyyy_mm_dd)} to ${endDate?.format(pattern: yyyy_mm_dd)}';
   }
 }
