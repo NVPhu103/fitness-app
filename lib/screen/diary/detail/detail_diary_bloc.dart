@@ -56,12 +56,12 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
       emit(state.copyWith(
         type: type,
         startDate: state.currentTime?.subtract(
-          const Duration(days: 7),
+          const Duration(days: 6),
         ),
         endDate: state.currentTime,
         timeDisplay: _convertText(
           state.currentTime?.subtract(
-            const Duration(days: 7),
+            const Duration(days: 6),
           ),
           state.currentTime,
           type,
@@ -92,12 +92,12 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
         state.copyWith(
           startDate: state.endDate,
           endDate: state.endDate?.add(
-            const Duration(days: 7),
+            const Duration(days: 6),
           ),
           timeDisplay: _convertText(
             state.endDate,
             state.endDate?.add(
-              const Duration(days: 7),
+              const Duration(days: 6),
             ),
             1,
           ),
@@ -127,12 +127,12 @@ class DetailDiaryBloc extends Cubit<DetailDiaryState> {
       emit(
         state.copyWith(
           startDate: state.startDate?.subtract(
-            const Duration(days: 7),
+            const Duration(days: 6),
           ),
           endDate: state.startDate,
           timeDisplay: _convertText(
             state.startDate?.subtract(
-              const Duration(days: 7),
+              const Duration(days: 6),
             ),
             state.startDate,
             1,
