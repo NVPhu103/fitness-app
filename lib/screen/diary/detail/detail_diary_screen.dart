@@ -247,7 +247,7 @@ class _DetailDiaryScreenState extends State<DetailDiaryScreen>
                 Row(
                   children: [
                     Text(
-                      'Avg',
+                      bloc.state.type == 0 ? 'Total' : 'Avg',
                       style: context.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.w600,
                       ),
