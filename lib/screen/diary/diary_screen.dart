@@ -21,11 +21,14 @@ class DiaryScreen extends StatefulWidget {
   final String name;
   Diary diary;
   UserProfile userProfile;
-  DiaryScreen(
-      {super.key,
-      required this.diary,
-      required this.name,
-      required this.userProfile});
+  String? urlNoti;
+  DiaryScreen({
+    super.key,
+    required this.diary,
+    required this.name,
+    required this.userProfile,
+    this.urlNoti,
+  });
 
   @override
   State<DiaryScreen> createState() =>
@@ -156,11 +159,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
       newDate = transferDateTimeToString(
           DateTime.parse(diary.date).add(const Duration(days: 1)));
     }
+    final path = widget.urlNoti ?? '/diaries/${diary.userId}?date=$newDate';
+
     Response newDiaryResponse = await get(
-      Uri.parse(
-          "https://fitness-app-e0xl.onrender.com/diaries/${diary.userId}?date=$newDate"),
+      Uri.parse("https://fitness-app-e0xl.onrender.com$path"),
       headers: {'Content-Type': 'application/json'},
     );
+    
     var newDiaryBody = jsonDecode(newDiaryResponse.body);
     setState(() {
       diary = Diary.fromJson(newDiaryBody);
