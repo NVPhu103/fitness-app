@@ -1,22 +1,18 @@
-import 'dart:convert';
-import 'dart:io';
-
 import 'package:fitness_app/components/loading.dart';
 import 'package:fitness_app/repository/notifications/models/notification_response.dart';
-import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
+import 'package:fitness_app/screen/diary/suggesstion/suggesstion_screen.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:http/http.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import 'notification_bloc.dart';
 import 'notification_state.dart';
 
 class NotificationScreen extends StatefulWidget {
-  NotificationScreen({
+  const NotificationScreen({
     super.key,
     required this.name,
     required this.userProfile,
@@ -52,18 +48,6 @@ class _NotificationScreenState extends State<NotificationScreen> {
     super.dispose();
   }
 
-  Future<Diary> _getDiary(NotificationResponse data) async {
-      Response diaryResponse = await get(
-        Uri.parse(
-            "https://fitness-app-e0xl.onrender.com${data.url}"),
-        headers: {'Content-Type': 'application/json'},
-      );
-      var diaryBody = jsonDecode(diaryResponse.body);
-      Diary diary = Diary.fromJson(diaryBody);
-      return diary;
-  }
-
-
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -84,6 +68,24 @@ class _NotificationScreenState extends State<NotificationScreen> {
                 );
               } else {
                 _pagingController.appendLastPage(state.dataList ?? []);
+              }
+            },
+          ),
+          BlocListener<NotificationBloc, NotificationState>(
+            listenWhen: (previous, current) =>
+                previous.isTapDiary != current.isTapDiary && current.isTapDiary,
+            listener: (context, state) {
+              if (state.diary != null) {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => DiaryScreen(
+                      name: widget.name,
+                      diary: state.diary!,
+                      userProfile: widget.userProfile,
+                    ),
+                  ),
+                );
               }
             },
           ),
@@ -139,20 +141,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
   ) {
     return InkWell(
       onTap: () {
-        if (data.page == 'DIARY') {
-          // Diary newDiary = _getDiary(data);
-          // Navigator.push(
-          //   context,
-          //   MaterialPageRoute(
-          //     builder: (context) => DiaryScreen(
-          //       name: widget.name,
-          //       diary: newDiary,
-          //       userProfile: widget.userProfile,
-          //     ),
-          //   ),
-          // );
+        if (data.page == 'DIARY' && data.url != null) {
+          bloc.getDiary(data.url!);
         } else {
-          //
+          if (data.url != null) {
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                builder: (context) => SuggesstionScreen(
+                  url: data.url!,
+                ),
+              ),
+            );
+          }
         }
       },
       child: ListTile(
@@ -162,7 +163,10 @@ class _NotificationScreenState extends State<NotificationScreen> {
           color: context.appColor.colorWhite,
           size: 20,
         )),
-        title: Text(data.title ?? ''),
+        title: Text(
+          data.title ?? '',
+          style: const TextStyle(fontWeight: FontWeight.w600),
+        ),
         subtitle: Text(data.content ?? ''),
       ),
     );

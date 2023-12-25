@@ -1,7 +1,9 @@
 import 'package:fitness_app/api/services/notifications/notifications_service.dart';
+import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:flutter/foundation.dart';
 
 import 'models/filter_notifications_response.dart';
+import 'models/food_response.dart';
 import 'models/notification_response.dart';
 import 'models/unread_notification_response.dart';
 
@@ -67,6 +69,48 @@ class NotificationsRepository {
         print("$error + $statckTrace");
       }
       return FilterNotificationsResponse();
+    }
+  }
+
+  Future<Diary?> getDiaryNotifications({
+    required String url,
+  }) async {
+    try {
+      final response = await _service.getDiaryNotifications(
+        url: url,
+      );
+      if (response.statusCode == 200) {
+        final result = Diary.fromJson(response.data);
+        return result;
+      } else {
+        return null;
+      }
+    } catch (error, statckTrace) {
+      if (kDebugMode) {
+        print("$error + $statckTrace");
+      }
+      return null;
+    }
+  }
+
+  Future<List<FoodResponse>> getSuggesstionNotifications({
+    required String url,
+  }) async {
+    try {
+      final response = await _service.getSuggesstionNotifications(
+        url: url,
+      );
+      if (response.statusCode == 200) {
+        final result = FoodResponse.fromJsonArray(response.data);
+        return result;
+      } else {
+        return [];
+      }
+    } catch (error, statckTrace) {
+      if (kDebugMode) {
+        print("$error + $statckTrace");
+      }
+      return [];
     }
   }
 }

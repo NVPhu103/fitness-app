@@ -30,6 +30,26 @@ class NotificationBloc extends Cubit<NotificationState> {
     }
   }
 
+  getDiary(String url) async {
+    try {
+      emit(state.copyWith(isTapDiary: false));
+      final diary = await _notificationsRepository.getDiaryNotifications(
+        url: url,
+      );
+
+      emit(state.copyWith(
+        isTapDiary: true,
+        diary: diary,
+      ));
+    } catch (error, statckTrace) {
+      if (kDebugMode) {
+        print("$error + $statckTrace");
+      }
+    } finally {
+      emit(state.copyWith(isTapDiary: false));
+    }
+  }
+
   onFetch({
     required int page,
   }) async {

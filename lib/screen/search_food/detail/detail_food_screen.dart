@@ -19,6 +19,7 @@ class DetailFoodScreen extends StatefulWidget {
     this.quantity = 1,
     required this.isUpdate,
     required this.onReload,
+    this.isView = false,
   });
 
   final String mealId;
@@ -29,6 +30,7 @@ class DetailFoodScreen extends StatefulWidget {
   final num quantity;
   final bool isUpdate;
   final void Function(FoodDiaryResponse) onReload;
+  final bool isView;
 
   @override
   State<DetailFoodScreen> createState() => _DetailFoodScreenState();
@@ -67,30 +69,33 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           builder: (context, state) {
             return Scaffold(
               appBar: AppBar(
-                title: widget.isUpdate
-                    ? const Text('Update')
-                    : const Text('Create'),
+                title: widget.isView
+                    ? const Text('Detail')
+                    : widget.isUpdate
+                        ? const Text('Update')
+                        : const Text('Create'),
                 actions: [
-                  InkWell(
-                    onTap: () async {
-                      final result = await PopupInputNumBerServings.show(
-                        context,
-                        initValue: state.quantity.toString(),
-                      );
-                      if (result != null) {
-                        bloc.onSubmit(
-                            isUpdate: widget.isUpdate, quantity: result);
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
+                  if (!widget.isView)
+                    InkWell(
+                      onTap: () async {
+                        final result = await PopupInputNumBerServings.show(
+                          context,
+                          initValue: state.quantity.toString(),
+                        );
+                        if (result != null) {
+                          bloc.onSubmit(
+                              isUpdate: widget.isUpdate, quantity: result);
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
+                        child: widget.isUpdate
+                            ? const Icon(Icons.edit)
+                            : const Icon(Icons.add),
                       ),
-                      child: widget.isUpdate
-                          ? const Icon(Icons.edit)
-                          : const Icon(Icons.add),
-                    ),
-                  )
+                    )
                 ],
               ),
               body: state.data == null
@@ -114,11 +119,12 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
                             height: 0,
                             thickness: 2,
                           ),
-                          _rowWidget(
-                            context,
-                            title: 'Meal',
-                            value: widget.mealName,
-                          ),
+                          if (!widget.isView)
+                            _rowWidget(
+                              context,
+                              title: 'Meal',
+                              value: widget.mealName,
+                            ),
                           _rowWidget(
                             context,
                             title: 'Number of Servings',

@@ -32,4 +32,18 @@ class NotificationsService extends BaseService {
     );
     return response;
   }
+
+  Future<Response> getDiaryNotifications({
+    required String url,
+  }) async {
+    final response = await get(url);
+    return response;
+  }
+
+  Future<Response> getSuggesstionNotifications({
+    required String url,
+  }) async {
+    final response = await get(url);
+    return response;
+  }
 }
