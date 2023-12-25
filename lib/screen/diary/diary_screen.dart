@@ -27,7 +27,6 @@ class DiaryScreen extends StatefulWidget {
     required this.diary,
     required this.name,
     required this.userProfile,
-    this.urlNoti,
   });
 
   @override
@@ -159,7 +158,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       newDate = transferDateTimeToString(
           DateTime.parse(diary.date).add(const Duration(days: 1)));
     }
-    final path = widget.urlNoti ?? '/diaries/${diary.userId}?date=$newDate';
+    final path = '/diaries/${diary.userId}?date=$newDate';
 
     Response newDiaryResponse = await get(
       Uri.parse("https://fitness-app-e0xl.onrender.com$path"),

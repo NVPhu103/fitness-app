@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:fitness_app/components/loading.dart';
 import 'package:fitness_app/repository/notifications/models/notification_response.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
@@ -6,21 +9,20 @@ import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/context.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:http/http.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import 'notification_bloc.dart';
 import 'notification_state.dart';
 
 class NotificationScreen extends StatefulWidget {
-  const NotificationScreen({
+  NotificationScreen({
     super.key,
     required this.name,
-    required this.diary,
     required this.userProfile,
   });
 
   final String name;
-  final Diary diary;
   final UserProfile userProfile;
 
   @override
@@ -50,6 +52,18 @@ class _NotificationScreenState extends State<NotificationScreen> {
     super.dispose();
   }
 
+  Future<Diary> _getDiary(NotificationResponse data) async {
+      Response diaryResponse = await get(
+        Uri.parse(
+            "https://fitness-app-e0xl.onrender.com${data.url}"),
+        headers: {'Content-Type': 'application/json'},
+      );
+      var diaryBody = jsonDecode(diaryResponse.body);
+      Diary diary = Diary.fromJson(diaryBody);
+      return diary;
+  }
+
+
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
@@ -78,7 +92,7 @@ class _NotificationScreenState extends State<NotificationScreen> {
           builder: (context, state) {
             return Scaffold(
               appBar: AppBar(
-                title: const Text('Select Food'),
+                title: const Text('YOUR NOTIFICATION'),
               ),
               body: state.dataList == null
                   ? const Loading()
@@ -124,19 +138,19 @@ class _NotificationScreenState extends State<NotificationScreen> {
     int index,
   ) {
     return InkWell(
-      onTap: () async {
+      onTap: () {
         if (data.page == 'DIARY') {
-          Navigator.push(
-            context,
-            MaterialPageRoute(
-              builder: (context) => DiaryScreen(
-                name: widget.name,
-                diary: widget.diary,
-                userProfile: widget.userProfile,
-                urlNoti: data.url,
-              ),
-            ),
-          );
+          // Diary newDiary = _getDiary(data);
+          // Navigator.push(
+          //   context,
+          //   MaterialPageRoute(
+          //     builder: (context) => DiaryScreen(
+          //       name: widget.name,
+          //       diary: newDiary,
+          //       userProfile: widget.userProfile,
+          //     ),
+          //   ),
+          // );
         } else {
           //
         }

@@ -158,7 +158,6 @@ class _DashboardPageState extends State<DashboardPage> {
                             MaterialPageRoute(
                                 builder: (context) => NotificationScreen(
                                       name: name,
-                                      diary: diary,
                                       userProfile: userProfile,
                                     )));
                         bloc.onReset();
@@ -183,7 +182,7 @@ class _DashboardPageState extends State<DashboardPage> {
                             },
                             builder: (context, numNoti) {
                               return Positioned(
-                                right: 12,
+                                right: 30,
                                 child: numNoti == 0
                                     ? space0
                                     : Container(
