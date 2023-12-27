@@ -339,23 +339,27 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           child: _columWidget(
             context,
             title: 'Cal',
-            value: ((state.data?.calories ?? 0) * widget.quantity).toString(),
+            value: ((state.data?.calories ?? 0) * widget.quantity)
+                .toStringAsFixed(1),
           ),
         ),
         _columWidget(
           context,
           title: 'Carbs',
-          value: ((state.data?.carbohydrate ?? 0) * widget.quantity).toString(),
+          value: ((state.data?.carbohydrate ?? 0) * widget.quantity)
+              .toStringAsFixed(1),
         ),
         _columWidget(
           context,
           title: 'Fat',
-          value: ((state.data?.totalFat ?? 0) * widget.quantity).toString(),
+          value: ((state.data?.totalFat ?? 0) * widget.quantity)
+              .toStringAsFixed(1),
         ),
         _columWidget(
           context,
           title: 'Protein',
-          value: ((state.data?.protein ?? 0) * widget.quantity).toString(),
+          value:
+              ((state.data?.protein ?? 0) * widget.quantity).toStringAsFixed(1),
         ),
       ],
     );
@@ -432,7 +436,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
               ),
             ),
             Text(
-              '$value $unit',
+              '${value.toStringAsFixed(1)} $unit',
               style: context.textTheme.titleLarge,
             ),
           ],

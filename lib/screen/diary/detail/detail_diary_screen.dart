@@ -327,15 +327,15 @@ class _DetailDiaryScreenState extends State<DetailDiaryScreen>
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
-                          avg.toString(),
+                          avg.toStringAsFixed(1),
                           style: context.textTheme.titleMedium,
                         ),
                         Text(
-                          goal.toString(),
+                          goal.toStringAsFixed(1),
                           style: context.textTheme.titleMedium,
                         ),
                         Text(
-                          (goal - avg).toStringAsFixed(2),
+                          (goal - avg).toStringAsFixed(1),
                           style: context.textTheme.titleMedium,
                         ),
                         SizedBox(

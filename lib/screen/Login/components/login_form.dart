@@ -6,6 +6,7 @@ import 'package:fitness_app/screen/dashboard/dashboard.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/goal/set_goal_screen_1.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
+import 'package:fitness_app/utilities/context.dart';
 import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -132,6 +133,7 @@ class LoginForm extends StatelessWidget {
                   passwordController.text.toString(), context),
               child: Text(
                 "Login".toUpperCase(),
+                style: TextStyle(color: context.appColor.colorWhite),
               ),
             ),
           ),
