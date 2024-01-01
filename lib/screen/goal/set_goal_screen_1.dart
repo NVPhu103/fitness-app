@@ -2,7 +2,6 @@ import 'package:fitness_app/screen/goal/components/UserProfile.dart';
 import 'package:fitness_app/screen/goal/set_goal_screen_2.dart';
 import 'package:flutter/material.dart';
 
-
 // ignore: must_be_immutable
 class SetGoalScreen1 extends StatefulWidget {
   final String userId;

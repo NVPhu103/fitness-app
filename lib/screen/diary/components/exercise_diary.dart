@@ -1,4 +1,3 @@
-
 import 'package:fitness_app/screen/search_exercise/components/exercise.dart';
 
 class ExerciseDiary {
@@ -9,7 +8,8 @@ class ExerciseDiary {
   late int burnedCalories;
   late Exercise exercise;
 
-  ExerciseDiary(this.id, this.diaryId, this.exerciseId, this.burnedCalories, this.practiceTime, this.exercise);
+  ExerciseDiary(this.id, this.diaryId, this.exerciseId, this.burnedCalories,
+      this.practiceTime, this.exercise);
 
   ExerciseDiary.fromJson(Map<String, dynamic> json) {
     id = json['id'];

@@ -14,16 +14,20 @@ import 'package:fitness_app/utilities/function.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
+import 'detail/detail_diary_screen.dart';
+
 // ignore: must_be_immutable
 class DiaryScreen extends StatefulWidget {
   final String name;
   Diary diary;
   UserProfile userProfile;
-  DiaryScreen(
-      {super.key,
-      required this.diary,
-      required this.name,
-      required this.userProfile});
+  String? urlNoti;
+  DiaryScreen({
+    super.key,
+    required this.diary,
+    required this.name,
+    required this.userProfile,
+  });
 
   @override
   State<DiaryScreen> createState() =>
@@ -154,11 +158,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
       newDate = transferDateTimeToString(
           DateTime.parse(diary.date).add(const Duration(days: 1)));
     }
+    final path = '/diaries/${diary.userId}?date=$newDate';
+
     Response newDiaryResponse = await get(
-      Uri.parse(
-          "https://fitness-app-e0xl.onrender.com/diaries/${diary.userId}?date=$newDate"),
+      Uri.parse("https://fitness-app-e0xl.onrender.com$path"),
       headers: {'Content-Type': 'application/json'},
     );
+    
     var newDiaryBody = jsonDecode(newDiaryResponse.body);
     setState(() {
       diary = Diary.fromJson(newDiaryBody);
@@ -199,6 +205,18 @@ class _DiaryScreenState extends State<DiaryScreen> {
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
         ),
         actions: <Widget>[
+          IconButton(
+              onPressed: () {
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => const DetailDiaryScreen()));
+              },
+              icon: const Icon(
+                Icons.pie_chart_outline,
+                color: Colors.black,
+                size: 36,
+              )),
           IconButton(
               onPressed: () {},
               icon: const Icon(
@@ -379,7 +397,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
                                     setState(() {
                                       diary = value.diary;
                                       refreshAllList();
-                                      remainingCalories = calculateRemainingCalories();
+                                      remainingCalories =
+                                          calculateRemainingCalories();
                                       getFoodDiary(diary);
                                     });
                                   },
@@ -441,7 +460,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
                           userProfile: userProfile,
                           isUpdate: false,
                           onReload: (value) {
-                            // reload 
+                            // reload
                           },
                         )));
           },

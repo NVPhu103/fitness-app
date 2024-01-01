@@ -1,6 +1,6 @@
 import 'package:fitness_app/utilities/constants.dart';
+import 'package:fitness_app/utilities/context.dart';
 import 'package:flutter/material.dart';
-
 
 import '../../Login/login_screen.dart';
 import '../../Signup/signup_screen.dart';
@@ -29,6 +29,7 @@ class LoginAndSignupBtn extends StatelessWidget {
             },
             child: Text(
               "Login".toUpperCase(),
+              style: TextStyle(color: context.appColor.colorWhite),
             ),
           ),
         ),

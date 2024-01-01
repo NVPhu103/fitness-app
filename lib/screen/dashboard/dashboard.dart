@@ -4,13 +4,21 @@ import 'dart:convert';
 
 import 'package:fitness_app/screen/dashboard/components/button_navigation_bar.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
+import 'package:fitness_app/screen/notification/notification_screen.dart';
 import 'package:fitness_app/screen/search_food/search_food_screen.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/utilities/constants.dart';
+import 'package:fitness_app/utilities/context.dart';
+import 'package:fitness_app/utilities/spaces.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:http/http.dart';
 import 'package:syncfusion_flutter_gauges/gauges.dart';
+
+import 'dashboard_bloc.dart';
+import 'dashboard_state.dart';
 
 // ignore: must_be_immutable
 class Dashboard extends StatefulWidget {
@@ -69,6 +77,8 @@ class DashboardPage extends StatefulWidget {
 }
 
 class _DashboardPageState extends State<DashboardPage> {
+  late DashboardBloc bloc;
+
   String name;
   Diary diary;
   UserProfile userProfile;
@@ -81,6 +91,7 @@ class _DashboardPageState extends State<DashboardPage> {
     name = changeName(name);
     getAllCalories();
     super.initState();
+    bloc = DashboardBloc()..getData();
   }
 
   String changeName(String name) {
@@ -112,115 +123,157 @@ class _DashboardPageState extends State<DashboardPage> {
   Widget build(BuildContext context) {
     var size = MediaQuery.of(context).size;
 
-    return Scaffold(
-      bottomNavigationBar: ButtonNavBar(
-        name: name,
-        isDashboardActive: true,
-        diary: diary,
-        userProfile: userProfile,
-      ),
-      body: Stack(children: <Widget>[
-        Container(
-          height: size.height * .48,
-          decoration: const BoxDecoration(
-              color: Color(0xFFF5CEB8),
-              image: DecorationImage(
-                  alignment: Alignment.centerLeft,
-                  image: AssetImage("assets/images/undraw_pilates_gpdb.png"))),
+    return BlocProvider(
+      create: (context) => bloc,
+      child: Scaffold(
+        bottomNavigationBar: ButtonNavBar(
+          name: name,
+          isDashboardActive: true,
+          diary: diary,
+          userProfile: userProfile,
         ),
-        SafeArea(
-          child: SingleChildScrollView(
-            padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                Container(
-                  height: size.height * 0.05,
-                  alignment: Alignment.topRight,
-                  child: IconButton(
-                    onPressed: () {},
-                    icon: const Stack(
-                      children: <Widget>[
-                        Icon(
-                          Icons.notifications,
-                          color: Colors.black,
-                          size: 40,
-                        ),
-                        Positioned(
-                            child: Icon(
-                          Icons.brightness_1,
-                          color: Colors.red,
-                          size: 12,
-                        ))
-                      ],
+        body: Stack(children: <Widget>[
+          Container(
+            height: size.height * .48,
+            decoration: const BoxDecoration(
+                color: Color(0xFFF5CEB8),
+                image: DecorationImage(
+                    alignment: Alignment.centerLeft,
+                    image:
+                        AssetImage("assets/images/undraw_pilates_gpdb.png"))),
+          ),
+          SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Container(
+                    height: size.height * 0.05,
+                    alignment: Alignment.topRight,
+                    child: IconButton(
+                      onPressed: () {
+                        Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => NotificationScreen(
+                                      name: name,
+                                      userProfile: userProfile,
+                                    )));
+                        bloc.onReset();
+                      },
+                      icon: Stack(
+                        clipBehavior: Clip.none,
+                        children: <Widget>[
+                          const Icon(
+                            Icons.notifications,
+                            color: Colors.black,
+                            size: 40,
+                          ),
+                          // Positioned(
+                          //     child: Icon(
+                          //   Icons.brightness_1,
+                          //   color: Colors.red,
+                          //   size: 12,
+                          // ))
+                          BlocSelector<DashboardBloc, DashboardState, int>(
+                            selector: (state) {
+                              return state.numNoti;
+                            },
+                            builder: (context, numNoti) {
+                              return Positioned(
+                                right: 30,
+                                child: numNoti == 0
+                                    ? space0
+                                    : Container(
+                                        padding: EdgeInsets.all(
+                                            numNoti < 10 ? 6.r : 4.r),
+                                        decoration: BoxDecoration(
+                                          shape: BoxShape.circle,
+                                          color: context.appColor.colorRed,
+                                        ),
+                                        child: Text(
+                                          numNoti < 10 ? '$numNoti' : '9+',
+                                          style: context.textTheme.labelMedium
+                                              ?.copyWith(
+                                            color: context.appColor.colorWhite,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                              );
+                            },
+                          )
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: size.height * 0.17,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 10),
-                    child: Text("Welcome here \n$name",
-                        textAlign: TextAlign.left,
-                        style: Theme.of(context)
-                            .textTheme
-                            .displaySmall!
-                            .copyWith(fontWeight: FontWeight.w900)),
+                  SizedBox(
+                    height: size.height * 0.17,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Text("Welcome here \n$name",
+                          textAlign: TextAlign.left,
+                          style: Theme.of(context)
+                              .textTheme
+                              .displaySmall!
+                              .copyWith(fontWeight: FontWeight.w900)),
+                    ),
                   ),
-                ),
-                Container(
-                  height: size.height * 0.08,
-                  alignment: Alignment.center,
-                  padding:
-                      const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
-                  decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(29.5)),
-                  child: TextField(
-                    textAlign: TextAlign.start,
-                    decoration: InputDecoration(
-                        hintStyle: const TextStyle(
-                          fontSize: 20,
-                        ),
-                        hintText: "Search",
-                        icon: SvgPicture.asset("assets/icons/search.svg"),
-                        border: InputBorder.none),
-                    onTap: () async {
-                      final value = await Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                              builder: (context) => SearchFoodScreen(
-                                    diary: diary,
-                                    userProfile: userProfile,
-                                    isUpdate: false,
-                                    onReload: (value) {
-                                      // reload
-                                      setState(() {
-                                        diary = value.diary;
-                                        getAllCalories();
-                                      });
-                                    },
-                                  )));
-                      if (!mounted) {
-                        return;
-                      }
-                      setState(() {
-                        diary = value;
-                        getAllCalories();
-                      });
-                    },
+                  Container(
+                    height: size.height * 0.08,
+                    alignment: Alignment.center,
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+                    decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(29.5)),
+                    child: TextField(
+                      textAlign: TextAlign.start,
+                      decoration: InputDecoration(
+                          hintStyle: const TextStyle(
+                            fontSize: 20,
+                          ),
+                          hintText: "Search",
+                          icon: SvgPicture.asset("assets/icons/search.svg"),
+                          border: InputBorder.none),
+                      onTap: () async {
+                        final value = await Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => SearchFoodScreen(
+                                      diary: diary,
+                                      userProfile: userProfile,
+                                      isUpdate: false,
+                                      onReload: (value) {
+                                        // reload
+                                        setState(() {
+                                          diary = value.diary;
+                                          getAllCalories();
+                                        });
+                                      },
+                                    )));
+                        if (!mounted) {
+                          return;
+                        }
+                        setState(() {
+                          diary = value;
+                          getAllCalories();
+                        });
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: size.height * 0.06,
-                ),
-                // Chart
-                chartCard(),
-              ],
+                  SizedBox(
+                    height: size.height * 0.06,
+                  ),
+                  // Chart
+                  chartCard(),
+                ],
+              ),
             ),
-          ),
-        )
-      ]),
+          )
+        ]),
+      ),
     );
   }
 

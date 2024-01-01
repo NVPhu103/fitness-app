@@ -16,9 +16,10 @@ class DetailFoodScreen extends StatefulWidget {
     required this.foodId,
     required this.foodName,
     required this.unit,
-    this.quantity = 0,
+    this.quantity = 1,
     required this.isUpdate,
     required this.onReload,
+    this.isView = false,
   });
 
   final String mealId;
@@ -29,6 +30,7 @@ class DetailFoodScreen extends StatefulWidget {
   final num quantity;
   final bool isUpdate;
   final void Function(FoodDiaryResponse) onReload;
+  final bool isView;
 
   @override
   State<DetailFoodScreen> createState() => _DetailFoodScreenState();
@@ -67,30 +69,33 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           builder: (context, state) {
             return Scaffold(
               appBar: AppBar(
-                title: widget.isUpdate
-                    ? const Text('Update')
-                    : const Text('Create'),
+                title: widget.isView
+                    ? const Text('Detail')
+                    : widget.isUpdate
+                        ? const Text('Update')
+                        : const Text('Create'),
                 actions: [
-                  InkWell(
-                    onTap: () async {
-                      final result = await PopupInputNumBerServings.show(
-                        context,
-                        initValue: state.quantity.toString(),
-                      );
-                      if (result != null) {
-                        bloc.onSubmit(
-                            isUpdate: widget.isUpdate, quantity: result);
-                      }
-                    },
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 12,
+                  if (!widget.isView)
+                    InkWell(
+                      onTap: () async {
+                        final result = await PopupInputNumBerServings.show(
+                          context,
+                          initValue: state.quantity.toString(),
+                        );
+                        if (result != null) {
+                          bloc.onSubmit(
+                              isUpdate: widget.isUpdate, quantity: result);
+                        }
+                      },
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                        ),
+                        child: widget.isUpdate
+                            ? const Icon(Icons.edit)
+                            : const Icon(Icons.add),
                       ),
-                      child: widget.isUpdate
-                          ? const Icon(Icons.edit)
-                          : const Icon(Icons.add),
-                    ),
-                  )
+                    )
                 ],
               ),
               body: state.data == null
@@ -105,7 +110,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
                         children: [
                           Text(
                             widget.foodName,
-                            style: context.textTheme.titleLarge,
+                            style: context.textTheme.headlineMedium,
                           ),
                           const SizedBox(
                             height: 20,
@@ -114,11 +119,12 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
                             height: 0,
                             thickness: 2,
                           ),
-                          _rowWidget(
-                            context,
-                            title: 'Meal',
-                            value: widget.mealName,
-                          ),
+                          if (!widget.isView)
+                            _rowWidget(
+                              context,
+                              title: 'Meal',
+                              value: widget.mealName,
+                            ),
                           _rowWidget(
                             context,
                             title: 'Number of Servings',
@@ -153,137 +159,164 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
         _rowWidget2(
           context,
           title: 'Calories',
-          value: data?.calories ?? 0,
+          value: (data?.calories ?? 0) * widget.quantity,
+          unit: '',
         ),
         _rowWidget2(
           context,
           title: 'Protein',
-          value: data?.protein ?? 0,
+          value: (data?.protein ?? 0) * widget.quantity,
+          unit: 'gram',
         ),
         _rowWidget2(
           context,
           title: 'TotalFat',
-          value: data?.totalFat ?? 0,
+          value: (data?.totalFat ?? 0) * widget.quantity,
+          unit: 'gram',
         ),
         _rowWidget2(
           context,
           title: 'Cholesterol',
-          value: data?.cholesterol ?? 0,
+          value: (data?.cholesterol ?? 0) * widget.quantity,
+          unit: 'gram',
         ),
         _rowWidget2(
           context,
           title: 'Carbohydrate',
-          value: data?.carbohydrate ?? 0,
+          value: (data?.carbohydrate ?? 0) * widget.quantity,
+          unit: 'gram',
         ),
         _rowWidget2(
           context,
           title: 'Sugars',
-          value: data?.sugars ?? 0,
+          value: (data?.sugars ?? 0) * widget.quantity,
+          unit: 'gram',
         ),
         _rowWidget2(
           context,
           title: 'DietaryFiber',
-          value: data?.dietaryFiber ?? 0,
+          value: (data?.dietaryFiber ?? 0) * widget.quantity,
+          unit: 'gram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminA',
-          value: data?.vitaminA ?? 0,
+          value: (data?.vitaminA ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminB1',
-          value: data?.vitaminB1 ?? 0,
+          value: (data?.vitaminB1 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminB2',
-          value: data?.vitaminB2 ?? 0,
+          value: (data?.vitaminB2 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminB6',
-          value: data?.vitaminB6 ?? 0,
+          value: (data?.vitaminB6 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminB9',
-          value: data?.vitaminB9 ?? 0,
+          value: (data?.vitaminB9 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminB12',
-          value: data?.vitaminB12 ?? 0,
+          value: (data?.vitaminB12 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminC',
-          value: data?.vitaminC ?? 0,
+          value: (data?.vitaminC ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminD',
-          value: data?.vitaminD ?? 0,
+          value: (data?.vitaminD ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminE',
-          value: data?.vitaminE ?? 0,
+          value: (data?.vitaminE ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'VitaminK',
-          value: data?.vitaminK ?? 0,
+          value: (data?.vitaminK ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Canxi',
-          value: data?.canxi ?? 0,
+          value: (data?.canxi ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Phospho',
-          value: data?.phospho ?? 0,
+          value: (data?.phospho ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Fe',
-          value: data?.fe ?? 0,
+          value: (data?.fe ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Magie',
-          value: data?.magie ?? 0,
+          value: (data?.magie ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Zn',
-          value: data?.zn ?? 0,
+          value: (data?.zn ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Natri',
-          value: data?.natri ?? 0,
+          value: (data?.natri ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Iod',
-          value: data?.iod ?? 0,
+          value: (data?.iod ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Omega3',
-          value: data?.omega3 ?? 0,
+          value: (data?.omega3 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Omega6',
-          value: data?.omega6 ?? 0,
+          value: (data?.omega6 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
         _rowWidget2(
           context,
           title: 'Omega9',
-          value: data?.omega9 ?? 0,
+          value: (data?.omega9 ?? 0) * widget.quantity,
+          unit: 'milligram',
         ),
       ],
     );
@@ -306,23 +339,27 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           child: _columWidget(
             context,
             title: 'Cal',
-            value: state.data?.calories.toString() ?? '',
+            value: ((state.data?.calories ?? 0) * widget.quantity)
+                .toStringAsFixed(1),
           ),
         ),
         _columWidget(
           context,
           title: 'Carbs',
-          value: state.data?.carbohydrate.toString() ?? '',
+          value: ((state.data?.carbohydrate ?? 0) * widget.quantity)
+              .toStringAsFixed(1),
         ),
         _columWidget(
           context,
           title: 'Fat',
-          value: state.data?.totalFat.toString() ?? '',
+          value: ((state.data?.totalFat ?? 0) * widget.quantity)
+              .toStringAsFixed(1),
         ),
         _columWidget(
           context,
           title: 'Protein',
-          value: state.data?.protein.toString() ?? '',
+          value:
+              ((state.data?.protein ?? 0) * widget.quantity).toStringAsFixed(1),
         ),
       ],
     );
@@ -337,13 +374,13 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
       children: [
         Text(
           value,
-          style: context.textTheme.titleMedium?.copyWith(
+          style: context.textTheme.titleLarge?.copyWith(
             fontWeight: FontWeight.w500,
           ),
         ),
         Text(
           title,
-          style: context.textTheme.titleSmall,
+          style: context.textTheme.titleMedium,
         ),
       ],
     );
@@ -362,11 +399,11 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           children: [
             Text(
               title,
-              style: context.textTheme.bodyLarge,
+              style: context.textTheme.titleLarge,
             ),
             Text(
               value,
-              style: context.textTheme.bodyLarge
+              style: context.textTheme.titleLarge
                   ?.copyWith(color: context.appColor.colorBlue),
             ),
           ],
@@ -384,6 +421,7 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
     BuildContext context, {
     required String title,
     required num value,
+    required String unit,
   }) {
     return Column(
       children: [
@@ -393,13 +431,13 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           children: [
             Text(
               title,
-              style: context.textTheme.bodyLarge?.copyWith(
+              style: context.textTheme.titleLarge?.copyWith(
                 color: value == 0 ? context.appColor.colorGrey : null,
               ),
             ),
             Text(
-              value.toString(),
-              style: context.textTheme.bodyLarge,
+              '${value.toStringAsFixed(1)} $unit',
+              style: context.textTheme.titleLarge,
             ),
           ],
         ),
