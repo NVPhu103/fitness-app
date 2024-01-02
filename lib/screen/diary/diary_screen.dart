@@ -164,7 +164,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       Uri.parse("https://fitness-app-e0xl.onrender.com$path"),
       headers: {'Content-Type': 'application/json'},
     );
-    
+
     var newDiaryBody = jsonDecode(newDiaryResponse.body);
     setState(() {
       diary = Diary.fromJson(newDiaryBody);

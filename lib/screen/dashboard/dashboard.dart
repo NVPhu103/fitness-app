@@ -86,6 +86,9 @@ class _DashboardPageState extends State<DashboardPage> {
   int burnedCaloriesOfExerciseDiaries = 0;
   _DashboardPageState(this.name, this.diary, this.userProfile);
 
+  bool isHovered1 = false;
+  bool isHovered2 = false;
+
   @override
   void initState() {
     name = changeName(name);
@@ -277,92 +280,133 @@ class _DashboardPageState extends State<DashboardPage> {
     );
   }
 
-  Center chartCard() {
+  Widget chartCard() {
     var size = MediaQuery.of(context).size;
 
-    return Center(
-      child: Container(
-        height: size.height * 0.52,
-        width: size.width * 0.98,
-        decoration: BoxDecoration(
-          color: Colors.white,
-          borderRadius: BorderRadius.circular(13),
-          boxShadow: const [
-            BoxShadow(
-              offset: Offset(0, 12),
-              blurRadius: 12,
-              spreadRadius: 0,
-              color: kShadowColor,
+    return Stack(
+      alignment: AlignmentDirectional.center,
+      children: [
+        Center(
+          child: Container(
+            height: size.height * 0.52,
+            width: size.width * 0.98,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(13),
+              boxShadow: const [
+                BoxShadow(
+                  offset: Offset(0, 12),
+                  blurRadius: 12,
+                  spreadRadius: 0,
+                  color: kShadowColor,
+                ),
+              ],
             ),
-          ],
-        ),
-        child: Column(
-          children: <Widget>[
-            SizedBox(
-              width: double.infinity,
-              height: size.height * 0.12,
-              child: const Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: <Widget>[
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
-                      child: Text(
-                        "Calories",
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 22,
+            child: Column(
+              children: <Widget>[
+                SizedBox(
+                  width: double.infinity,
+                  height: size.height * 0.12,
+                  child: const Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: <Widget>[
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 10),
+                          child: Text(
+                            "Calories",
+                            style: TextStyle(
+                              fontWeight: FontWeight.bold,
+                              fontSize: 22,
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
+                          child:
+                              Text("Remaining  =  Goal  -  Food  +  Exercise"),
+                        ),
+                      ]),
+                ),
+                SizedBox(
+                  height: size.height * 0.4,
+                  width: double.infinity,
+                  child: Row(
+                    children: <Widget>[
+                      Expanded(
+                        flex: 3,
+                        child: MouseRegion(
+                          onEnter: (event) => onEntered1(true),
+                          onExit: (event) => onEntered1(false),
+                          child: sfRadialGauge(),
                         ),
                       ),
-                    ),
-                    Padding(
-                      padding: EdgeInsets.fromLTRB(20, 0, 0, 0),
-                      child: Text("Remaining  =  Goal  -  Food  +  Exercise"),
-                    ),
-                  ]),
-            ),
-            SizedBox(
-              height: size.height * 0.4,
-              width: double.infinity,
-              child: Row(
-                children: <Widget>[
-                  Expanded(
-                    flex: 3,
-                    child: sfRadialGauge(),
+                      Expanded(
+                        flex: 2,
+                        child: Column(
+                          children: <Widget>[
+                            MouseRegion(
+                              onEnter: (event) => onEntered2(true),
+                              onExit: (event) => onEntered2(false),
+                              child: RowBehindGauge(
+                                text: "Base Goal",
+                                data: diary.maximumCaloriesIntake,
+                                icons: Icons.flag,
+                                iconColor: Colors.green,
+                              ),
+                            ),
+                            RowBehindGauge(
+                              text: "Food",
+                              data: totalCaloriesOfFoodDiaries,
+                              icons: Icons.food_bank,
+                              iconColor: Colors.blue,
+                            ),
+                            RowBehindGauge(
+                              text: "Exercise",
+                              data: burnedCaloriesOfExerciseDiaries,
+                              icons: Icons.fitness_center,
+                              iconColor: Colors.orange,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                  Expanded(
-                    flex: 2,
-                    child: Column(
-                      children: <Widget>[
-                        RowBehindGauge(
-                          text: "Base Goal",
-                          data: diary.maximumCaloriesIntake,
-                          icons: Icons.flag,
-                          iconColor: Colors.green,
-                        ),
-                        RowBehindGauge(
-                          text: "Food",
-                          data: totalCaloriesOfFoodDiaries,
-                          icons: Icons.food_bank,
-                          iconColor: Colors.blue,
-                        ),
-                        RowBehindGauge(
-                          text: "Exercise",
-                          data: burnedCaloriesOfExerciseDiaries,
-                          icons: Icons.fitness_center,
-                          iconColor: Colors.orange,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
+        if (isHovered1) ...[
+          Container(
+            padding: EdgeInsets.all(12.r),
+            color: context.appColor.colorGrey,
+            child: Text(
+              'Remaining  =  Goal  -  Food  +  Exercise',
+              style: TextStyle(color: context.appColor.colorWhite),
+            ),
+          )
+        ],
+        if (isHovered2) ...[
+          Container(
+            padding: EdgeInsets.all(12.r),
+            color: context.appColor.colorGrey,
+            child: Text(
+              'Base goal = TDEE - Your Goal\nTDEE (Total daily energy expenditure) = BMR × AL\nBMR (Basal Metabolic Rate): is calculated using the Mifflin-St Jeor formula\nAL (Activity Level): The 4 goals are equivalent to 1.2, 1.375, 1.55, and 1.9 respectively\nYour Goal: Equal to 0 or larger or smaller depending on your goal',
+              style: TextStyle(color: context.appColor.colorWhite),
+            ),
+          )
+        ],
+      ],
     );
   }
+
+  void onEntered1(bool isHovered) => setState(() {
+        this.isHovered1 = isHovered;
+      });
+  void onEntered2(bool isHovered) => setState(() {
+        this.isHovered2 = isHovered;
+      });
 
   double calculatePercentageOfGauge() {
     double percentageOfGauge =

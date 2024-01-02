@@ -18,3 +18,8 @@ class NotificationsApi {
   static const filterNotifications =
       "/notifications/{id}?page={page}&per_page=10";
 }
+
+class NewsfeedApi {
+  static const newsfeed = "/newsfeeds";
+  static const searchLocation = "/locations?q={location}";
+}
