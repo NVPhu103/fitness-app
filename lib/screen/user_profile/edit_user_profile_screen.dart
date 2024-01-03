@@ -82,7 +82,7 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                     child: SizedBox(
                       height: size.height * 0.08,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: null,
                           child: customText(
                               userProfile.startingWeight.toString(), 24)),
                     ),
@@ -107,9 +107,35 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                     child: SizedBox(
                       height: size.height * 0.08,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showDialog(context, "Current weight");
+                          },
                           child: customText(
                               userProfile.currentWeight.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.004,
+            ),
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Height", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(userProfile.height.toString(), 24)),
                     ),
                   )
                 ],
@@ -189,6 +215,55 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                 ],
               ),
             ),
+            SizedBox(
+              height: size.height * 0.004,
+            ),
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Gender", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(userProfile.gender.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            SizedBox(
+              height: size.height * 0.004,
+            ),
+            Container(
+              height: size.height * 0.08,
+              color: Colors.white,
+              child: Row(
+                children: <Widget>[
+                  SizedBox(
+                    width: size.width * 0.1,
+                  ),
+                  Expanded(flex: 2, child: customText("Year of birth", 24)),
+                  Expanded(
+                    flex: 1,
+                    child: SizedBox(
+                      height: size.height * 0.08,
+                      child: TextButton(
+                          onPressed: () {},
+                          child: customText(
+                              userProfile.yearOfBirth.toString(), 24)),
+                    ),
+                  )
+                ],
+              ),
+            ),
           ],
         ),
       ),
@@ -211,5 +286,101 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
       height: size.height * 0.004,
       child: Container(color: const Color.fromARGB(255, 236, 236, 236)),
     );
+  }
+
+  Future<void> _showDialog(BuildContext context, String title) {
+    return showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text(
+              title,
+              style: const TextStyle(fontSize: 26),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop("CARDIO"),
+                    child: const Text(
+                      "Cardio",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.normal),
+                    )),
+                const SizedBox(
+                  height: 10,
+                ),
+                TextButton(
+                    onPressed: () => Navigator.of(context).pop("STRENGTH"),
+                    child: const Text(
+                      "Strength",
+                      style: TextStyle(
+                          color: Colors.black,
+                          fontSize: 22,
+                          fontWeight: FontWeight.normal),
+                    ))
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text(
+                  'Update',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {},
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+    // }).then((value) => {
+    // if (value == "CARDIO")
+    //   {
+    //     Navigator.push(
+    //         context,
+    //         MaterialPageRoute(
+    //             builder: (context) => SearchExerciseScreen(
+    //                   diary: diary,
+    //                   exerciseType: "CARDIO",
+    //                   userProfile: userProfile,
+    //                 )))
+    //   }
+    // else if (value == "STRENGTH")
+    //   {
+    //     Navigator.push(
+    //         context,
+    //         MaterialPageRoute(
+    //             builder: (context) => SearchExerciseScreen(
+    //                   diary: diary,
+    //                   exerciseType: "STRENGTH",
+    //                   userProfile: userProfile,
+    //                 )))
+    //   }
+    // }
+    // );
   }
 }
