@@ -75,7 +75,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
       headers: {'Content-Type': 'application/json'},
     );
     if (get_exercise_response.body.isNotEmpty) {
-      List<dynamic> listNewExercises = jsonDecode(get_exercise_response.body);
+      List<dynamic> listNewExercises = jsonDecode(utf8.decode(get_exercise_response.bodyBytes));
       setState(() {
         page++;
         isLoading = false;
@@ -357,7 +357,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
             headers: {'Content-Type': 'application/json'},
           );
           if (postExerciseDiaryResponse.statusCode == 201) {
-            var diaryBody = jsonDecode(postExerciseDiaryResponse.body)['diary'];
+            var diaryBody = jsonDecode(utf8.decode(postExerciseDiaryResponse.bodyBytes))['diary'];
             Diary newDiary = Diary.fromJson(diaryBody);
             setState(() {
               diary = newDiary;
@@ -416,7 +416,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
           setState(() {
             // ignore: non_constant_identifier_names
             List<dynamic> get_exercise_response_body =
-                jsonDecode(get_exercise_response.body);
+                jsonDecode(utf8.decode(get_exercise_response.bodyBytes));
             for (int i = 0; i < get_exercise_response_body.length; i++) {
               listExercises
                   .add(Exercise.fromJson(get_exercise_response_body[i]));
@@ -464,7 +464,7 @@ class _SearchExerciseScreenState extends State<SearchExerciseScreen> {
           setState(() {
             // ignore: non_constant_identifier_names
             List<dynamic> get_exercise_history_response_body =
-                jsonDecode(get_exercise_history_response.body);
+                jsonDecode(utf8.decode(get_exercise_history_response.bodyBytes));
             for (int i = 0;
                 i < get_exercise_history_response_body.length;
                 i++) {

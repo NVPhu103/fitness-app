@@ -102,7 +102,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
           headers: {'Content-Type': 'application/json'},
         );
         if (response.statusCode == 201) {
-          var body = jsonDecode(response.body);
+          var body = jsonDecode(utf8.decode(response.bodyBytes));
           // Get totalCaloriesIntake from diary
           String userId = body['userId'];
           String today = getTodayWithYMD();
@@ -111,7 +111,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
                 "https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
             headers: {'Content-Type': 'application/json'},
           );
-          var diaryBody = jsonDecode(diaryResponse.body);
+          var diaryBody = jsonDecode(utf8.decode(diaryResponse.bodyBytes));
           Diary diary = Diary.fromJson(diaryBody);
           String gender = body['gender'];
           UserProfile userProfile = UserProfile.fromJson(body);
@@ -125,7 +125,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
                         userProfile: userProfile,
                       )));
         } else {
-          var body = jsonDecode(response.body);
+          var body = jsonDecode(utf8.decode(response.bodyBytes));
           if (response.statusCode == 422) {
             // ignore: use_build_context_synchronously
             ScaffoldMessenger.of(context).showSnackBar(SnackBar(
