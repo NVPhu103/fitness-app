@@ -5,17 +5,21 @@ part 'comments_popup_state.g.dart';
 
 @CopyWith()
 class CommentsPopupState {
-  final int id;
-  final int userId;
-  final String userName;
+  final String id;
+  final String userId;
   final List<CommentResponse>? dataList;
   final bool isLoading;
+  final int currentPage;
+  final bool canLoadMore;
+  final bool onReload;
 
   const CommentsPopupState({
-    this.id = 0,
-    this.userId = 0,
-    this.userName = '',
+    this.id = '',
+    this.userId = '',
     this.dataList,
     this.isLoading = false,
+    this.currentPage = 1,
+    this.canLoadMore = false,
+    this.onReload = false,
   });
 }

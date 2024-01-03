@@ -41,34 +41,6 @@ class _SearchLocationScreenState extends State<SearchLocationScreen> {
             body: Column(
               children: [
                 _buildSearchField(),
-                Padding(
-                  padding: EdgeInsets.only(right: 16.w),
-                  child: Align(
-                    alignment: Alignment.topRight,
-                    child: InkWell(
-                      onTap: () {
-                        widget.onChange.call(null);
-                        Navigator.pop(context);
-                      },
-                      child: Container(
-                        height: 28,
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 12.w, vertical: 4.h),
-                        decoration: BoxDecoration(
-                          color: context.appColor.colorRed,
-                          borderRadius: BorderRadius.circular(4.r),
-                        ),
-                        child: Text(
-                          'Remove location search',
-                          style: context.textTheme.bodyMedium?.copyWith(
-                            color: context.appColor.colorWhite,
-                            fontWeight: FontWeight.w600,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
                 state.isLoading
                     ? const Loading()
                     : ListView.separated(

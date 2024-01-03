@@ -4,20 +4,20 @@ part 'comment_response.g.dart';
 
 @JsonSerializable()
 class CommentResponse {
-  int? commentId;
-  int? postId;
-  int? userId;
+  String? id;
+  String? newsfeedId;
+  String? createdBy;
   String? content;
-  DateTime? commentDate;
-  String? fullName;
+  DateTime? createdTime;
+  String? userProfileName;
 
   CommentResponse({
-    this.commentId,
-    this.postId,
-    this.userId,
+    this.id,
+    this.newsfeedId,
+    this.createdBy,
     this.content,
-    this.commentDate,
-    this.fullName,
+    this.createdTime,
+    this.userProfileName,
   });
 
   factory CommentResponse.fromJson(Map<String, dynamic> json) {

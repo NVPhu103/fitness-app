@@ -3,6 +3,7 @@ import 'package:fitness_app/components/button/solid_button.dart';
 import 'package:fitness_app/screen/newsfeed/tab/create/create_newsfeed_state.dart';
 import 'package:fitness_app/screen/newsfeed/tab/location/search_location_screen.dart';
 import 'package:fitness_app/screen/newsfeed/tab/widgets/text_input.dart';
+import 'package:fitness_app/utilities/context.dart';
 import 'package:fitness_app/utilities/date_time.dart';
 import 'package:fitness_app/utilities/spaces.dart';
 import 'package:flutter/material.dart';
@@ -97,24 +98,50 @@ class _CreateNewsfeedScreenState extends State<CreateNewsfeedScreen> {
                         ),
                       ),
                       spaceH4,
-                      InkWell(
-                        onTap: () {
-                          Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                  builder: (context) => SearchLocationScreen(
-                                        onChange: (p0) {
-                                          bloc.onChangeLocation(p0);
-                                        },
-                                      )));
-                        },
-                        child: TextInput(
-                          key: ObjectKey(state.location),
-                          readOnly: true,
-                          initialValue: state.location?.location,
-                          hintText: 'Location',
-                          onChanged: (p0) {},
-                        ),
+                      Row(
+                        children: [
+                          Expanded(
+                            child: InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SearchLocationScreen(
+                                              onChange: (p0) {
+                                                bloc.onChangeLocation(p0);
+                                              },
+                                            )));
+                              },
+                              child: TextInput(
+                                key: ObjectKey(state.location),
+                                readOnly: true,
+                                initialValue: state.location?.location,
+                                hintText: 'Location',
+                                onChanged: (p0) {},
+                              ),
+                            ),
+                          ),
+                          spaceW8,
+                          InkWell(
+                            onTap: () {
+                              bloc.onChangeLocation(null);
+                            },
+                            child: Container(
+                              height: 56,
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 18, vertical: 6),
+                              decoration: BoxDecoration(
+                                color: context.appColor.colorRed,
+                                borderRadius: BorderRadius.circular(4.r),
+                              ),
+                              child: Icon(
+                                Icons.delete,
+                                color: context.appColor.colorWhite,
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
                       spaceH4,
                     ],

@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:fitness_app/api/exception/api_endpoints.dart';
 import 'package:fitness_app/base/base_service.dart';
 
+import 'models/create_comment_request.dart';
 import 'models/create_newsfeed_request.dart';
 
 class NewsfeedService extends BaseService {
@@ -47,6 +48,40 @@ class NewsfeedService extends BaseService {
 
     final response = await get(
       path.replaceAll(RegExp('{page}'), page),
+    );
+    return response;
+  }
+
+  Future<Response> createComment({
+    required CreateCommentRequest request,
+  }) async {
+    final response = await post(
+      NewsfeedApi.createComment,
+      data: request.toJson(),
+    );
+    return response;
+  }
+
+  Future<Response> filterComments({
+    required String id,
+    required String page,
+  }) async {
+    final response = await get(
+      NewsfeedApi.filterComments
+          .replaceAll(RegExp('{id}'), id)
+          .replaceAll(RegExp('{page}'), page),
+    );
+    return response;
+  }
+
+  Future<Response> deleteComment({
+    required String id,
+    required String idCom,
+  }) async {
+    final response = await delete(
+      NewsfeedApi.deleteComment
+          .replaceAll(RegExp('{id}'), id)
+          .replaceAll(RegExp('{idCom}'), idCom),
     );
     return response;
   }

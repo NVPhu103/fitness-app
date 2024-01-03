@@ -48,6 +48,7 @@ class _NewsfeedScreenState extends State<NewsfeedScreen>
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 243, 240, 240),
         automaticallyImplyLeading: false,
+        centerTitle: true,
         title: const Text(
           "NEWS FEED",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -99,7 +100,8 @@ class _NewsfeedScreenState extends State<NewsfeedScreen>
         Tab(
           child: Text(
             'ALL',
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
               color: _tabController.index == 0
                   ? context.appColor.colorBlack
                   : context.appColor.colorBlack.withOpacity(0.5),
@@ -109,7 +111,8 @@ class _NewsfeedScreenState extends State<NewsfeedScreen>
         Tab(
           child: Text(
             'MY SELF',
-            style: context.textTheme.bodyMedium?.copyWith(
+            style: context.textTheme.bodyLarge?.copyWith(
+              fontWeight: FontWeight.w600,
               color: _tabController.index == 1
                   ? context.appColor.colorBlack
                   : context.appColor.colorBlack.withOpacity(0.5),

@@ -7,6 +7,7 @@ import 'package:fitness_app/utilities/spaces.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
 import 'comments_popup_bloc.dart';
 import 'comments_popup_state.dart';
@@ -18,12 +19,12 @@ class CommentsPopup extends StatefulWidget {
     required this.onReload,
   });
 
-  final int id;
+  final String id;
   final VoidCallback onReload;
 
   static Future<void> show(
     BuildContext context, {
-    required int id,
+    required String id,
     required VoidCallback onReload,
   }) {
     return showAppModalBottomSheetV3<void>(
@@ -45,12 +46,20 @@ class _CommentsPopupState extends State<CommentsPopup> {
 
   late FocusNode _focusNode;
 
+  final PagingController<int, CommentResponse> _pagingController =
+      PagingController(firstPageKey: 1, invisibleItemsThreshold: 5);
+
   @override
   void initState() {
     super.initState();
     bloc = CommentsPopupBloc()..getData(widget.id);
     smsTextCtrl = TextEditingController();
     _focusNode = FocusNode();
+    _pagingController.addPageRequestListener((pageKey) {
+      if (pageKey != 1 && mounted) {
+        bloc.onFetch(page: pageKey);
+      }
+    });
   }
 
   @override
@@ -64,49 +73,81 @@ class _CommentsPopupState extends State<CommentsPopup> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => bloc,
-      child: BlocBuilder<CommentsPopupBloc, CommentsPopupState>(
-        builder: (context, state) {
-          return TitleBottomSheetAutoHeightWrapper(
-            title: 'Bình luận',
-            minimum: EdgeInsets.only(bottom: 8.h),
-            child: Padding(
-              padding: EdgeInsets.symmetric(
-                horizontal: 20.w,
-              ),
-              child: SizedBox(
-                height: 1.sh * 0.6,
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Expanded(
-                      child: state.isLoading
-                          ? const Loading()
-                          : (state.dataList ?? []).isEmpty
-                              ? _empty(context)
-                              : ListView.separated(
-                                  addAutomaticKeepAlives: true,
-                                  cacheExtent: 99999,
-                                  keyboardDismissBehavior:
-                                      ScrollViewKeyboardDismissBehavior.onDrag,
-                                  physics: const ClampingScrollPhysics(),
-                                  shrinkWrap: true,
-                                  padding: EdgeInsets.only(bottom: 72.h),
-                                  itemBuilder: (context, index) => _item(
-                                      context,
-                                      data: (state.dataList ?? [])[index]),
-                                  itemCount: (state.dataList ?? []).length,
-                                  separatorBuilder: (context, index) =>
-                                      spaceH20,
-                                ),
-                    ),
-                    _sendComment(context),
-                    spaceH8,
-                  ],
+      child: MultiBlocListener(
+        listeners: [
+          BlocListener<CommentsPopupBloc, CommentsPopupState>(
+            listenWhen: (previous, current) =>
+                previous.dataList != current.dataList,
+            listener: (context, state) {
+              if (state.currentPage == 1) {
+                _pagingController.refresh();
+              }
+              if (state.canLoadMore) {
+                _pagingController.appendPage(
+                  state.dataList ?? [],
+                  state.currentPage + 1,
+                );
+              } else {
+                _pagingController.appendLastPage(state.dataList ?? []);
+              }
+            },
+          ),
+          BlocListener<CommentsPopupBloc, CommentsPopupState>(
+            listenWhen: (previous, current) =>
+                previous.onReload != current.onReload && current.onReload,
+            listener: (context, state) {
+              bloc.onFetch(page: 1);
+            },
+          ),
+        ],
+        child: BlocBuilder<CommentsPopupBloc, CommentsPopupState>(
+          builder: (context, state) {
+            return TitleBottomSheetAutoHeightWrapper(
+              title: 'Bình luận',
+              minimum: EdgeInsets.only(bottom: 8.h),
+              child: Padding(
+                padding: EdgeInsets.symmetric(
+                  horizontal: 20.w,
+                ),
+                child: SizedBox(
+                  height: 1.sh * 0.6,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Expanded(
+                        child: state.isLoading
+                            ? const Loading()
+                            : (state.dataList ?? []).isEmpty
+                                ? _empty(context)
+                                : PagedListView.separated(
+                                    addAutomaticKeepAlives: true,
+                                    cacheExtent: 99999,
+                                    keyboardDismissBehavior:
+                                        ScrollViewKeyboardDismissBehavior
+                                            .onDrag,
+                                    physics: const ClampingScrollPhysics(),
+                                    shrinkWrap: true,
+                                    padding: EdgeInsets.only(bottom: 72.h),
+                                    builderDelegate: PagedChildBuilderDelegate<
+                                        CommentResponse>(
+                                      itemBuilder: (context, item, index) {
+                                        return _item(context, data: item);
+                                      },
+                                    ),
+                                    separatorBuilder: (context, index) =>
+                                        spaceH20,
+                                    pagingController: _pagingController,
+                                  ),
+                      ),
+                      _sendComment(context),
+                      spaceH8,
+                    ],
+                  ),
                 ),
               ),
-            ),
-          );
-        },
+            );
+          },
+        ),
       ),
     );
   }
@@ -125,19 +166,42 @@ class _CommentsPopupState extends State<CommentsPopup> {
     BuildContext context, {
     required CommentResponse data,
   }) {
-    final timeText = data.commentDate?.format(pattern: yyyy_mm_dd_HH_mm);
+    final timeText = data.createdTime
+            ?.add(
+              const Duration(hours: 7),
+            )
+            .getDiffFromToday() ??
+        '';
 
     return Column(
       children: [
         Row(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  data.fullName ?? '',
-                  style: context.textTheme.bodyMedium,
+                Row(
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(4.r),
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: context.appColor.colorGrey,
+                      ),
+                      child: Image.asset(
+                        "assets/images/human.png",
+                        height: 12.r,
+                        width: 12.r,
+                      ),
+                    ),
+                    spaceW4,
+                    Text(
+                      data.userProfileName ?? '',
+                      style: context.textTheme.bodyMedium,
+                    ),
+                  ],
                 ),
                 spaceH4,
                 Text(
@@ -152,7 +216,17 @@ class _CommentsPopupState extends State<CommentsPopup> {
                   style: context.textTheme.labelSmall,
                 ),
               ],
-            )
+            ),
+            if (data.createdBy == bloc.state.userId)
+              InkWell(
+                onTap: () {
+                  bloc.onDeleteComment(data.id ?? '');
+                },
+                child: Icon(
+                  Icons.close,
+                  color: context.appColor.colorRed,
+                ),
+              )
           ],
         ),
       ],
