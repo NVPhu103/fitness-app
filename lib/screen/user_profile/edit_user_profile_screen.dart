@@ -327,7 +327,7 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
       String gender = userProfile.gender.toString();
       setState(() {
         this.userProfile = userProfile;
-        this.name = gender;
+        name = gender;
       });
       return true;
     } else {
