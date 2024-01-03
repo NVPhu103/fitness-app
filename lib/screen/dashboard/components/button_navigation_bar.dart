@@ -1,6 +1,7 @@
 import 'package:fitness_app/screen/dashboard/dashboard.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/diary/diary_screen.dart';
+import 'package:fitness_app/screen/newsfeed/newsfeed_screen.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:fitness_app/screen/user_profile/edit_user_profile_screen.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +13,7 @@ class ButtonNavBar extends StatelessWidget {
   final String name;
   bool isDashboardActive;
   bool isDiaryActive;
+  bool isNewsfeedActive;
   bool isSettingActive;
   Diary diary;
   UserProfile userProfile;
@@ -20,6 +22,7 @@ class ButtonNavBar extends StatelessWidget {
       {super.key,
       this.isDashboardActive = false,
       this.isDiaryActive = false,
+      this.isNewsfeedActive = false,
       this.isSettingActive = false,
       required this.diary,
       required this.name,
@@ -29,7 +32,7 @@ class ButtonNavBar extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
-      height: 60,
+      height: 80,
       color: Colors.white,
       child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -58,6 +61,21 @@ class ButtonNavBar extends StatelessWidget {
                     context,
                     MaterialPageRoute(
                         builder: (context) => DiaryScreen(
+                              name: name,
+                              diary: diary,
+                              userProfile: userProfile,
+                            )));
+              },
+            ),
+            BottomNavItem(
+              title: "NewsFeed",
+              svgScr: "assets/icons/newsfeed.svg",
+              isActive: isNewsfeedActive,
+              press: () {
+                Navigator.pushReplacement(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => NewsfeedScreen(
                               name: name,
                               diary: diary,
                               userProfile: userProfile,
@@ -107,6 +125,8 @@ class BottomNavItem extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: <Widget>[
           SvgPicture.asset(
+            width: 26,
+            height: 26,
             svgScr,
             color: isActive ? kActiveIconColor : kTextColor,
           ),

@@ -1,6 +1,7 @@
 import 'package:fitness_app/components/loading.dart';
 import 'package:fitness_app/repository/food_diaries/models/food_diary_response.dart';
 import 'package:fitness_app/utilities/context.dart';
+import 'package:fitness_app/utilities/spaces.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
@@ -318,6 +319,13 @@ class _DetailFoodScreenState extends State<DetailFoodScreen> {
           value: (data?.omega9 ?? 0) * widget.quantity,
           unit: 'milligram',
         ),
+        spaceH8,
+        Text(
+          "Your daily nutrition is only a relative number and not completely accurate. This number will depend on the actual condition of your body as well as your needs",
+          style: TextStyle(
+            color: context.appColor.colorGrey,
+          ),
+        )
       ],
     );
   }

@@ -76,13 +76,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
     );
     if (get_list_breakfast_response.body.isNotEmpty) {
       List<dynamic> listNewFoodDiary =
-          jsonDecode(get_list_breakfast_response.body)['listFoodDiaries'];
+          jsonDecode(utf8.decode(get_list_breakfast_response.bodyBytes))['listFoodDiaries'];
       setState(() {
         for (int i = 0; i < listNewFoodDiary.length; i++) {
           listBreakfast.add(FoodDiary.fromJson(listNewFoodDiary[i]));
         }
-        breakfastTotalCalories = jsonDecode(
-            get_list_breakfast_response.body)['totalCaloriesOfFoodDiaries'];
+        breakfastTotalCalories = jsonDecode(utf8.decode(
+            get_list_breakfast_response.bodyBytes))['totalCaloriesOfFoodDiaries'];
         foodTotalCalories += breakfastTotalCalories;
       });
     }
@@ -96,13 +96,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
     );
     if (get_list_lunch_response.body.isNotEmpty) {
       List<dynamic> listNewFoodDiary =
-          jsonDecode(get_list_lunch_response.body)['listFoodDiaries'];
+          jsonDecode(utf8.decode(get_list_lunch_response.bodyBytes))['listFoodDiaries'];
       setState(() {
         for (int i = 0; i < listNewFoodDiary.length; i++) {
           listLunch.add(FoodDiary.fromJson(listNewFoodDiary[i]));
         }
-        lunchTotalCalories = jsonDecode(
-            get_list_lunch_response.body)['totalCaloriesOfFoodDiaries'];
+        lunchTotalCalories = jsonDecode(utf8.decode(
+            get_list_lunch_response.bodyBytes))['totalCaloriesOfFoodDiaries'];
         foodTotalCalories += lunchTotalCalories;
       });
     }
@@ -116,13 +116,13 @@ class _DiaryScreenState extends State<DiaryScreen> {
     );
     if (get_list_dining_response.body.isNotEmpty) {
       List<dynamic> listNewFoodDiary =
-          jsonDecode(get_list_dining_response.body)['listFoodDiaries'];
+          jsonDecode(utf8.decode(get_list_dining_response.bodyBytes))['listFoodDiaries'];
       setState(() {
         for (int i = 0; i < listNewFoodDiary.length; i++) {
           listDining.add(FoodDiary.fromJson(listNewFoodDiary[i]));
         }
-        diningTotalCalories = jsonDecode(
-            get_list_dining_response.body)['totalCaloriesOfFoodDiaries'];
+        diningTotalCalories = jsonDecode(utf8.decode(
+            get_list_dining_response.bodyBytes))['totalCaloriesOfFoodDiaries'];
         foodTotalCalories += diningTotalCalories;
       });
     }
@@ -138,12 +138,12 @@ class _DiaryScreenState extends State<DiaryScreen> {
     );
     if (get_exercise_diary_response.body.isNotEmpty) {
       List<dynamic> listNewExerciseDiary =
-          jsonDecode(get_exercise_diary_response.body)['listExerciseDiaries'];
+          jsonDecode(utf8.decode(get_exercise_diary_response.bodyBytes))['listExerciseDiaries'];
       setState(() {
         for (int i = 0; i < listNewExerciseDiary.length; i++) {
           listExercicse.add(ExerciseDiary.fromJson(listNewExerciseDiary[i]));
         }
-        exerciseBurnedCalories = jsonDecode(get_exercise_diary_response.body)[
+        exerciseBurnedCalories = jsonDecode(utf8.decode(get_exercise_diary_response.bodyBytes))[
             'burnedCaloriesOfExerciseDiaries'];
       });
     }
@@ -164,8 +164,8 @@ class _DiaryScreenState extends State<DiaryScreen> {
       Uri.parse("https://fitness-app-e0xl.onrender.com$path"),
       headers: {'Content-Type': 'application/json'},
     );
-    
-    var newDiaryBody = jsonDecode(newDiaryResponse.body);
+
+    var newDiaryBody = jsonDecode(utf8.decode(newDiaryResponse.bodyBytes));
     setState(() {
       diary = Diary.fromJson(newDiaryBody);
       refreshAllList();
