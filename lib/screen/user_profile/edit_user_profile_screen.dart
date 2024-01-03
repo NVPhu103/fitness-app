@@ -1,9 +1,13 @@
 // ignore_for_file: no_logic_in_create_state
 
+import 'dart:convert';
+import 'dart:js_util';
+
 import 'package:fitness_app/screen/dashboard/components/button_navigation_bar.dart';
 import 'package:fitness_app/screen/diary/components/diary.dart';
 import 'package:fitness_app/screen/user_profile/components/user_profile.dart';
 import 'package:flutter/material.dart';
+import 'package:http/http.dart';
 
 // ignore: must_be_immutable
 class EditUserprofileScreen extends StatefulWidget {
@@ -108,7 +112,8 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                       height: size.height * 0.08,
                       child: TextButton(
                           onPressed: () {
-                            _showDialog(context, "Current weight");
+                            _showDialogText(context, "Current weight",
+                                userProfile.currentWeight, "currentWeight");
                           },
                           child: customText(
                               userProfile.currentWeight.toString(), 24)),
@@ -134,7 +139,10 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                     child: SizedBox(
                       height: size.height * 0.08,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showDialogText(context, "Height",
+                                userProfile.height, "height");
+                          },
                           child: customText(userProfile.height.toString(), 24)),
                     ),
                   )
@@ -158,7 +166,10 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                     child: SizedBox(
                       height: size.height * 0.08,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showDialogText(context, "Goal Weight",
+                                userProfile.desiredWeight, "desiredWeight");
+                          },
                           child: customText(
                               userProfile.desiredWeight.toString(), 24)),
                     ),
@@ -288,7 +299,54 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
     );
   }
 
-  Future<void> _showDialog(BuildContext context, String title) {
+  Future<bool> updateUserProfile(String updateField, var newValue) async {
+    if (updateField == "currentWeight" ||
+        updateField == "height" ||
+        updateField == "desiredWeight") {
+      newValue = double.parse(newValue);
+      if (newValue <= 0) {
+        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+          content: Text(
+            "Value > 0",
+            textAlign: TextAlign.center,
+          ),
+          duration: Duration(seconds: 1),
+        ));
+        return false;
+      }
+    }
+    Response response = await patch(
+      Uri.parse(
+          "https://fitness-app-e0xl.onrender.com/userprofiles/${userProfile.id}"),
+      body: jsonEncode({updateField: newValue}),
+      headers: {'Content-Type': 'application/json'},
+    );
+    var body = jsonDecode(utf8.decode(response.bodyBytes));
+    if (response.statusCode == 200) {
+      UserProfile userProfile = UserProfile.fromJson(body);
+      String gender = userProfile.gender.toString();
+      setState(() {
+        this.userProfile = userProfile;
+        this.name = gender;
+      });
+      return true;
+    } else {
+      // ignore: use_build_context_synchronously
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          "ERROR",
+          textAlign: TextAlign.center,
+        ),
+      ));
+      return false;
+    }
+  }
+
+  Future<void> _showDialogText(
+      BuildContext context, String title, var oldValue, String updateField) {
+    TextEditingController textFieldController =
+        TextEditingController(text: oldValue.toString());
+
     return showDialog(
         context: context,
         builder: (context) {
@@ -302,27 +360,12 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: <Widget>[
-                TextButton(
-                    onPressed: () => Navigator.of(context).pop("CARDIO"),
-                    child: const Text(
-                      "Cardio",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
-                          fontWeight: FontWeight.normal),
-                    )),
-                const SizedBox(
-                  height: 10,
+                TextField(
+                  controller: textFieldController,
+                  decoration: const InputDecoration(
+                    labelText: "kilogram",
+                  ),
                 ),
-                TextButton(
-                    onPressed: () => Navigator.of(context).pop("STRENGTH"),
-                    child: const Text(
-                      "Strength",
-                      style: TextStyle(
-                          color: Colors.black,
-                          fontSize: 22,
-                          fontWeight: FontWeight.normal),
-                    ))
               ],
             ),
             actions: <Widget>[
@@ -337,7 +380,14 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                       fontSize: 18,
                       fontWeight: FontWeight.bold),
                 ),
-                onPressed: () {},
+                onPressed: () {
+                  updateUserProfile(
+                          updateField, textFieldController.text.toString())
+                      .then((value) => {
+                            if (value == true) {Navigator.of(context).pop()}
+                            else {Navigator.of(context).pop()}
+                          });
+                },
               ),
               TextButton(
                 style: TextButton.styleFrom(

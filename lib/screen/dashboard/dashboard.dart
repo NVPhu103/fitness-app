@@ -343,6 +343,7 @@ class _DashboardPageState extends State<DashboardPage> {
                               flex: 1,
                               child: Tooltip(
                                 message: "Base goal = TDEE - Your Goal\n\tTDEE (Total daily energy expenditure) = BMR × AL\n\t\t\t\tBMR (Basal Metabolic Rate): is calculated using the Mifflin-St Jeor formula\n\t\t\t\tAL (Activity Level): The 4 goals are equivalent to 1.2, 1.375, 1.55, and 1.9 respectively\n\tYour Goal: Equal to 0 or larger or smaller depending on your goal",
+                                preferBelow: false,
                                 child: Row(
                                   children: <Widget>[RowBehindGauge(
                                     text: "Base Goal",

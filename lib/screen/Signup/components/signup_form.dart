@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:fitness_app/utilities/context.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart';
 
@@ -114,7 +115,7 @@ class SignUpForm extends StatelessWidget {
                   passwordController.text.toString(),
                   confirmPasswordController.text.toString(),
                   context),
-              child: Text("Sign Up".toUpperCase()),
+              child: Text("Sign Up".toUpperCase(),style: TextStyle(color: context.appColor.colorWhite),),
             ),
           ),
           const SizedBox(height: defaultPadding),
