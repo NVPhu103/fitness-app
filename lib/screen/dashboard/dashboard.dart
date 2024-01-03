@@ -86,8 +86,6 @@ class _DashboardPageState extends State<DashboardPage> {
   int burnedCaloriesOfExerciseDiaries = 0;
   _DashboardPageState(this.name, this.diary, this.userProfile);
 
-  bool isHovered1 = false;
-  bool isHovered2 = false;
 
   @override
   void initState() {
@@ -114,7 +112,7 @@ class _DashboardPageState extends State<DashboardPage> {
       Uri.parse(url),
       headers: {'Content-Type': 'application/json'},
     );
-    var responseBody = jsonDecode(response.body);
+    var responseBody = jsonDecode(utf8.decode(response.bodyBytes));
     setState(() {
       totalCaloriesOfFoodDiaries = responseBody['totalCaloriesOfFoodDiaries'];
       burnedCaloriesOfExerciseDiaries =
@@ -335,24 +333,24 @@ class _DashboardPageState extends State<DashboardPage> {
                     children: <Widget>[
                       Expanded(
                         flex: 3,
-                        child: MouseRegion(
-                          onEnter: (event) => onEntered1(true),
-                          onExit: (event) => onEntered1(false),
-                          child: sfRadialGauge(),
-                        ),
+                        child: sfRadialGauge(),
                       ),
                       Expanded(
                         flex: 2,
                         child: Column(
                           children: <Widget>[
-                            MouseRegion(
-                              onEnter: (event) => onEntered2(true),
-                              onExit: (event) => onEntered2(false),
-                              child: RowBehindGauge(
-                                text: "Base Goal",
-                                data: diary.maximumCaloriesIntake,
-                                icons: Icons.flag,
-                                iconColor: Colors.green,
+                            Expanded(
+                              flex: 1,
+                              child: Tooltip(
+                                message: "Base goal = TDEE - Your Goal\n\tTDEE (Total daily energy expenditure) = BMR × AL\n\t\t\t\tBMR (Basal Metabolic Rate): is calculated using the Mifflin-St Jeor formula\n\t\t\t\tAL (Activity Level): The 4 goals are equivalent to 1.2, 1.375, 1.55, and 1.9 respectively\n\tYour Goal: Equal to 0 or larger or smaller depending on your goal",
+                                child: Row(
+                                  children: <Widget>[RowBehindGauge(
+                                    text: "Base Goal",
+                                    data: diary.maximumCaloriesIntake,
+                                    icons: Icons.flag,
+                                    iconColor: Colors.green,
+                                  ),]
+                                ),
                               ),
                             ),
                             RowBehindGauge(
@@ -377,36 +375,10 @@ class _DashboardPageState extends State<DashboardPage> {
             ),
           ),
         ),
-        if (isHovered1) ...[
-          Container(
-            padding: EdgeInsets.all(12.r),
-            color: context.appColor.colorGrey,
-            child: Text(
-              'Remaining  =  Goal  -  Food  +  Exercise',
-              style: TextStyle(color: context.appColor.colorWhite),
-            ),
-          )
-        ],
-        if (isHovered2) ...[
-          Container(
-            padding: EdgeInsets.all(12.r),
-            color: context.appColor.colorGrey,
-            child: Text(
-              'Base goal = TDEE - Your Goal\nTDEE (Total daily energy expenditure) = BMR × AL\nBMR (Basal Metabolic Rate): is calculated using the Mifflin-St Jeor formula\nAL (Activity Level): The 4 goals are equivalent to 1.2, 1.375, 1.55, and 1.9 respectively\nYour Goal: Equal to 0 or larger or smaller depending on your goal',
-              style: TextStyle(color: context.appColor.colorWhite),
-            ),
-          )
-        ],
       ],
     );
   }
 
-  void onEntered1(bool isHovered) => setState(() {
-        this.isHovered1 = isHovered;
-      });
-  void onEntered2(bool isHovered) => setState(() {
-        this.isHovered2 = isHovered;
-      });
 
   double calculatePercentageOfGauge() {
     double percentageOfGauge =

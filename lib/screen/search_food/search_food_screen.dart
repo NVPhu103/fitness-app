@@ -89,7 +89,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
       headers: {'Content-Type': 'application/json'},
     );
     if (get_food_response.body.isNotEmpty) {
-      List<dynamic> listNewFoods = jsonDecode(get_food_response.body);
+      List<dynamic> listNewFoods = jsonDecode(utf8.decode(get_food_response.bodyBytes));
       setState(() {
         page++;
         isLoading = false;
@@ -535,7 +535,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
           headers: {'Content-Type': 'application/json'},
         );
         if (postFoodDiaryResponse.statusCode == 201) {
-          var diaryBody = jsonDecode(postFoodDiaryResponse.body)['diary'];
+          var diaryBody = jsonDecode(utf8.decode(postFoodDiaryResponse.bodyBytes))['diary'];
           Diary newDiary = Diary.fromJson(diaryBody);
           setState(() {
             diary = newDiary;
@@ -573,7 +573,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
           setState(() {
             // ignore: non_constant_identifier_names
             List<dynamic> get_food_response_body =
-                jsonDecode(get_food_response.body);
+                jsonDecode(utf8.decode(get_food_response.bodyBytes));
             for (int i = 0; i < get_food_response_body.length; i++) {
               listFoods.add(Food.fromJson(get_food_response_body[i]));
             }
@@ -620,7 +620,7 @@ class _SearchFoodScreenState extends State<SearchFoodScreen> {
           setState(() {
             // ignore: non_constant_identifier_names
             List<dynamic> get_food__history_response_body =
-                jsonDecode(get_food_history_response.body);
+                jsonDecode(utf8.decode(get_food_history_response.bodyBytes));
             for (int i = 0; i < get_food__history_response_body.length; i++) {
               listFoodHistories.add(
                   FoodHistory.fromJson(get_food__history_response_body[i]));

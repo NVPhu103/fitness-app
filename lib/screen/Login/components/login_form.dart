@@ -33,7 +33,7 @@ class LoginForm extends StatelessWidget {
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
-        var body = jsonDecode(response.body);
+        var body = jsonDecode(utf8.decode(response.bodyBytes));
         String userId = body['id'];
         Navigator.push(
             context,
@@ -42,7 +42,7 @@ class LoginForm extends StatelessWidget {
                       userId: userId,
                     )));
       } else if (response.statusCode == 202) {
-        var body = jsonDecode(response.body);
+        var body = jsonDecode(utf8.decode(response.bodyBytes));
         // Get totalCaloriesIntake from diary
         String userId = body['id'];
         String today = getTodayWithYMD();
@@ -51,7 +51,7 @@ class LoginForm extends StatelessWidget {
               "https://fitness-app-e0xl.onrender.com/diaries/$userId?date=$today"),
           headers: {'Content-Type': 'application/json'},
         );
-        var diaryBody = jsonDecode(diaryResponse.body);
+        var diaryBody = jsonDecode(utf8.decode(diaryResponse.bodyBytes));
         Diary diary = Diary.fromJson(diaryBody);
         String gender = body['userProfile']['gender'];
         var userProfileBody = body['userProfile'];
@@ -66,7 +66,7 @@ class LoginForm extends StatelessWidget {
                       userProfile: userProfile,
                     )));
       } else {
-        var body = jsonDecode(response.body);
+        var body = jsonDecode(utf8.decode(response.bodyBytes));
         if (response.statusCode == 422) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
               content: Text(
