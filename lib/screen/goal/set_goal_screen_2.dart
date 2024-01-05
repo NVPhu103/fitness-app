@@ -190,6 +190,76 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
       ),
       body: Column(
         children: <Widget>[
+          // Year of birth
+          Container(
+            padding: const EdgeInsets.symmetric(vertical: 15),
+            height: size.height * 0.26,
+            width: size.width,
+            color: Colors.white,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const Padding(
+                  padding: EdgeInsets.only(left: 150),
+                  child: Text(
+                    "YOUR YEAR OF BIRTH",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 20,
+                        fontWeight: FontWeight.normal),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 100),
+                  child: NumberPicker(
+                    value: _yearOfBirth,
+                    minValue: 1950,
+                    maxValue: 2017,
+                    onChanged: (value) => setState(() => _yearOfBirth = value),
+                    selectedTextStyle: const TextStyle(
+                        fontSize: 30, color: Colors.deepPurpleAccent),
+                    axis: Axis.horizontal,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(color: Colors.black26),
+                    ),
+                  ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 140),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    children: [
+                      IconButton(
+                        icon: const Icon(Icons.remove),
+                        onPressed: () => setState(() {
+                          final newValue = _yearOfBirth - 1;
+                          if (newValue >= minYearValue) {
+                            _yearOfBirth = newValue;
+                          }
+                        }),
+                      ),
+                      Text(
+                        'Current value: $_yearOfBirth',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.bold, fontSize: 16),
+                      ),
+                      IconButton(
+                        icon: const Icon(Icons.add),
+                        onPressed: () => setState(() {
+                          final newValue = _yearOfBirth + 1;
+                          if (newValue <= maxYearValue) {
+                            _yearOfBirth = newValue;
+                          }
+                        }),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
           // HEIGHT
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 20),
@@ -201,7 +271,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
-                  "Your Height",
+                  "YOUR HEIGHT",
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -235,7 +305,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
-                  "Your current weight",
+                  "YOUR CURRENT WEIGHT",
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -269,7 +339,7 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
                 const Text(
-                  "Your goal weight",
+                  "YOUR GOAL WEIGHT",
                   style: TextStyle(
                       color: Colors.black,
                       fontSize: 20,
@@ -288,69 +358,6 @@ class _SetGoalScreen2State extends State<SetGoalScreen2> {
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ),
-          // Year of birth
-          Container(
-            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 15),
-            height: size.height * 0.26,
-            width: size.width,
-            color: Colors.white,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: <Widget>[
-                const Text(
-                  "Your year of birth",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 20,
-                      fontWeight: FontWeight.normal),
-                ),
-                Center(
-                  child: NumberPicker(
-                    value: _yearOfBirth,
-                    minValue: 1950,
-                    maxValue: 2017,
-                    onChanged: (value) => setState(() => _yearOfBirth = value),
-                    selectedTextStyle: const TextStyle(
-                        fontSize: 30, color: Colors.deepPurpleAccent),
-                    axis: Axis.horizontal,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: Colors.black26),
-                    ),
-                  ),
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    IconButton(
-                      icon: const Icon(Icons.remove),
-                      onPressed: () => setState(() {
-                        final newValue = _yearOfBirth - 1;
-                        if (newValue >= minYearValue) {
-                          _yearOfBirth = newValue;
-                        }
-                      }),
-                    ),
-                    Text(
-                      'Current value: $_yearOfBirth',
-                      style: const TextStyle(
-                          fontWeight: FontWeight.bold, fontSize: 16),
-                    ),
-                    IconButton(
-                      icon: const Icon(Icons.add),
-                      onPressed: () => setState(() {
-                        final newValue = _yearOfBirth + 1;
-                        if (newValue <= maxYearValue) {
-                          _yearOfBirth = newValue;
-                        }
-                      }),
-                    ),
-                  ],
                 ),
               ],
             ),

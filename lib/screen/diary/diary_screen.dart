@@ -200,6 +200,7 @@ class _DiaryScreenState extends State<DiaryScreen> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 243, 240, 240),
         automaticallyImplyLeading: false,
+        centerTitle: true,
         title: const Text(
           "DIARY",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),

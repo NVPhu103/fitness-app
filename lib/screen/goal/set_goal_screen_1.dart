@@ -71,14 +71,17 @@ class _SetGoalScreen1State extends State<SetGoalScreen1> {
             color: Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  "GENDER",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 26,
-                      fontWeight: FontWeight.normal),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(200, 0, 0, 0),
+                  child: Text(
+                    "GENDER",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 26,
+                        fontWeight: FontWeight.normal),
+                  ),
                 ),
                 ListTile(
                   title: const Text('Female'),
@@ -113,14 +116,17 @@ class _SetGoalScreen1State extends State<SetGoalScreen1> {
             color: Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  "YOUR GOAL",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 26,
-                      fontWeight: FontWeight.normal),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(200, 0, 0, 0),
+                  child: Text(
+                    "YOUR GOAL",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 26,
+                        fontWeight: FontWeight.normal),
+                  ),
                 ),
                 ListTile(
                   title: const Text('Lose weight'),
@@ -167,14 +173,17 @@ class _SetGoalScreen1State extends State<SetGoalScreen1> {
             color: Colors.white,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              crossAxisAlignment: CrossAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: <Widget>[
-                const Text(
-                  "ACTIVITY LEVEL",
-                  style: TextStyle(
-                      color: Colors.black,
-                      fontSize: 26,
-                      fontWeight: FontWeight.normal),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(200, 0, 0, 0),
+                  child: Text(
+                    "ACTIVITY LEVEL",
+                    style: TextStyle(
+                        color: Colors.black,
+                        fontSize: 26,
+                        fontWeight: FontWeight.normal),
+                  ),
                 ),
                 ListTile(
                   title: const Text('Not Very Active'),

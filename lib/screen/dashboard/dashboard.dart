@@ -86,7 +86,6 @@ class _DashboardPageState extends State<DashboardPage> {
   int burnedCaloriesOfExerciseDiaries = 0;
   _DashboardPageState(this.name, this.diary, this.userProfile);
 
-
   @override
   void initState() {
     name = changeName(name);
@@ -333,7 +332,12 @@ class _DashboardPageState extends State<DashboardPage> {
                     children: <Widget>[
                       Expanded(
                         flex: 3,
-                        child: sfRadialGauge(),
+                        child: Tooltip(
+                            message:
+                                "The number of calories you can still take in today",
+                            verticalOffset: 50,
+                            preferBelow: true,
+                            child: sfRadialGauge()),
                       ),
                       Expanded(
                         flex: 2,
@@ -342,16 +346,17 @@ class _DashboardPageState extends State<DashboardPage> {
                             Expanded(
                               flex: 1,
                               child: Tooltip(
-                                message: "Base goal = TDEE - Your Goal\n\tTDEE (Total daily energy expenditure) = BMR × AL\n\t\t\t\tBMR (Basal Metabolic Rate): is calculated using the Mifflin-St Jeor formula\n\t\t\t\tAL (Activity Level): The 4 goals are equivalent to 1.2, 1.375, 1.55, and 1.9 respectively\n\tYour Goal: Equal to 0 or larger or smaller depending on your goal",
+                                message:
+                                    "Base goal = TDEE - Your Goal\n\tTDEE (Total daily energy expenditure) = BMR × AL\n\t\t\t\tBMR (Basal Metabolic Rate): is calculated using the Mifflin-St Jeor formula\n\t\t\t\tAL (Activity Level): The 4 goals are equivalent to 1.2, 1.375, 1.55, and 1.9 respectively\n\tYour Goal: Equal to 0 or larger or smaller depending on your goal",
                                 preferBelow: false,
-                                child: Row(
-                                  children: <Widget>[RowBehindGauge(
+                                child: Row(children: <Widget>[
+                                  RowBehindGauge(
                                     text: "Base Goal",
                                     data: diary.maximumCaloriesIntake,
                                     icons: Icons.flag,
                                     iconColor: Colors.green,
-                                  ),]
-                                ),
+                                  ),
+                                ]),
                               ),
                             ),
                             RowBehindGauge(
@@ -379,7 +384,6 @@ class _DashboardPageState extends State<DashboardPage> {
       ],
     );
   }
-
 
   double calculatePercentageOfGauge() {
     double percentageOfGauge =
@@ -429,7 +433,7 @@ class _DashboardPageState extends State<DashboardPage> {
                       const Text(
                         'Remaining',
                         style: TextStyle(
-                            fontSize: 18,
+                            fontSize: 22,
                             fontWeight: FontWeight.w500,
                             fontStyle: FontStyle.normal),
                       ),

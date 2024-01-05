@@ -51,6 +51,7 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
       appBar: AppBar(
         backgroundColor: const Color.fromARGB(255, 243, 240, 240),
         automaticallyImplyLeading: false,
+        centerTitle: true,
         title: const Text(
           "USER PROFILE",
           style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
@@ -194,7 +195,14 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                     child: SizedBox(
                       height: size.height * 0.08,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showDialogDropdown(context, "Your Goal", "goal",
+                                userProfile.goal.toString(), [
+                              "LOSE_WEIGHT",
+                              "MAINTAIN_WEIGHT",
+                              "GAIN_WEIGHT"
+                            ]);
+                          },
                           child: customText(userProfile.goal.toString(), 24)),
                     ),
                   )
@@ -218,7 +226,15 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                     child: SizedBox(
                       height: size.height * 0.08,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showDialogDropdown(context, "Your Activity Level", "activity_level",
+                                userProfile.activityLevel.toString(), [
+                              "NOT_VERY_ACTIVE",
+                              "LIGHTLY_ACTIVE",
+                              "ACTIVE",
+                              "VERY_ACTIVE"
+                            ]);
+                          },
                           child: customText(
                               userProfile.activityLevel.toString(), 24)),
                     ),
@@ -243,7 +259,13 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                     child: SizedBox(
                       height: size.height * 0.08,
                       child: TextButton(
-                          onPressed: () {},
+                          onPressed: () {
+                            _showDialogDropdown(context, "Your Gender", "gender",
+                                userProfile.gender.toString(), [
+                              "Male",
+                              "Female"
+                            ]);
+                          },
                           child: customText(userProfile.gender.toString(), 24)),
                     ),
                   )
@@ -384,8 +406,10 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
                   updateUserProfile(
                           updateField, textFieldController.text.toString())
                       .then((value) => {
-                            if (value == true) {Navigator.of(context).pop()}
-                            else {Navigator.of(context).pop()}
+                            if (value == true)
+                              {Navigator.of(context).pop()}
+                            else
+                              {Navigator.of(context).pop()}
                           });
                 },
               ),
@@ -407,30 +431,85 @@ class _EditUserprofileScreenState extends State<EditUserprofileScreen> {
             ],
           );
         });
-    // }).then((value) => {
-    // if (value == "CARDIO")
-    //   {
-    //     Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //             builder: (context) => SearchExerciseScreen(
-    //                   diary: diary,
-    //                   exerciseType: "CARDIO",
-    //                   userProfile: userProfile,
-    //                 )))
-    //   }
-    // else if (value == "STRENGTH")
-    //   {
-    //     Navigator.push(
-    //         context,
-    //         MaterialPageRoute(
-    //             builder: (context) => SearchExerciseScreen(
-    //                   diary: diary,
-    //                   exerciseType: "STRENGTH",
-    //                   userProfile: userProfile,
-    //                 )))
-    //   }
-    // }
-    // );
   }
+
+  Future<void> _showDialogDropdown(BuildContext context, String title,
+      String updateField, String oldValue, List<String> values) {
+
+    return showDialog(
+        context: context,
+        builder: (context) {
+          String? selectedItem = oldValue;
+          List<String> items = values;
+
+          return AlertDialog(
+            title: Text(
+              title,
+              style: const TextStyle(fontSize: 26),
+            ),
+            content: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: <Widget>[
+                DropdownButton<String>(
+                  value: selectedItem,
+                  items: items.map((String item) {
+                    return DropdownMenuItem<String>(
+                      value: item,
+                      child: Text(item),
+                    );
+                  }).toList(),
+                  onChanged: (String? newValue) {
+                    // Use a nullable type for onChanged
+                    if (newValue != null) {
+                      setState(() {
+                        selectedItem = newValue;
+                      });
+                    }
+                  },
+                ),
+              ],
+            ),
+            actions: <Widget>[
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text(
+                  'Update',
+                  style: TextStyle(
+                      color: Colors.blue,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  updateUserProfile(updateField, selectedItem).then((value) => {
+                        if (value == true)
+                          {Navigator.of(context).pop()}
+                        else
+                          {Navigator.of(context).pop()}
+                      });
+                },
+              ),
+              TextButton(
+                style: TextButton.styleFrom(
+                  textStyle: Theme.of(context).textTheme.labelLarge,
+                ),
+                child: const Text(
+                  'Cancel',
+                  style: TextStyle(
+                      color: Colors.red,
+                      fontSize: 18,
+                      fontWeight: FontWeight.bold),
+                ),
+                onPressed: () {
+                  Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        });
+  }
+
 }
